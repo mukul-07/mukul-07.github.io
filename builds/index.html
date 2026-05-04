@@ -80,7 +80,7 @@
   .mc-strip .right { margin-left: auto; }
 
   /* Nav */
-  .nav { position: relative; z-index: 5; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
+  .nav { position: relative; z-index: 65; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
   .nav__inner { max-width: 1200px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
   .nav__brand { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--mono); letter-spacing: 0.04em; }
   .nav__brand-mark { width: 28px; height: 28px; background: var(--cyan); color: var(--space); border-radius: 6px; display: flex; align-items: center; justify-content: center; font: 700 11px/1 var(--mono); box-shadow: 0 0 16px var(--cyan-glow); }
@@ -89,6 +89,21 @@
   .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
   .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 16px; border-radius: 6px; background: var(--cyan); color: var(--space); box-shadow: 0 0 16px var(--cyan-glow); }
   .nav__btn:hover { background: var(--ink); }
+  /* Mobile hamburger + drawer (shared across pages) */
+  .nav__hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 36px; height: 36px; background: transparent; border: 1px solid var(--rule-2, rgba(232,238,250,0.22)); border-radius: 6px; padding: 8px; cursor: pointer; transition: border-color .2s; }
+  .nav__hamburger:hover { border-color: var(--cyan); }
+  .nav__hamburger span { display: block; width: 100%; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform .25s, opacity .2s; transform-origin: center; }
+  .nav__hamburger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav__hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav__hamburger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .nav__drawer { display: none; position: fixed; left: 0; right: 0; top: 0; z-index: 60; background: rgba(5,8,22,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--rule); padding: 64px 24px 24px; box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6); }
+  .nav__drawer.is-open { display: block; animation: drawer-down .25s ease-out; }
+  @keyframes drawer-down { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .nav__drawer ul { list-style: none; padding: 0; margin: 0; }
+  .nav__drawer li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; font: 500 13px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-dim); border-bottom: 1px solid var(--rule); transition: color .2s; }
+  .nav__drawer li:last-child a { border-bottom: none; }
+  .nav__drawer li a:hover, .nav__drawer li a.now { color: var(--cyan); }
+  .nav__drawer li a .num { font-size: 10px; color: var(--muted); }
 
   /* Page wrap */
   .page { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 80px 32px 60px; }
@@ -233,7 +248,8 @@
     .build__body { padding: 28px 24px 24px; }
   }
   @media (max-width: 700px) {
-    .nav__links { display: none; }
+    .nav__links, .nav__btn { display: none; }
+    .nav__hamburger { display: flex; }
     .mc-strip .right { display: none; }
     .page { padding: 56px 22px 40px; }
     .hero__title { font-size: 32px; }
@@ -312,6 +328,19 @@
         <a href="/#comms">contact</a>
       </div>
       <a href="/#comms" class="nav__btn">Book a call →</a>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__drawer" id="navDrawer">
+      <ul>
+        <li><a href="/"><span>Mission</span><span class="num">01</span></a></li>
+        <li><a href="/#about"><span>About</span><span class="num">02</span></a></li>
+        <li><a href="/builds/" class="now"><span>Builds</span><span class="num">03</span></a></li>
+        <li><a href="/writing/"><span>Writing</span><span class="num">04</span></a></li>
+        <li><a href="/off-mission/"><span>Off-mission</span><span class="num">05</span></a></li>
+        <li><a href="/#comms"><span style="color:var(--cyan)">Book a call →</span><span class="num">06</span></a></li>
+      </ul>
     </div>
   </nav>
 
@@ -455,6 +484,19 @@
       if (el) el.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
     }
     tick(); setInterval(tick, 1000);
+
+    // Mobile drawer toggle
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('navDrawer');
+    if (hamburger && drawer) {
+      const setOpen = (o) => {
+        drawer.classList.toggle('is-open', o);
+        hamburger.classList.toggle('is-open', o);
+        hamburger.setAttribute('aria-expanded', o);
+      };
+      hamburger.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open')));
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+    }
   </script>
 </body>
 </html>
