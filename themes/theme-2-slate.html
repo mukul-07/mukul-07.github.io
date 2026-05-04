@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>B · Operator — Mukul Dharpure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..700,0..100&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2EDE4;
+    --bone: #FFFFFE;
+    --ink: #1C2118;
+    --body: #3D4438;
+    --muted: #807A6E;
+    --rule: rgba(28,33,24,0.10);
+    --rule-strong: rgba(28,33,24,0.22);
+    --brass: #A77C2E;
+    --brass-deep: #7C5A1F;
+    --green: #4A7C2E;
+    --serif: "Fraunces", "GT Sectra", "Tiempos", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --max-w: 1240px;
+    --pad-x: 48px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--brass); color: var(--bone); }
+
+  .theme-bar { position: fixed; top: 14px; left: 14px; z-index: 99; background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 100px; font: 500 11px/1 var(--mono); letter-spacing: 0.04em; }
+  .theme-bar a { color: rgba(255,255,255,0.55); margin-left: 12px; }
+  .theme-bar a:hover { color: var(--brass); }
+
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(242,237,228,0.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--rule); }
+  .nav__inner { max-width: var(--max-w); margin: 0 auto; padding: 20px var(--pad-x); display: flex; align-items: center; justify-content: space-between; }
+  .nav__brand { display: flex; align-items: baseline; gap: 12px; }
+  .nav__brand-name { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.015em; line-height: 1; }
+  .nav__brand-role { font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-left: 12px; border-left: 1px solid var(--rule-strong); }
+  .nav__links { display: flex; gap: 36px; font-size: 14px; font-weight: 500; }
+  .nav__links a { color: var(--body); transition: color .2s; position: relative; }
+  .nav__links a:hover { color: var(--brass); }
+  .nav__cv { font-family: var(--mono); font-size: 12px; border: 1px solid var(--ink); padding: 9px 16px; border-radius: 100px; background: var(--ink); color: var(--bg); }
+
+  /* HERO */
+  .hero { max-width: var(--max-w); margin: 0 auto; padding: 120px var(--pad-x) 100px; position: relative; }
+  .hero__grid { display: grid; grid-template-columns: 1fr 380px; gap: 80px; align-items: start; }
+  .hero__col-l { padding-top: 8px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass-deep); margin-bottom: 36px; }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--brass); }
+
+  .hero__headline {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(48px, 6.5vw, 88px);
+    line-height: 1.0; letter-spacing: -0.025em;
+    margin-bottom: 36px; color: var(--ink);
+    font-variation-settings: "SOFT" 60;
+  }
+  .hero__headline em { font-style: italic; font-weight: 300; color: var(--brass-deep); }
+  .hero__sub { font-size: 19px; color: var(--body); max-width: 560px; line-height: 1.55; margin-bottom: 44px; }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 36px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 500 14px/1 var(--sans); padding: 14px 24px; border-radius: 100px; border: none; cursor: pointer; transition: all .2s; }
+  .btn--primary { background: var(--ink); color: var(--bg); }
+  .btn--primary:hover { background: var(--brass-deep); }
+  .btn--ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule-strong); }
+  .btn--ghost:hover { border-color: var(--ink); }
+
+  .availability { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--body); }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(74,124,46,0.4); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(74,124,46,0); } }
+
+  .hero__col-r { position: relative; }
+  .hero__portrait { width: 100%; aspect-ratio: 4/5; background: var(--bone); border-radius: 4px; display: flex; align-items: center; justify-content: center; box-shadow: 0 30px 80px -20px rgba(28,33,24,0.18), 0 1px 0 rgba(255,255,255,1) inset; position: relative; overflow: hidden; }
+  .hero__portrait::before { content: "MD"; font-family: var(--serif); font-size: 220px; font-weight: 300; color: var(--brass); opacity: 0.18; letter-spacing: -0.04em; }
+  .hero__portrait-meta {
+    position: absolute; bottom: -1px; left: -1px; right: -1px;
+    background: var(--ink); color: var(--bg);
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: baseline;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .hero__portrait-meta span:last-child { color: var(--brass); }
+
+  /* IMPACT */
+  .impact { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--pad-x) 100px; }
+  .impact__head { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid var(--ink); margin-bottom: 0; }
+  .impact__head-l { font-family: var(--serif); font-size: 22px; font-weight: 400; font-style: italic; color: var(--ink); }
+  .impact__head-r { font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .impact__card { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .stat { padding: 40px 0; border-right: 1px solid var(--rule); padding-right: 32px; padding-left: 32px; }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; padding-right: 0; }
+  .stat__num { font-family: var(--serif); font-size: 96px; font-weight: 300; color: var(--ink); line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 16px; font-variant-numeric: tabular-nums; }
+  .stat__num em { color: var(--brass-deep); font-style: normal; font-weight: 400; }
+  .stat__lbl { font-size: 14px; color: var(--body); line-height: 1.5; max-width: 240px; }
+
+  /* SECTION */
+  .section { max-width: var(--max-w); margin: 0 auto; padding: 120px var(--pad-x); }
+  .section__head { display: grid; grid-template-columns: 220px 1fr; gap: 64px; margin-bottom: 72px; }
+  .section__num { font: 500 11px/1.5 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .section__num strong { display: block; font-family: var(--serif); font-size: 56px; font-weight: 300; font-style: italic; color: var(--brass-deep); letter-spacing: -0.02em; margin-top: 8px; }
+  .section__title { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 5vw, 64px); line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 20px; max-width: 920px; }
+  .section__title em { font-style: italic; color: var(--brass-deep); font-weight: 300; }
+  .section__sub { font-size: 18px; color: var(--body); max-width: 620px; line-height: 1.55; }
+
+  /* CASE HERO */
+  .case-hero { background: var(--bone); border-radius: 4px; padding: 64px; margin-bottom: 32px; box-shadow: 0 30px 60px -30px rgba(28,33,24,0.12); position: relative; }
+  .case-hero__tag { display: inline-flex; align-items: center; gap: 12px; font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass-deep); margin-bottom: 28px; padding: 7px 14px; border: 1px solid var(--rule-strong); border-radius: 100px; }
+  .case-hero__tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brass); }
+  .case-hero__title { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 24px; max-width: 880px; }
+  .case-hero__title em { font-style: italic; color: var(--brass-deep); font-weight: 300; }
+  .case-hero__lead { font-size: 17px; color: var(--body); line-height: 1.65; max-width: 760px; margin-bottom: 44px; }
+  .case-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-bottom: 40px; padding: 28px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .case-metric { padding: 0 24px; border-right: 1px solid var(--rule); }
+  .case-metric:first-child { padding-left: 0; }
+  .case-metric:last-child { border-right: none; padding-right: 0; }
+  .case-metric__num { font-family: var(--serif); font-size: 48px; font-weight: 400; color: var(--ink); line-height: 1; letter-spacing: -0.025em; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .case-metric__lbl { font: 500 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
+  .chip { font: 500 12px/1 var(--mono); padding: 7px 12px; border-radius: 100px; background: var(--bg); color: var(--body); }
+  .case-link { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-family: var(--serif); font-size: 18px; font-style: italic; border-bottom: 1px solid var(--ink); padding-bottom: 4px; transition: all .2s; }
+  .case-link:hover { color: var(--brass-deep); border-color: var(--brass-deep); gap: 14px; }
+
+  .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .case-card { background: var(--bone); border-radius: 4px; padding: 40px 36px; box-shadow: 0 20px 40px -28px rgba(28,33,24,0.1); transition: transform .3s; }
+  .case-card:hover { transform: translateY(-4px); }
+  .case-card__tag { font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass-deep); margin-bottom: 20px; }
+  .case-card__title { font-family: var(--serif); font-size: 28px; font-weight: 400; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .case-card__desc { font-size: 14px; color: var(--body); line-height: 1.65; margin-bottom: 24px; }
+
+  /* CONTACT */
+  .contact { background: var(--ink); color: var(--bg); padding: 140px var(--pad-x); position: relative; }
+  .contact__inner { max-width: var(--max-w); margin: 0 auto; }
+  .contact__eyebrow { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass); margin-bottom: 28px; }
+  .contact__title { font-family: var(--serif); font-weight: 300; font-size: clamp(64px, 9vw, 144px); letter-spacing: -0.04em; line-height: 0.92; margin-bottom: 40px; }
+  .contact__title em { font-style: italic; color: var(--brass); }
+  .contact__sub { font-size: 19px; color: rgba(242,237,228,0.65); max-width: 560px; line-height: 1.55; margin-bottom: 44px; }
+  .contact__email { display: inline-flex; align-items: center; gap: 16px; font-family: var(--serif); font-size: 36px; font-weight: 300; padding-bottom: 8px; border-bottom: 1px solid rgba(242,237,228,0.25); transition: all .3s; }
+  .contact__email:hover { color: var(--brass); border-color: var(--brass); gap: 24px; }
+
+  @media (max-width: 1000px) {
+    :root { --pad-x: 32px; }
+    .hero__grid { grid-template-columns: 1fr; gap: 48px; }
+    .hero__col-r { max-width: 320px; }
+  }
+  @media (max-width: 900px) {
+    .case-metrics { grid-template-columns: repeat(2, 1fr); padding: 0; }
+    .case-metric { padding: 24px 20px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .case-metric:nth-child(2) { border-right: none; }
+    .case-metric:nth-child(3), .case-metric:nth-child(4) { border-bottom: none; padding-bottom: 0; }
+    .case-metric:first-child, .case-metric:nth-child(3) { padding-left: 0; }
+    .case-grid { grid-template-columns: 1fr; }
+    .section__head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  @media (max-width: 640px) {
+    :root { --pad-x: 22px; }
+    .impact__card { grid-template-columns: 1fr; }
+    .stat { padding: 28px 0; border-right: none; border-bottom: 1px solid var(--rule); padding-left: 0; padding-right: 0; }
+    .stat:last-child { border-bottom: none; }
+    .case-hero { padding: 36px 24px; }
+    .case-hero__title { font-size: 30px; }
+    .nav__brand-role { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="theme-bar">B · Operator<a href="theme-1-ivory.html">← A</a><a href="index.html">menu</a><a href="theme-3-espresso.html">C →</a></div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <span class="nav__brand-name">Mukul Dharpure</span>
+        <span class="nav__brand-role">Robotics PM</span>
+      </div>
+      <div class="nav__links">
+        <a href="#">Work</a>
+        <a href="#">About</a>
+        <a href="#">Writing</a>
+        <a href="#" class="nav__cv">Download CV</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero__grid">
+        <div class="hero__col-l">
+          <p class="eyebrow">Founding PM · Industrial Robotics</p>
+          <h1 class="hero__headline">I ship autonomous robots and AI products that <em>actually work.</em></h1>
+          <p class="hero__sub">Five years. Two flagship products shipped 0→1. Thirty-five robots deployed into Fortune 500 factories across five countries.</p>
+          <div class="hero__ctas">
+            <a href="#" class="btn btn--primary">View case studies →</a>
+            <a href="#" class="btn btn--ghost">Download CV</a>
+          </div>
+          <div class="availability"><span class="pulse"></span> Open to Robotics PM roles in EU & USA · Visa sponsorship required</div>
+        </div>
+        <div class="hero__col-r">
+          <div class="hero__portrait">
+            <div class="hero__portrait-meta"><span>MD · BLR</span><span>2026</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact">
+      <div class="impact__head">
+        <span class="impact__head-l">By the numbers</span>
+        <span class="impact__head-r">Updated · May 2026</span>
+      </div>
+      <div class="impact__card">
+        <div class="stat">
+          <div class="stat__num">5<em>+</em></div>
+          <div class="stat__lbl">Years building autonomous systems and shipping them into production.</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">35<em>+</em></div>
+          <div class="stat__lbl">Robots deployed across commercial sites at 95%+ fleet uptime.</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">5</div>
+          <div class="stat__lbl">Countries shipped — India, UAE, Thailand, Singapore, Germany.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <p class="section__num">Selected Work<strong>I.</strong></p>
+        <div>
+          <h2 class="section__title">From 0→1 launches to enterprise programs at <em>Fortune 500</em> factories.</h2>
+          <p class="section__sub">End-to-end ownership — product strategy, engineering execution, and commercial delivery.</p>
+        </div>
+      </div>
+
+      <article class="case-hero">
+        <p class="case-hero__tag">Flo Mobility · India · 2020–2024 · Founding PM</p>
+        <h3 class="case-hero__title">Two 0→1 product launches and a fleet scaled to 35+ robots across <em>11 cities.</em></h3>
+        <p class="case-hero__lead">Founding PM at Flo Mobility. Launched two commercial autonomous products 0→1 — an indoor material-handling robot for commercial construction sites, and an outdoor autonomous lawnmower — both from market research through commercial release.</p>
+        <div class="case-metrics">
+          <div class="case-metric"><div class="case-metric__num">02</div><div class="case-metric__lbl">0→1 launches</div></div>
+          <div class="case-metric"><div class="case-metric__num">35+</div><div class="case-metric__lbl">robots deployed</div></div>
+          <div class="case-metric"><div class="case-metric__num">11</div><div class="case-metric__lbl">cities shipped</div></div>
+          <div class="case-metric"><div class="case-metric__num">95%</div><div class="case-metric__lbl">fleet uptime</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip">Founding PM</span>
+          <span class="chip">Indoor AMR</span>
+          <span class="chip">Outdoor autonomous</span>
+          <span class="chip">B2B Enterprise</span>
+          <span class="chip">India · UAE</span>
+        </div>
+        <a class="case-link" href="#">Read the full case study →</a>
+      </article>
+
+      <div class="case-grid">
+        <article class="case-card">
+          <p class="case-card__tag">Ford Motors · Thailand · 2024</p>
+          <h3 class="case-card__title">Two autonomous forklifts on the Body Shop floor in 60 days.</h3>
+          <p class="case-card__desc">A Fortune 500 automotive plant, a 60-day clock, and two production shifts to keep running. Owned end-to-end at Rayong.</p>
+          <a class="case-link" href="#">Read more →</a>
+        </article>
+        <article class="case-card">
+          <p class="case-card__tag">Caterpillar · Singapore · 2024</p>
+          <h3 class="case-card__title">Two production-ready forklifts in 15 days.</h3>
+          <p class="case-card__desc">Compressed the standard delivery cycle by 6×. Two units shipped on accelerated timeline. Zero incidents.</p>
+          <a class="case-link" href="#">Read more →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="contact__inner">
+        <p class="contact__eyebrow">— Get in touch</p>
+        <h2 class="contact__title">Let's <em>talk.</em></h2>
+        <p class="contact__sub">Looking for Robotics PM / Senior PM / Product Lead roles in Europe or the USA. Happy to chat about relocation and sponsorship.</p>
+        <a class="contact__email" href="#">mukuldharpure@gmail.com →</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

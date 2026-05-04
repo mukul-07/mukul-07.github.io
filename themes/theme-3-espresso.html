@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C · Workshop — Mukul Dharpure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE;
+    --paper: #FFFFFF;
+    --paper-2: #FAF8F4;
+    --carbon: #1A1A1A;
+    --body: #4A4A4A;
+    --muted: #8A8A85;
+    --rule: rgba(26,26,26,0.08);
+    --rule-strong: rgba(26,26,26,0.18);
+    --signal: #2C6EE6;
+    --signal-deep: #1E4FB8;
+    --green: #16A34A;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --max-w: 1200px;
+    --pad-x: 32px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--carbon); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--signal); color: var(--paper); }
+
+  .theme-bar { position: fixed; top: 14px; left: 14px; z-index: 99; background: var(--carbon); color: var(--paper); padding: 6px 14px; border-radius: 100px; font: 500 11px/1 var(--mono); letter-spacing: 0.04em; }
+  .theme-bar a { color: rgba(255,255,255,0.55); margin-left: 12px; }
+  .theme-bar a:hover { color: var(--signal); }
+
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(244,242,238,0.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--rule); }
+  .nav__inner { max-width: var(--max-w); margin: 0 auto; padding: 16px var(--pad-x); display: flex; align-items: center; justify-content: space-between; }
+  .nav__brand { font: 600 14px/1 var(--mono); letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  .nav__brand-mark { width: 22px; height: 22px; background: var(--carbon); color: var(--paper); border-radius: 5px; display: flex; align-items: center; justify-content: center; font: 700 10px/1 var(--mono); }
+  .nav__links { display: flex; gap: 28px; font: 500 13px/1 var(--mono); }
+  .nav__links a { color: var(--body); transition: color .2s; }
+  .nav__links a:hover { color: var(--signal); }
+  .nav__cv { font: 500 12px/1 var(--mono); border: 1px solid var(--rule-strong); padding: 9px 14px; border-radius: 6px; background: var(--paper); }
+
+  /* HERO — minimal, sharp, modern-tech */
+  .hero { max-width: var(--max-w); margin: 0 auto; padding: 100px var(--pad-x) 80px; }
+  .hero__pre { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; font: 500 12px/1 var(--mono); color: var(--muted); }
+  .hero__pre-status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--paper); border: 1px solid var(--rule); border-radius: 100px; color: var(--carbon); }
+  .hero__pre-status .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(22,163,74,0.4); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0); } }
+  .hero__pre-loc { padding-left: 14px; border-left: 1px solid var(--rule-strong); }
+
+  .hero__headline {
+    font-size: clamp(56px, 8vw, 112px);
+    font-weight: 600; letter-spacing: -0.045em; line-height: 0.92;
+    margin-bottom: 32px; max-width: 1100px; color: var(--carbon);
+  }
+  .hero__headline .accent { color: var(--signal); }
+  .hero__headline .underline { background: linear-gradient(transparent 62%, rgba(44,110,230,0.15) 62%); padding: 0 4px; }
+
+  .hero__sub { font-size: 20px; color: var(--body); max-width: 600px; line-height: 1.5; margin-bottom: 44px; }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 500 14px/1 var(--sans); padding: 13px 22px; border-radius: 8px; border: none; cursor: pointer; transition: all .2s; }
+  .btn--primary { background: var(--carbon); color: var(--paper); box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 12px rgba(26,26,26,0.18); }
+  .btn--primary:hover { background: var(--signal); }
+  .btn--ghost { background: var(--paper); color: var(--carbon); border: 1px solid var(--rule-strong); }
+  .btn--ghost:hover { border-color: var(--carbon); }
+
+  /* IMPACT — spec sheet style */
+  .impact { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--pad-x) 100px; }
+  .impact__card { background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 30px 60px -30px rgba(26,26,26,0.08); }
+  .impact__bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--paper-2); border-bottom: 1px solid var(--rule); font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .impact__bar .dots { display: flex; gap: 5px; }
+  .impact__bar .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--rule-strong); }
+  .impact__bar .dots span:first-child { background: var(--signal); }
+  .impact__grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .stat { padding: 36px 32px; border-right: 1px solid var(--rule); }
+  .stat:last-child { border-right: none; }
+  .stat__key { font: 500 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+  .stat__key::before { content: ""; width: 16px; height: 1px; background: var(--signal); }
+  .stat__num { font-family: var(--mono); font-size: 64px; font-weight: 500; color: var(--carbon); line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 12px; font-variant-numeric: tabular-nums; }
+  .stat__num .accent { color: var(--signal); }
+  .stat__lbl { font-size: 14px; color: var(--body); line-height: 1.45; }
+
+  /* SECTION */
+  .section { max-width: var(--max-w); margin: 0 auto; padding: 100px var(--pad-x); }
+  .section__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 64px; margin-bottom: 56px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+  .section__head-l { max-width: 800px; }
+  .section__num { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); margin-bottom: 18px; }
+  .section__title { font-size: clamp(32px, 4vw, 52px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 16px; }
+  .section__sub { font-size: 17px; color: var(--body); max-width: 620px; line-height: 1.55; }
+  .section__head-r { font: 500 12px/1.5 var(--mono); color: var(--muted); text-align: right; padding-bottom: 6px; }
+
+  /* CASE HERO */
+  .case-hero { background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; padding: 48px; margin-bottom: 24px; box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 30px 60px -30px rgba(26,26,26,0.08); position: relative; overflow: hidden; }
+  .case-hero::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--signal); }
+  .case-hero__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 14px; }
+  .case-hero__tag { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .case-hero__tag .accent { color: var(--signal); }
+  .case-hero__pill { font: 500 11px/1 var(--mono); padding: 6px 12px; background: rgba(44,110,230,0.08); color: var(--signal-deep); border-radius: 100px; }
+  .case-hero__title { font-size: 40px; font-weight: 600; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 22px; max-width: 880px; }
+  .case-hero__lead { font-size: 16px; color: var(--body); line-height: 1.65; max-width: 760px; margin-bottom: 36px; }
+  .case-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-bottom: 36px; padding: 24px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .case-metric { padding: 0 20px; border-right: 1px solid var(--rule); }
+  .case-metric:first-child { padding-left: 0; }
+  .case-metric:last-child { border-right: none; padding-right: 0; }
+  .case-metric__num { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--carbon); line-height: 1; letter-spacing: -0.03em; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .case-metric__lbl { font: 500 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+  .chip { font: 500 12px/1 var(--mono); padding: 7px 12px; border-radius: 6px; background: var(--bg); color: var(--body); }
+  .case-link { display: inline-flex; align-items: center; gap: 8px; color: var(--signal); font: 500 14px/1 var(--mono); transition: gap .2s; }
+  .case-link:hover { gap: 14px; }
+
+  .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .case-card { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 32px; transition: transform .3s, box-shadow .3s; }
+  .case-card:hover { transform: translateY(-3px); box-shadow: 0 30px 50px -30px rgba(26,26,26,0.15); }
+  .case-card__tag { font: 500 11px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal); margin-bottom: 16px; }
+  .case-card__title { font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.025em; margin-bottom: 12px; }
+  .case-card__desc { font-size: 14px; color: var(--body); line-height: 1.6; margin-bottom: 20px; }
+
+  /* CONTACT */
+  .contact { background: var(--carbon); color: var(--paper); padding: 100px var(--pad-x); position: relative; overflow: hidden; }
+  .contact::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(44,110,230,0.18) 0%, transparent 60%); pointer-events: none; }
+  .contact__inner { max-width: var(--max-w); margin: 0 auto; position: relative; }
+  .contact__pre { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); margin-bottom: 24px; }
+  .contact__title { font-size: clamp(56px, 8vw, 120px); font-weight: 600; letter-spacing: -0.045em; line-height: 0.92; margin-bottom: 32px; }
+  .contact__title .accent { color: var(--signal); }
+  .contact__sub { font-size: 19px; color: rgba(255,255,255,0.65); max-width: 580px; line-height: 1.55; margin-bottom: 40px; }
+  .contact__email { display: inline-flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 22px; padding: 16px 24px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 100px; transition: all .3s; }
+  .contact__email:hover { background: var(--signal); border-color: var(--signal); gap: 22px; }
+
+  @media (max-width: 900px) {
+    .case-metrics { grid-template-columns: repeat(2, 1fr); padding: 0; gap: 0; }
+    .case-metric { padding: 20px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .case-metric:nth-child(2) { border-right: none; }
+    .case-metric:nth-child(3), .case-metric:nth-child(4) { border-bottom: none; padding-bottom: 0; }
+    .case-metric:nth-child(odd) { padding-left: 0; }
+    .case-grid { grid-template-columns: 1fr; }
+    .section__head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .section__head-r { text-align: left; }
+  }
+  @media (max-width: 640px) {
+    :root { --pad-x: 20px; }
+    .impact__grid { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 28px 24px; }
+    .stat:last-child { border-bottom: none; }
+    .case-hero { padding: 32px 24px; }
+    .case-hero__title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+  <div class="theme-bar">C · Workshop<a href="theme-2-slate.html">← B</a><a href="index.html">menu</a></div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </div>
+      <div class="nav__links">
+        <a href="#">work</a>
+        <a href="#">about</a>
+        <a href="#">writing</a>
+        <a href="#" class="nav__cv">cv ↓</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero__pre">
+        <span class="hero__pre-status"><span class="pulse"></span>Open to Robotics PM roles · EU & USA</span>
+        <span class="hero__pre-loc">Bengaluru, IN · GMT+5:30</span>
+      </div>
+      <h1 class="hero__headline">I ship <span class="underline">autonomous robots</span> and <span class="accent">AI products</span> that actually work in the real world.</h1>
+      <p class="hero__sub">5+ years. 2 flagship products shipped 0→1. 35+ robots deployed into Fortune 500 factories across 5 countries.</p>
+      <div class="hero__ctas">
+        <a href="#" class="btn btn--primary">View case studies →</a>
+        <a href="#" class="btn btn--ghost">Download CV ↓</a>
+      </div>
+    </section>
+
+    <section class="impact">
+      <div class="impact__card">
+        <div class="impact__bar">
+          <span>impact.json</span>
+          <span class="dots"><span></span><span></span><span></span></span>
+        </div>
+        <div class="impact__grid">
+          <div class="stat">
+            <div class="stat__key">years</div>
+            <div class="stat__num">5<span class="accent">+</span></div>
+            <div class="stat__lbl">Building autonomous systems and shipping into production environments.</div>
+          </div>
+          <div class="stat">
+            <div class="stat__key">fleet</div>
+            <div class="stat__num">35<span class="accent">+</span></div>
+            <div class="stat__lbl">Robots deployed across commercial sites at 95%+ fleet uptime.</div>
+          </div>
+          <div class="stat">
+            <div class="stat__key">footprint</div>
+            <div class="stat__num">5</div>
+            <div class="stat__lbl">Countries — India, UAE, Thailand, Singapore, Germany.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <div class="section__head-l">
+          <p class="section__num">01 · Selected Work</p>
+          <h2 class="section__title">From 0→1 launches to enterprise programs at Fortune 500 factories.</h2>
+          <p class="section__sub">End-to-end ownership — product strategy, engineering execution, and commercial delivery.</p>
+        </div>
+        <div class="section__head-r">3 case studies<br>2020 — present</div>
+      </div>
+
+      <article class="case-hero">
+        <div class="case-hero__head">
+          <p class="case-hero__tag">Flo Mobility <span class="accent">·</span> India <span class="accent">·</span> 2020–2024 <span class="accent">·</span> Founding PM</p>
+          <span class="case-hero__pill">Featured</span>
+        </div>
+        <h3 class="case-hero__title">Two 0→1 product launches and a fleet scaled to 35+ robots across 11 cities.</h3>
+        <p class="case-hero__lead">Founding PM at Flo Mobility. Launched two commercial autonomous products 0→1 — an indoor material-handling robot for commercial construction sites, and an outdoor autonomous lawnmower — both from market research through commercial release.</p>
+        <div class="case-metrics">
+          <div class="case-metric"><div class="case-metric__num">02</div><div class="case-metric__lbl">0→1 launches</div></div>
+          <div class="case-metric"><div class="case-metric__num">35+</div><div class="case-metric__lbl">robots deployed</div></div>
+          <div class="case-metric"><div class="case-metric__num">11</div><div class="case-metric__lbl">cities shipped</div></div>
+          <div class="case-metric"><div class="case-metric__num">95%</div><div class="case-metric__lbl">fleet uptime</div></div>
+        </div>
+        <div class="chips">
+          <span class="chip">Founding PM</span>
+          <span class="chip">Indoor AMR</span>
+          <span class="chip">Outdoor autonomous</span>
+          <span class="chip">B2B Enterprise</span>
+          <span class="chip">India · UAE</span>
+        </div>
+        <a class="case-link" href="#">Read the full case study →</a>
+      </article>
+
+      <div class="case-grid">
+        <article class="case-card">
+          <p class="case-card__tag">Ford Motors · Thailand · 2024</p>
+          <h3 class="case-card__title">Two autonomous forklifts on the Body Shop floor in 60 days.</h3>
+          <p class="case-card__desc">A Fortune 500 automotive plant, a 60-day clock, and two production shifts to keep running. Owned end-to-end at Rayong.</p>
+          <a class="case-link" href="#">Read more →</a>
+        </article>
+        <article class="case-card">
+          <p class="case-card__tag">Caterpillar · Singapore · 2024</p>
+          <h3 class="case-card__title">Two production-ready forklifts in 15 days.</h3>
+          <p class="case-card__desc">Compressed the standard delivery cycle by 6×. Two units shipped on accelerated timeline. Zero incidents.</p>
+          <a class="case-link" href="#">Read more →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="contact__inner">
+        <p class="contact__pre">— Get in touch</p>
+        <h2 class="contact__title">Let's <span class="accent">talk.</span></h2>
+        <p class="contact__sub">Looking for Robotics PM / Senior PM / Product Lead roles in Europe or the USA. Happy to chat about relocation and sponsorship.</p>
+        <a class="contact__email" href="#">mukuldharpure@gmail.com →</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

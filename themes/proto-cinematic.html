@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mukul Dharpure — Robotics PM · Cinematic edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space:    #030616;
+    --space-2:  #08112A;
+    --space-3:  #0D1A38;
+    --ink:      #ECF1FA;
+    --ink-dim:  #A8B4D0;
+    --muted:    #5C6A8A;
+    --rule:     rgba(236, 241, 250, 0.08);
+    --rule-2:   rgba(236, 241, 250, 0.18);
+    --cyan:     #00E0FF;
+    --cyan-2:   #7FF0FF;
+    --cyan-soft:rgba(0, 224, 255, 0.10);
+    --cyan-mid: rgba(0, 224, 255, 0.30);
+    --cyan-glow:rgba(0, 224, 255, 0.55);
+    --green:    #00E676;
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body { background: var(--space); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--cyan); color: var(--space); }
+
+  /* ============ COSMIC BG ============ */
+  .cosmos {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 224, 255, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 50%, rgba(0, 224, 255, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(0, 224, 255, 0.05) 0%, transparent 60%);
+  }
+  .cosmos::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1px 1px at 82% 73%, rgba(255,255,255,0.65), transparent),
+      radial-gradient(1px 1px at 38% 87%, rgba(255,255,255,0.50), transparent),
+      radial-gradient(2px 2px at 67% 14%, rgba(0,224,255,0.7), transparent),
+      radial-gradient(1px 1px at 8% 64%, rgba(255,255,255,0.45), transparent),
+      radial-gradient(1px 1px at 93% 33%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(2px 2px at 47% 51%, rgba(0,224,255,0.5), transparent),
+      radial-gradient(1px 1px at 28% 12%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 71% 89%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1px 1px at 55% 28%, rgba(255,255,255,0.4), transparent);
+    animation: drift 120s linear infinite;
+  }
+  @keyframes drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-200px); }
+  }
+
+  /* ============ READING-PROGRESS (subtle, cinematic) ============ */
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 1px; z-index: 100; background: rgba(255,255,255,0.04); }
+  .progress__fill { height: 100%; width: 0%; background: linear-gradient(90deg, transparent, var(--cyan), transparent); transition: width .15s linear; }
+
+  /* ============ MISSION STRIP — single thin line ============ */
+  .mc {
+    position: relative; z-index: 5;
+    border-bottom: 1px solid var(--rule);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    padding: 12px 32px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    color: var(--muted);
+  }
+  .mc .v { color: var(--ink); }
+  .mc .v.cyan { color: var(--cyan); }
+  .mc .live { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-dim); }
+  .mc .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2.4s infinite; }
+  @keyframes blink { 50% { opacity: 0.4; } }
+  .mc .right { margin-left: auto; }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: sticky; top: 1px; z-index: 50;
+    background: rgba(3, 6, 22, 0.85); backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav__inner { max-width: 1440px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .nav__brand { display: flex; align-items: center; gap: 12px; font: 500 15px/1 var(--mono); letter-spacing: -0.01em; color: var(--ink); }
+  .nav__brand-mark {
+    width: 32px; height: 32px;
+    background: var(--cyan); color: var(--space);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font: 700 13px/1 var(--mono);
+    box-shadow: 0 0 24px var(--cyan-glow), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .nav__links { display: flex; gap: 32px; font: 500 12px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; }
+  .nav__links a { color: var(--muted); transition: color .25s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
+  .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; padding: 13px 20px; border-radius: 8px; transition: all .25s; background: var(--cyan); color: var(--space); display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 28px var(--cyan-glow), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .nav__btn:hover { background: var(--cyan-2); transform: translateY(-1px); box-shadow: 0 0 40px var(--cyan-glow); }
+
+  /* =============================================
+     HERO — cinematic, lots of breathing space
+     ============================================= */
+  .hero {
+    position: relative; z-index: 1;
+    min-height: calc(100vh - 80px);
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: center;
+    max-width: 1440px; margin: 0 auto;
+    padding: 80px 32px;
+  }
+
+  .hero__l { padding-right: 32px; }
+  .hero__eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 40px;
+    opacity: 0; animation: fade 0.8s 0.1s forwards;
+  }
+  .hero__eyebrow .line { width: 36px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+  .hero__eyebrow .cyan { color: var(--cyan); }
+  @keyframes fade { to { opacity: 1; } }
+
+  .hero__title {
+    font-size: clamp(56px, 7vw, 120px);
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    margin-bottom: 36px;
+    color: var(--ink);
+  }
+  .hero__title .line { display: block; overflow: hidden; }
+  .hero__title .word {
+    display: inline-block; opacity: 0;
+    transform: translateY(0.4em);
+    animation: rise 0.9s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+    margin-right: 0.18em;
+  }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+  .hero__title .serif { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--cyan); text-shadow: 0 0 32px var(--cyan-glow); }
+
+  .hero__sub {
+    font-size: 19px;
+    color: var(--ink-dim);
+    max-width: 540px;
+    line-height: 1.65;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fade 1s 1.4s forwards;
+  }
+  .hero__sub strong { color: var(--ink); font-weight: 600; }
+
+  .hero__cta {
+    opacity: 0;
+    animation: fade 1s 1.7s forwards;
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: 600 14px/1 var(--sans); padding: 18px 28px; border-radius: 10px;
+    cursor: pointer; transition: all .3s; border: none;
+  }
+  .btn--prim {
+    background: var(--cyan); color: var(--space);
+    box-shadow:
+      0 0 0 1px var(--cyan),
+      0 12px 32px -6px var(--cyan-glow),
+      0 0 60px -10px var(--cyan-glow),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .btn--prim:hover {
+    background: var(--cyan-2); transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px var(--cyan-2),
+      0 16px 40px -6px var(--cyan-glow),
+      0 0 80px -10px var(--cyan-glow);
+  }
+  .btn--prim .arrow { font-size: 16px; transition: transform .3s; }
+  .btn--prim:hover .arrow { transform: translateX(4px); }
+  .btn--ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule-2); padding: 17px 28px; }
+  .btn--ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .hero__avail {
+    margin-top: 32px; font: 500 12px/1.5 var(--mono); letter-spacing: 0.06em; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 10px;
+    opacity: 0; animation: fade 1s 2s forwards;
+  }
+  .hero__avail .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2.4s infinite; }
+
+  /* HERO RIGHT — globe canvas with cinematic chrome */
+  .hero__r {
+    position: relative; height: 100%; min-height: 580px;
+    opacity: 0; animation: fade 1.6s 0.4s forwards;
+  }
+  .globe-stage { position: relative; width: 100%; height: 100%; min-height: 580px; }
+  .globe-stage canvas { display: block; width: 100% !important; height: 100% !important; }
+  .globe-stage::before {
+    content: ""; position: absolute; inset: -10%;
+    background: radial-gradient(circle at 50% 50%, var(--cyan-soft), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .globe-hud {
+    position: absolute; z-index: 5; pointer-events: none;
+    font: 500 10px/1.6 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  }
+  .globe-hud .v { color: var(--ink); }
+  .globe-hud .cyan { color: var(--cyan); }
+  .globe-hud--tl { top: 16px; left: 16px; }
+  .globe-hud--tr { top: 16px; right: 16px; text-align: right; }
+  .globe-hud--bl { bottom: 16px; left: 16px; }
+  .globe-hud--br { bottom: 16px; right: 16px; text-align: right; }
+  .globe-hud .ln { display: inline-block; width: 16px; height: 1px; background: var(--cyan); vertical-align: middle; margin-right: 8px; box-shadow: 0 0 6px var(--cyan-glow); }
+
+  /* Continuous slow-rotating rings around the globe — Outcrowd signature */
+  .globe-rings {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .globe-rings::before, .globe-rings::after {
+    content: ""; position: absolute;
+    border: 1px solid rgba(0, 224, 255, 0.10);
+    border-radius: 50%;
+  }
+  .globe-rings::before {
+    width: 95%; height: 95%; border-style: dashed;
+    animation: spin 80s linear infinite;
+  }
+  .globe-rings::after {
+    width: 110%; height: 110%; border-style: dotted;
+    animation: spin 140s linear infinite reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* =============================================
+     STATS — cinematic ticker
+     ============================================= */
+  .stats {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: rgba(8, 17, 42, 0.4);
+  }
+  .stats__inner {
+    max-width: 1440px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--rule);
+  }
+  .stat { padding: 40px 32px; background: var(--space); display: flex; flex-direction: column; justify-content: center; min-height: 180px; transition: background .3s; }
+  .stat:hover { background: rgba(0, 224, 255, 0.03); }
+  .stat__key { font: 500 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .stat__key::before { content: ""; width: 8px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow); }
+  .stat__num {
+    font-family: var(--mono); font-size: clamp(48px, 4.2vw, 64px); font-weight: 400;
+    line-height: 0.95; letter-spacing: -0.04em; color: var(--ink);
+    margin-bottom: 8px; font-variant-numeric: tabular-nums;
+  }
+  .stat__num .accent { color: var(--cyan); text-shadow: 0 0 24px var(--cyan-glow); }
+  .stat__lbl { font-size: 13px; color: var(--ink-dim); line-height: 1.45; }
+
+  /* =============================================
+     SECTIONS · scroll reveals
+     ============================================= */
+  [data-reveal] {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 1s cubic-bezier(0.2, 0.85, 0.25, 1), transform 1s cubic-bezier(0.2, 0.85, 0.25, 1);
+  }
+  [data-reveal].in { opacity: 1; transform: translateY(0); }
+
+  .section {
+    position: relative; z-index: 1;
+    max-width: 1440px; margin: 0 auto;
+    padding: 160px 32px;
+  }
+  .section__head { margin-bottom: 80px; max-width: 920px; }
+  .section__num {
+    font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .section__num::before { content: ""; width: 36px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+  .section__title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 500; letter-spacing: -0.035em; line-height: 1.0;
+    margin-bottom: 20px;
+  }
+  .section__title .serif { font-family: var(--serif); font-style: italic; color: var(--cyan); font-weight: 400; }
+  .section__sub { font-size: 18px; color: var(--ink-dim); max-width: 660px; line-height: 1.65; }
+
+  /* TRUST */
+  .trust {
+    position: relative; z-index: 1;
+    max-width: 1440px; margin: 0 auto;
+    padding: 60px 32px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .trust__inner { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; justify-content: center; }
+  .trust__lbl { font: 500 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .trust__items { display: flex; gap: 32px; flex-wrap: wrap; align-items: center; }
+  .trust__item {
+    font: 500 14px/1 var(--mono); color: var(--ink-dim); letter-spacing: 0.04em;
+    transition: color .25s, text-shadow .25s; cursor: default;
+  }
+  .trust__item:hover { color: var(--cyan); text-shadow: 0 0 16px var(--cyan-glow); }
+  .trust__item.f500 { color: var(--ink); }
+  .trust__item.f500::after { content: " · F500"; color: var(--cyan); font-size: 10px; letter-spacing: 0.10em; opacity: 0.6; }
+
+  /* WORK */
+  .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cases > .case:first-child { grid-column: 1 / -1; }
+  .case {
+    background: linear-gradient(180deg, rgba(13, 26, 56, 0.6), rgba(8, 17, 42, 0.6));
+    border: 1px solid var(--rule);
+    border-radius: 18px; padding: 56px;
+    position: relative; overflow: hidden;
+    transition: border-color .4s, transform .4s;
+  }
+  .case::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0; transition: opacity .4s;
+  }
+  .case:hover { border-color: var(--cyan-mid); transform: translateY(-4px); }
+  .case:hover::before { opacity: 1; }
+  .case__tag {
+    font: 500 11px/1 var(--mono); color: var(--cyan); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 32px; display: inline-flex; align-items: center; gap: 10px;
+  }
+  .case__tag .f500 { padding: 4px 10px; background: var(--cyan-soft); color: var(--cyan); border-radius: 100px; font-size: 9px; letter-spacing: 0.10em; border: 1px solid var(--cyan-mid); }
+  .case__num {
+    font-family: var(--mono); font-weight: 400; line-height: 0.92;
+    letter-spacing: -0.05em; color: var(--cyan);
+    margin-bottom: 24px; font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 60px var(--cyan-glow);
+  }
+  .case__num.xl { font-size: clamp(80px, 9vw, 144px); }
+  .case__num.lg { font-size: clamp(60px, 6vw, 96px); }
+  .case__num .small { font-size: 0.42em; color: var(--ink); text-shadow: none; }
+  .case__title { font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 18px; max-width: 600px; }
+  .case__desc { font-size: 15px; color: var(--ink-dim); line-height: 1.65; margin-bottom: 28px; max-width: 600px; }
+  .case__desc strong { color: var(--ink); }
+  .case__link { font: 500 12px/1 var(--mono); color: var(--cyan); letter-spacing: 0.10em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; transition: gap .3s; }
+  .case:hover .case__link { gap: 16px; }
+
+  /* JUDGMENT */
+  .dec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .dec {
+    background: rgba(8, 17, 42, 0.5);
+    border: 1px solid var(--rule); border-radius: 14px; padding: 32px;
+    transition: border-color .3s; position: relative;
+  }
+  .dec:hover { border-color: var(--cyan-mid); }
+  .dec__tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-dim); padding: 7px 12px;
+    background: var(--space-3); border: 1px solid var(--rule); border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .dec__tag .mark { font-weight: 700; color: var(--cyan); }
+  .dec__title { font: 500 19px/1.25 var(--sans); letter-spacing: -0.015em; margin-bottom: 16px; }
+  .dec__body { font-size: 14px; color: var(--ink-dim); line-height: 1.65; }
+  .dec__body strong { color: var(--cyan); font-weight: 600; }
+
+  /* VALUE / FINAL */
+  .value-stack {
+    background: linear-gradient(180deg, transparent, var(--cyan-soft), transparent);
+    padding: 160px 32px;
+    position: relative; z-index: 1;
+  }
+  .value-stack__inner { max-width: 1100px; margin: 0 auto; }
+  .value-stack__pre {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cyan); padding: 9px 16px; background: var(--cyan-soft);
+    border: 1px solid var(--cyan-mid); border-radius: 100px;
+    margin-bottom: 32px;
+  }
+  .value-stack__pre .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: blink 1.6s infinite; }
+  .value-stack__title {
+    font-size: clamp(40px, 5.2vw, 72px); font-weight: 500;
+    letter-spacing: -0.04em; line-height: 1.0; margin-bottom: 24px; max-width: 880px;
+  }
+  .value-stack__title .serif { font-family: var(--serif); font-style: italic; color: var(--cyan); font-weight: 400; }
+  .value-stack__sub { font-size: 19px; color: var(--ink-dim); max-width: 660px; line-height: 1.65; margin-bottom: 56px; }
+
+  .vrows { display: flex; flex-direction: column; max-width: 880px; margin-bottom: 48px; }
+  .vrow { display: grid; grid-template-columns: 44px 1fr 90px; gap: 20px; padding: 22px 0; align-items: center; border-bottom: 1px solid var(--rule); transition: background .3s; }
+  .vrow:hover { background: var(--cyan-soft); padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+  .vrow__check { width: 32px; height: 32px; border-radius: 50%; background: var(--cyan-soft); color: var(--cyan); display: flex; align-items: center; justify-content: center; font: 700 14px/1 var(--mono); border: 1px solid var(--cyan-mid); }
+  .vrow__title { font-size: 16px; font-weight: 500; color: var(--ink); }
+  .vrow__title span { display: block; color: var(--muted); font: 400 13px/1.5 var(--mono); letter-spacing: 0.04em; margin-top: 4px; }
+  .vrow__val { font: 500 12px/1 var(--mono); color: var(--cyan); letter-spacing: 0.06em; text-transform: uppercase; text-align: right; }
+
+  /* FINAL CTA */
+  .final {
+    position: relative; z-index: 1;
+    max-width: 1440px; margin: 0 auto;
+    padding: 0 32px 160px;
+  }
+  .final__inner {
+    background:
+      radial-gradient(ellipse at 100% 0%, var(--cyan-soft), transparent 60%),
+      radial-gradient(ellipse at 0% 100%, var(--cyan-soft), transparent 60%),
+      var(--space-2);
+    border: 1px solid var(--cyan-mid);
+    border-radius: 24px; padding: 100px 80px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 60px 120px -40px var(--cyan-glow), 0 0 0 4px rgba(0, 224, 255, 0.04);
+  }
+  .final__inner::before {
+    content: ""; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px; pointer-events: none;
+    background: radial-gradient(circle, var(--cyan-soft), transparent 50%);
+  }
+  .final__pre { position: relative; }
+  .final__title {
+    position: relative;
+    font-size: clamp(48px, 6.5vw, 100px); font-weight: 500;
+    letter-spacing: -0.045em; line-height: 0.95;
+    margin-bottom: 28px; max-width: 920px;
+  }
+  .final__title .serif { font-family: var(--serif); font-style: italic; color: var(--cyan); font-weight: 400; text-shadow: 0 0 40px var(--cyan-glow); }
+  .final__sub { position: relative; font-size: 19px; color: var(--ink-dim); max-width: 620px; line-height: 1.65; margin-bottom: 44px; }
+
+  .final__slots { position: relative; display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+  .slot {
+    background: rgba(13, 26, 56, 0.6); border: 1px solid var(--rule-2);
+    border-radius: 12px; padding: 18px 22px; min-width: 160px;
+    transition: all .3s; cursor: pointer;
+  }
+  .slot:hover { border-color: var(--cyan); background: var(--cyan-soft); transform: translateY(-3px); box-shadow: 0 16px 40px -16px var(--cyan-glow); }
+  .slot__day { font: 500 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .slot__date { font-size: 19px; font-weight: 600; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .slot__time { font: 500 12px/1.4 var(--mono); color: var(--cyan); letter-spacing: 0.04em; }
+  .slot.taken { opacity: 0.30; cursor: not-allowed; pointer-events: none; }
+  .slot.taken .slot__time { text-decoration: line-through; color: var(--muted); }
+
+  .final__scarcity {
+    font: 500 12px/1.4 var(--mono); color: var(--cyan); letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 32px; display: inline-flex; align-items: center; gap: 10px; position: relative;
+  }
+  .final__scarcity .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan-glow); animation: blink 1.6s infinite; }
+
+  /* FOOTER */
+  .footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--rule);
+    padding: 32px;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    font: 400 11px/1.5 var(--mono); letter-spacing: 0.06em; color: var(--muted);
+  }
+  .footer strong { color: var(--ink); }
+  .footer a { color: var(--cyan); }
+
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero__l { padding-right: 0; padding-bottom: 60px; }
+    .hero__r { min-height: 460px; }
+    .stats__inner { grid-template-columns: repeat(2, 1fr); }
+    .cases { grid-template-columns: 1fr; }
+    .dec-grid { grid-template-columns: 1fr; }
+    .final__inner { padding: 60px 36px; }
+  }
+  @media (max-width: 700px) {
+    .nav__links { display: none; }
+    .mc .right { display: none; }
+    .hero { padding: 50px 22px; }
+    .section { padding: 100px 22px; }
+    .stats__inner { grid-template-columns: 1fr; }
+    .case { padding: 36px 28px; }
+    .value-stack { padding: 100px 22px; }
+    .vrow { grid-template-columns: 32px 1fr; gap: 14px; }
+    .vrow__val { display: none; }
+    .final__inner { padding: 48px 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="cosmos"></div>
+  <div class="progress"><div class="progress__fill" id="prog"></div></div>
+
+  <div class="mc">
+    <span><span style="color: var(--muted)">Mission</span> <span class="v cyan">MD-PM-04</span></span>
+    <span style="color: var(--rule-2)">│</span>
+    <span class="live"><span class="dot"></span><span class="v">Open · interviewing actively</span></span>
+    <div class="right">
+      <span><span style="color: var(--muted)">UTC</span> <span class="v" id="utc">--:--:--</span></span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </div>
+      <div class="nav__links">
+        <a href="#work">work</a>
+        <a href="#judgment">judgment</a>
+        <a href="#book">book</a>
+      </div>
+      <a href="#book" class="nav__btn">Book 30 min →</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="hero__l">
+        <p class="hero__eyebrow">
+          <span class="line"></span>
+          <span>Senior PM · Industrial Robotics · <span class="cyan">Bengaluru → EU+USA</span></span>
+        </p>
+
+        <h1 class="hero__title">
+          <span class="line">
+            <span class="word" style="animation-delay:.20s">I</span>
+            <span class="word" style="animation-delay:.30s">ship</span>
+          </span>
+          <span class="line">
+            <span class="word serif" style="animation-delay:.42s">autonomous&nbsp;robots</span>
+          </span>
+          <span class="line">
+            <span class="word" style="animation-delay:.65s">into</span>
+            <span class="word" style="animation-delay:.75s">factories</span>
+          </span>
+          <span class="line">
+            <span class="word" style="animation-delay:.90s">that</span>
+            <span class="word" style="animation-delay:1.00s">actually</span>
+            <span class="word serif" style="animation-delay:1.10s">work.</span>
+          </span>
+        </h1>
+
+        <p class="hero__sub">
+          <strong>Five years.</strong> Two flagship products shipped 0→1. <strong>35+ robots</strong> deployed across <strong>5 countries</strong> at 95%+ fleet uptime. Founding PM at Flo Mobility — owned every line from customer-site interview to OTA cadence at scale.
+        </p>
+
+        <div class="hero__cta">
+          <a href="#book" class="btn btn--prim">
+            <span>Book a 30-min call</span>
+            <span class="arrow">→</span>
+          </a>
+          <a href="#work" class="btn btn--ghost">See the work first ↓</a>
+        </div>
+
+        <p class="hero__avail">
+          <span class="dot"></span>
+          Average response · 4 hours · sponsorship required
+        </p>
+      </div>
+
+      <div class="hero__r">
+        <div class="globe-stage">
+          <div class="globe-rings"></div>
+          <div class="globe-hud globe-hud--tl"><span class="ln"></span>Mission · <span class="cyan">MD-PM-04</span></div>
+          <div class="globe-hud globe-hud--tr">Targets · <span class="v">06</span><br>Arcs · <span class="cyan">05</span></div>
+          <div class="globe-hud globe-hud--bl">5 countries<br>11 cities</div>
+          <div class="globe-hud globe-hud--br" id="globeHover">— rotating —</div>
+          <canvas id="globe-canvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STATS ========== -->
+    <section class="stats" data-reveal>
+      <div class="stats__inner">
+        <div class="stat">
+          <div class="stat__key">Tenure</div>
+          <div class="stat__num">5<span class="accent">+</span></div>
+          <div class="stat__lbl">Years building autonomous systems end-to-end</div>
+        </div>
+        <div class="stat">
+          <div class="stat__key">0→1 launches</div>
+          <div class="stat__num">02</div>
+          <div class="stat__lbl">Commercial products taken from research → release</div>
+        </div>
+        <div class="stat">
+          <div class="stat__key">Fleet</div>
+          <div class="stat__num">35<span class="accent">+</span></div>
+          <div class="stat__lbl">Robots deployed across enterprise customers</div>
+        </div>
+        <div class="stat">
+          <div class="stat__key">Footprint</div>
+          <div class="stat__num">5</div>
+          <div class="stat__lbl">Countries with active commercial deployments</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TRUST ========== -->
+    <section class="trust" data-reveal>
+      <div class="trust__inner">
+        <div class="trust__lbl">Trusted by teams at</div>
+        <div class="trust__items">
+          <span class="trust__item f500">Ford Motors</span>
+          <span class="trust__item f500">Caterpillar</span>
+          <span class="trust__item f500">Coca-Cola</span>
+          <span class="trust__item">L&amp;T</span>
+          <span class="trust__item">Godrej</span>
+          <span class="trust__item">Sobha</span>
+          <span class="trust__item">K2K</span>
+          <span class="trust__item">Everest Carbon</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== WORK ========== -->
+    <section class="section" id="work">
+      <div class="section__head" data-reveal>
+        <p class="section__num">01 · Selected proof</p>
+        <h2 class="section__title">Three deployments that <span class="serif">closed.</span></h2>
+        <p class="section__sub">Each owned end-to-end — product strategy, engineering execution, and commercial delivery. Click any card for the full datasheet.</p>
+      </div>
+
+      <div class="cases">
+        <article class="case" data-reveal>
+          <p class="case__tag">Flo Mobility · India + UAE · 2020 → 2024</p>
+          <div class="case__num xl">35<span class="small">+</span></div>
+          <h3 class="case__title">Robots deployed across 11 cities at 95%+ uptime.</h3>
+          <p class="case__desc">Two 0→1 commercial launches. Indoor MMR + outdoor autonomous lawnmower. Customers — <strong>L&amp;T, Godrej, Sobha, K2K, Coca-Cola.</strong></p>
+          <a class="case__link" href="proto-datasheet.html">Open datasheet →</a>
+        </article>
+
+        <article class="case" data-reveal>
+          <p class="case__tag">Ford Motors · Thailand · 2024 <span class="f500">F500</span></p>
+          <div class="case__num lg">60<span class="small">d</span></div>
+          <h3 class="case__title">Two autonomous forklifts on the Body Shop floor.</h3>
+          <p class="case__desc">Fortune 500 automotive plant. <strong>14 trips/hour, 2 shifts/day.</strong> Owned end-to-end at Rayong from kickoff to handover.</p>
+          <a class="case__link" href="#">Open datasheet →</a>
+        </article>
+
+        <article class="case" data-reveal>
+          <p class="case__tag">Caterpillar · Singapore · 2024 <span class="f500">F500</span></p>
+          <div class="case__num lg">15<span class="small">d</span></div>
+          <h3 class="case__title">6× cycle compression. Zero incidents.</h3>
+          <p class="case__desc">Two production-ready autonomous forklifts on an accelerated timeline. <strong>Compressed the standard delivery cycle by 6×.</strong></p>
+          <a class="case__link" href="#">Open datasheet →</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== JUDGMENT ========== -->
+    <section class="section" id="judgment">
+      <div class="section__head" data-reveal>
+        <p class="section__num">02 · How I think</p>
+        <h2 class="section__title">Three decisions I'm proud of saying <span class="serif">no</span> to.</h2>
+        <p class="section__sub">Most PM portfolios brag about results. This one brags about judgment — the signal recruiters actually screen for at senior levels.</p>
+      </div>
+
+      <div class="dec-grid">
+        <article class="dec" data-reveal>
+          <span class="dec__tag"><span class="mark">✕</span> Said no</span>
+          <h3 class="dec__title">3D LiDAR for v1.</h3>
+          <p class="dec__body">Hardware team argued for robustness. <strong>I cut it.</strong> 2D + ultrasonics covered our actual envelope at one-third the BOM. Saved ~₹2.4L/unit.</p>
+        </article>
+        <article class="dec" data-reveal>
+          <span class="dec__tag"><span class="mark">✕</span> Said no</span>
+          <h3 class="dec__title">L&amp;T's bespoke payload request.</h3>
+          <p class="dec__body">Procurement wanted per-site customisation. <strong>Held to three standard trims.</strong> Two of three now account for 90% of orders. Bespoke would have killed the platform.</p>
+        </article>
+        <article class="dec" data-reveal>
+          <span class="dec__tag"><span class="mark">✓</span> Said yes</span>
+          <h3 class="dec__title">Ship MMR before lawnmower.</h3>
+          <p class="dec__body">Founders preferred lawnmower (bigger TAM, sexier demo). I argued indoor first — <strong>shorter sales cycle, faster iteration.</strong> Took 2 months to land.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== VALUE ========== -->
+    <section class="value-stack" data-reveal>
+      <div class="value-stack__inner">
+        <span class="value-stack__pre"><span class="dot"></span>What you get on the call</span>
+        <h2 class="value-stack__title">Thirty minutes worth more than <span class="serif">most PM resumes.</span></h2>
+        <p class="value-stack__sub">I treat the booking like a free consulting session for your team. You learn how a real robotics deployment ships — even if you don't end up hiring me.</p>
+
+        <div class="vrows">
+          <div class="vrow">
+            <span class="vrow__check">✓</span>
+            <div class="vrow__title">Walkthrough of any deployment, end-to-end<span>Pick Flo, Ford, or Cat — I'll bring the artifacts</span></div>
+            <span class="vrow__val">~ 8 min</span>
+          </div>
+          <div class="vrow">
+            <span class="vrow__check">✓</span>
+            <div class="vrow__title">The unsanitised version — what I'd reverse if I started over<span>Decision logs, the misses, the customer escalations</span></div>
+            <span class="vrow__val">~ 8 min</span>
+          </div>
+          <div class="vrow">
+            <span class="vrow__check">✓</span>
+            <div class="vrow__title">Honest answers about scope, team, timeline, customer dynamics<span>Procurement reality, security reviews, on-site safety</span></div>
+            <span class="vrow__val">~ 6 min</span>
+          </div>
+          <div class="vrow">
+            <span class="vrow__check">✓</span>
+            <div class="vrow__title">Your hardest current question — bring it<span>I've probably hit a version of it on a factory floor</span></div>
+            <span class="vrow__val">~ 8 min</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
+    <section class="final" id="book" data-reveal>
+      <div class="final__inner">
+        <p class="final__scarcity"><span class="dot"></span>3 slots remaining · 12-week interview window</p>
+        <h2 class="final__title">Pick a slot. <span class="serif">No back-and-forth.</span></h2>
+        <p class="final__sub">Three slots open this week. After this window I commit to whichever team moves fastest — calendar reopens in two weeks.</p>
+
+        <div class="final__slots">
+          <div class="slot taken">
+            <div class="slot__day">Mon</div>
+            <div class="slot__date">May 5</div>
+            <div class="slot__time">10:00 — 10:30</div>
+          </div>
+          <div class="slot">
+            <div class="slot__day">Tue</div>
+            <div class="slot__date">May 6</div>
+            <div class="slot__time">14:00 — 14:30</div>
+          </div>
+          <div class="slot">
+            <div class="slot__day">Thu</div>
+            <div class="slot__date">May 8</div>
+            <div class="slot__time">17:00 — 17:30</div>
+          </div>
+          <div class="slot">
+            <div class="slot__day">Fri</div>
+            <div class="slot__date">May 9</div>
+            <div class="slot__time">09:00 — 09:30</div>
+          </div>
+          <div class="slot taken">
+            <div class="slot__day">Fri</div>
+            <div class="slot__date">May 9</div>
+            <div class="slot__time">15:30 — 16:00</div>
+          </div>
+        </div>
+
+        <div style="position: relative;">
+          <a href="#" class="btn btn--prim">
+            <span>Book a 30-min call</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span><strong>Mukul Dharpure</strong> · Senior PM · Industrial Robotics · Bengaluru → EU + USA</span>
+    <span><a href="proto-space-convert.html">← convert edition</a> · <a href="proto-space-globe.html">mission control</a> · <a href="index.html">themes</a></span>
+  </footer>
+
+  <!-- ============ THREE.JS GLOBE ============ -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js"
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    /* ============ UTC clock ============ */
+    function pad(n){return n.toString().padStart(2,'0');}
+    function tickClock() { const d = new Date(); document.getElementById('utc').textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`; }
+    tickClock(); setInterval(tickClock, 1000);
+
+    /* ============ progress bar ============ */
+    const prog = document.getElementById('prog');
+    document.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      prog.style.width = `${Math.min(100, h.scrollTop / (h.scrollHeight - h.clientHeight) * 100)}%`;
+    }, { passive: true });
+
+    /* ============ scroll reveals ============ */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+    document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+    /* ============ Three.js cinematic globe ============ */
+    const canvas = document.getElementById('globe-canvas');
+    const stage = canvas.parentElement;
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+    camera.position.set(0, 0, 3.4);
+
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      renderer.setSize(r.width, r.height, false);
+      camera.aspect = r.width / r.height;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    /* Earth sphere (dark navy) */
+    const earth = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 64, 64),
+      new THREE.MeshBasicMaterial({ color: 0x08112A })
+    );
+    scene.add(earth);
+
+    /* Inner wireframe (latitude/longitude grid) */
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(new THREE.SphereGeometry(1.001, 32, 16)),
+      new THREE.LineBasicMaterial({ color: 0x00E0FF, transparent: true, opacity: 0.10 })
+    );
+    earth.add(wire);
+
+    /* Atmosphere — back-side fresnel glow */
+    const atmosMat = new THREE.ShaderMaterial({
+      vertexShader: `varying vec3 vNormal; void main() {
+        vNormal = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+      fragmentShader: `varying vec3 vNormal; void main() {
+        float intensity = pow(0.62 - dot(vNormal, vec3(0.0,0.0,1.0)), 2.6);
+        gl_FragColor = vec4(0.0, 0.88, 1.0, 1.0) * intensity;
+      }`,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false
+    });
+    const atmos = new THREE.Mesh(new THREE.SphereGeometry(1.18, 64, 64), atmosMat);
+    scene.add(atmos);
+
+    /* Inner halo (also additive for that bloom feeling) */
+    const halo = new THREE.Mesh(
+      new THREE.SphereGeometry(1.04, 64, 64),
+      new THREE.MeshBasicMaterial({ color: 0x00E0FF, transparent: true, opacity: 0.04, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    scene.add(halo);
+
+    /* Stars */
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 700;
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const r = 8 + Math.random() * 12;
+      const t = Math.random() * Math.PI * 2;
+      const p = Math.acos(2 * Math.random() - 1);
+      starPos[i*3]   = r * Math.sin(p) * Math.cos(t);
+      starPos[i*3+1] = r * Math.sin(p) * Math.sin(t);
+      starPos[i*3+2] = r * Math.cos(p);
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.025, transparent: true, opacity: 0.5, sizeAttenuation: true, depthWrite: false }));
+    scene.add(stars);
+
+    /* lat/lon → unit sphere vec3 */
+    function ll(lon, lat, r=1) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const theta = (lon + 180) * Math.PI / 180;
+      return new THREE.Vector3(
+        -r * Math.sin(phi) * Math.cos(theta),
+         r * Math.cos(phi),
+         r * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+
+    /* Land outlines from topojson */
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(r => r.json())
+      .then(world => {
+        const land = topojson.feature(world, world.objects.countries);
+        const segs = [];
+        function processRing(ring) {
+          for (let i = 0; i < ring.length - 1; i++) {
+            segs.push(ll(ring[i][0], ring[i][1], 1.005));
+            segs.push(ll(ring[i+1][0], ring[i+1][1], 1.005));
+          }
+        }
+        land.features.forEach(f => {
+          const g = f.geometry;
+          if (!g) return;
+          if (g.type === 'Polygon') g.coordinates.forEach(processRing);
+          else if (g.type === 'MultiPolygon') g.coordinates.forEach(p => p.forEach(processRing));
+        });
+        const landGeo = new THREE.BufferGeometry().setFromPoints(segs);
+        const landLines = new THREE.LineSegments(
+          landGeo,
+          new THREE.LineBasicMaterial({ color: 0x00E0FF, transparent: true, opacity: 0.55 })
+        );
+        earth.add(landLines);
+
+        /* Glow duplicate (slightly bigger, lower opacity, additive) */
+        const glowSegs = segs.map(v => v.clone().multiplyScalar(1.008));
+        const glowGeo = new THREE.BufferGeometry().setFromPoints(glowSegs);
+        earth.add(new THREE.LineSegments(
+          glowGeo,
+          new THREE.LineBasicMaterial({ color: 0x00E0FF, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending })
+        ));
+      });
+
+    /* Sites + arcs */
+    const sites = [
+      { id: 'blr', city: 'Bengaluru',  country: 'India',     coords: [77.59, 12.97], type: 'hq'   },
+      { id: 'bom', city: 'Mumbai',     country: 'India',     coords: [72.87, 19.07], type: 'ent'  },
+      { id: 'dxb', city: 'Dubai',      country: 'UAE',       coords: [55.27, 25.20], type: 'ent'  },
+      { id: 'ryg', city: 'Rayong',     country: 'Thailand',  coords: [101.27, 12.68],type: 'f500' },
+      { id: 'sin', city: 'Singapore',  country: 'Singapore', coords: [103.81, 1.35], type: 'f500' },
+      { id: 'ber', city: 'Berlin',     country: 'Germany',   coords: [13.40, 52.52], type: 'ent'  }
+    ];
+    const HQ = sites[0];
+
+    sites.forEach(s => {
+      const v = ll(s.coords[0], s.coords[1], 1.015);
+      const isHQ = s.type === 'hq';
+      // Inner pin
+      const pin = new THREE.Mesh(
+        new THREE.SphereGeometry(isHQ ? 0.025 : 0.018, 16, 16),
+        new THREE.MeshBasicMaterial({ color: isHQ ? 0x00E676 : 0x00E0FF })
+      );
+      pin.position.copy(v);
+      earth.add(pin);
+      // Outer glow ring (additive sphere)
+      const ring = new THREE.Mesh(
+        new THREE.SphereGeometry(isHQ ? 0.06 : 0.05, 16, 16),
+        new THREE.MeshBasicMaterial({ color: isHQ ? 0x00E676 : 0x00E0FF, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      ring.position.copy(v);
+      ring.userData.baseScale = 1;
+      ring.userData.phase = Math.random() * Math.PI * 2;
+      ring.userData.pulse = true;
+      earth.add(ring);
+    });
+
+    /* Arcs HQ → site, with traveling particles */
+    const arcs = [];
+    sites.filter(s => s.type !== 'hq').forEach(s => {
+      const start = ll(HQ.coords[0], HQ.coords[1], 1.005);
+      const end = ll(s.coords[0], s.coords[1], 1.005);
+      const dist = start.distanceTo(end);
+      const liftHeight = 1.0 + dist * 0.45;
+      const mid = start.clone().add(end).normalize().multiplyScalar(liftHeight);
+      const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+      const points = curve.getPoints(60);
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+      const mat = new THREE.LineBasicMaterial({
+        color: 0x00E0FF, transparent: true,
+        opacity: s.type === 'f500' ? 0.55 : 0.30,
+        blending: THREE.AdditiveBlending
+      });
+      const line = new THREE.Line(geo, mat);
+      earth.add(line);
+
+      // Traveling particle (data packet)
+      const pk = new THREE.Mesh(
+        new THREE.SphereGeometry(0.014, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
+      );
+      earth.add(pk);
+      // glow halo
+      const pkHalo = new THREE.Mesh(
+        new THREE.SphereGeometry(0.030, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x00E0FF, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      earth.add(pkHalo);
+
+      arcs.push({ curve, packet: pk, halo: pkHalo, offset: Math.random(), speed: 0.15 + Math.random() * 0.1 });
+    });
+
+    /* Drag controls (manual — simpler than OrbitControls) */
+    let drag = false, lastX = 0, lastY = 0, autoRotate = true, autoTimer = null;
+    const dragSensitivity = 0.005;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      drag = true; lastX = e.clientX; lastY = e.clientY; canvas.style.cursor = 'grabbing';
+      autoRotate = false;
+      clearTimeout(autoTimer);
+    });
+    window.addEventListener('pointerup', () => {
+      drag = false; canvas.style.cursor = 'grab';
+      autoTimer = setTimeout(() => { autoRotate = true; }, 4000);
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      earth.rotation.y += dx * dragSensitivity;
+      earth.rotation.x += dy * dragSensitivity;
+      earth.rotation.x = Math.max(-1.2, Math.min(1.2, earth.rotation.x));
+      lastX = e.clientX; lastY = e.clientY;
+    });
+    canvas.style.cursor = 'grab';
+
+    /* Hover label updates — pick the closest visible site to camera */
+    const hoverEl = document.getElementById('globeHover');
+    function nearestSite() {
+      const cam = camera.position.clone();
+      let best = null, bestDot = -Infinity;
+      sites.forEach(s => {
+        const v = ll(s.coords[0], s.coords[1], 1.0).applyMatrix4(earth.matrixWorld);
+        const dot = v.clone().normalize().dot(cam.clone().normalize());
+        if (dot > bestDot) { bestDot = dot; best = s; }
+      });
+      return best;
+    }
+
+    /* Animation loop */
+    const clock = new THREE.Clock();
+    function loop() {
+      const dt = clock.getDelta();
+      const t = clock.getElapsedTime();
+
+      if (autoRotate) earth.rotation.y += dt * 0.10;
+
+      // Pulse rings
+      earth.children.forEach(c => {
+        if (c.userData.pulse) {
+          const s = 1 + Math.sin(t * 2 + c.userData.phase) * 0.4 + 0.4;
+          c.scale.setScalar(s);
+          c.material.opacity = Math.max(0, 0.32 - (s - 0.6) * 0.18);
+        }
+      });
+
+      // Move arc packets
+      arcs.forEach(a => {
+        a.offset = (a.offset + dt * a.speed) % 1;
+        const p = a.curve.getPoint(a.offset);
+        a.packet.position.copy(p);
+        a.halo.position.copy(p);
+        const fade = Math.sin(a.offset * Math.PI);
+        a.halo.material.opacity = 0.6 * fade;
+        a.packet.material.opacity = 0.7 + 0.3 * fade;
+      });
+
+      // Stars slow drift
+      stars.rotation.y += dt * 0.005;
+
+      // Update HUD
+      const ns = nearestSite();
+      if (ns) hoverEl.innerHTML = `<span class="cyan">${ns.city.toUpperCase()}</span><br>${ns.country}`;
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

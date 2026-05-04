@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Off-mission · Mukul Dharpure — What I do when I'm away from Robots</title>
+<meta name="description" content="Books, treks, builds, and quiet hours. Things outside of work that don't have a PRD." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space:    #050816;
+    --space-2:  #0A1228;
+    --space-3:  #0F1A33;
+    --panel:    rgba(15, 26, 51, 0.72);
+    --ink:      #E8EEFA;
+    --ink-dim:  #B5BFD9;
+    --muted:    #6B7A99;
+    --rule:     rgba(232, 238, 250, 0.10);
+    --rule-2:   rgba(232, 238, 250, 0.22);
+    --cyan:     #00D4FF;
+    --cyan-glow:rgba(0, 212, 255, 0.40);
+    --cyan-soft:rgba(0, 212, 255, 0.10);
+    --cyan-mid: rgba(0, 212, 255, 0.30);
+    --green:    #00E676;
+    --amber:    #FFB020;
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--space); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--cyan); color: var(--space); }
+
+  /* Cosmic background */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(2px 2px at 65% 20%, rgba(0,212,255,0.6), transparent),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 30% 15%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.5), transparent);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,212,255,0.012) 3px, rgba(0,212,255,0.012) 4px);
+  }
+
+  /* Mission control strip */
+  .mc-strip {
+    position: relative; z-index: 5;
+    background: var(--space-2); color: var(--ink-dim);
+    border-bottom: 1px solid var(--rule);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.08em;
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    text-transform: uppercase;
+  }
+  .mc-strip .key { color: var(--muted); margin-right: 6px; font-size: 10px; }
+  .mc-strip .v { color: var(--ink); }
+  .mc-strip .v.cyan { color: var(--cyan); }
+  .mc-strip .v.green { color: var(--green); }
+  .mc-strip .sep { color: var(--rule-2); }
+  .mc-strip .live { display: inline-flex; align-items: center; gap: 8px; }
+  .mc-strip .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .mc-strip .right { margin-left: auto; }
+
+  /* Nav */
+  .nav { position: relative; z-index: 5; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
+  .nav__inner { max-width: 1200px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .nav__brand { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--mono); letter-spacing: 0.04em; }
+  .nav__brand-mark { width: 28px; height: 28px; background: var(--cyan); color: var(--space); border-radius: 6px; display: flex; align-items: center; justify-content: center; font: 700 11px/1 var(--mono); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__links { display: flex; gap: 28px; font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .nav__links a { color: var(--muted); transition: color .2s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
+  .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 16px; border-radius: 6px; background: var(--cyan); color: var(--space); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__btn:hover { background: var(--ink); }
+
+  /* Page wrap */
+  .page { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 80px 32px 60px; }
+
+  /* Hero */
+  .hero { padding-bottom: 56px; border-bottom: 1px solid var(--rule); margin-bottom: 56px; max-width: 920px; }
+  .hero__eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 24px; padding: 7px 14px; background: var(--cyan-soft); border: 1px solid var(--cyan-mid); border-radius: 100px; }
+  .hero__eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: blink 2s infinite; }
+  .hero__title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 64px);
+    letter-spacing: -0.025em; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hero__title em { font-style: italic; color: var(--cyan); }
+  .hero__sub { font-size: 17px; color: var(--ink-dim); line-height: 1.65; margin-bottom: 28px; max-width: 700px; }
+  .hero__sub strong { color: var(--ink); font-weight: 600; }
+
+  /* Section title */
+  .section { margin-bottom: 72px; }
+  .section__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+    padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+  }
+  .section__title { font: 600 22px/1.2 var(--sans); letter-spacing: -0.015em; color: var(--ink); }
+  .section__sub { font: 400 12px/1.5 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+
+  /* === LIFE CARDS === */
+  .life-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .life-card {
+    background: var(--space-2); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 22px 22px 20px; transition: border-color .25s, transform .25s;
+  }
+  .life-card:hover { border-color: var(--cyan-mid); transform: translateY(-2px); }
+  .life-card__icon { font-size: 22px; margin-bottom: 14px; line-height: 1; }
+  .life-card__pill { font: 500 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
+  .life-card__pill::before { content: ""; width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 6px var(--cyan-glow); }
+  .life-card__caption { font-size: 14px; color: var(--ink-dim); line-height: 1.55; }
+  .life-card__caption strong { color: var(--ink); font-weight: 600; }
+
+  .life-card__embed {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 16px; padding: 11px 12px;
+    background: var(--space-3); border: 1px solid var(--rule);
+    border-radius: 4px; transition: all .25s; text-decoration: none;
+  }
+  .life-card__embed:hover { border-color: var(--cyan); background: rgba(0,212,255,0.06); box-shadow: 0 0 16px rgba(0,212,255,0.10); }
+  .life-card__embed-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--green); flex-shrink: 0;
+  }
+  .life-card__embed-status .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 6px var(--green);
+    animation: blink 2s infinite;
+  }
+  .life-card__embed-name { font: 500 12px/1 var(--mono); color: var(--ink); flex: 1; letter-spacing: 0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .life-card__embed-arrow { font: 500 14px/1 var(--mono); color: var(--cyan); flex-shrink: 0; transition: transform .25s; }
+  .life-card__embed:hover .life-card__embed-arrow { transform: translate(2px, -2px); }
+
+  .life-card__flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .flag-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; background: var(--space-3);
+    border: 1px solid var(--rule); border-radius: 100px;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.04em;
+    transition: border-color .25s, transform .25s;
+  }
+  .flag-chip:hover { border-color: var(--cyan); transform: translateY(-1px); }
+  .flag-chip__flag { font-size: 14px; line-height: 1; }
+  .flag-chip__code { color: var(--ink); }
+  .flag-chip__count { color: var(--cyan); font-weight: 700; padding-left: 6px; border-left: 1px solid var(--rule); }
+
+  /* === BOOKSHELF === */
+  .bookshelf { background: var(--space-2); border: 1px solid var(--rule); border-radius: 6px; padding: 24px 24px 20px; }
+  .bookshelf__head { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .bookshelf__head::before { content: ""; width: 16px; height: 1px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow); }
+  .bookshelf__head .count { color: var(--cyan); margin-left: auto; }
+  .bookshelf__row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; }
+  .book { display: flex; flex-direction: column; gap: 8px; transition: transform .3s; }
+  .book:hover { transform: translateY(-3px); }
+  .book__cover {
+    aspect-ratio: 2/3; background: var(--space-3); border-radius: 3px;
+    overflow: hidden; position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.04) inset;
+    transition: box-shadow .3s;
+  }
+  .book:hover .book__cover { box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 16px rgba(0,212,255,0.20); }
+  .book__cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92) brightness(0.95); transition: filter .3s; }
+  .book:hover .book__cover img { filter: saturate(1) brightness(1); }
+  .book__title { font: 500 11px/1.3 var(--sans); color: var(--ink); letter-spacing: -0.005em; }
+  .book__author { font: 400 10px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+
+  /* === INFLUENCES (most-formative books with notes) === */
+  .influences { display: flex; flex-direction: column; gap: 14px; }
+  .influence {
+    display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start;
+    padding: 22px; background: var(--space-2); border: 1px solid var(--rule);
+    border-left: 2px solid var(--cyan); border-radius: 6px;
+    transition: border-color .25s, transform .25s;
+  }
+  .influence:hover { border-color: rgba(0,212,255,0.35); border-left-color: var(--cyan); transform: translateY(-2px); }
+  .influence__cover {
+    aspect-ratio: 2/3; background: var(--space-3); border-radius: 3px; overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .influence__cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.92) brightness(0.95); }
+  .influence__body { display: flex; flex-direction: column; }
+  .influence__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .influence__title { font: 600 17px/1.25 var(--sans); letter-spacing: -0.005em; color: var(--ink); }
+  .influence__author { font: 500 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+  .influence__note { font: 400 14px/1.6 var(--sans); color: var(--ink-dim); margin-top: 4px; }
+  .influence__note em { color: var(--cyan); font-style: normal; font-weight: 500; }
+  .influence__note .ph { color: var(--muted); font-style: italic; font-family: var(--mono); font-size: 13px; }
+
+  /* === TREK LOG === */
+  .treks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .trek {
+    background: var(--space-2); border: 1px solid var(--rule); border-radius: 6px;
+    overflow: hidden; transition: border-color .25s, transform .25s;
+  }
+  .trek:hover { border-color: var(--cyan-mid); transform: translateY(-2px); }
+  .trek__photo {
+    aspect-ratio: 4/3; background: var(--space-3);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); position: relative; overflow: hidden;
+  }
+  .trek__photo::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(0,212,255,0.10), transparent 70%),
+      linear-gradient(135deg, rgba(0,212,255,0.04) 0%, transparent 50%);
+  }
+  .trek__photo .icon { font-size: 28px; opacity: 0.5; position: relative; z-index: 1; }
+  .trek__photo .ph {
+    position: absolute; bottom: 12px; left: 12px;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--muted); padding: 5px 8px; background: rgba(5,8,22,0.7);
+    border: 1px dashed var(--rule); border-radius: 100px; z-index: 2;
+  }
+  .trek__body { padding: 16px 18px; }
+  .trek__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; gap: 10px; }
+  .trek__name { font: 600 15px/1.25 var(--sans); letter-spacing: -0.005em; color: var(--ink); }
+  .trek__date { font: 500 10px/1 var(--mono); color: var(--cyan); letter-spacing: 0.06em; }
+  .trek__meta { font: 400 12px/1.5 var(--sans); color: var(--ink-dim); }
+  .trek__meta .ph { color: var(--muted); font-style: italic; font-family: var(--mono); font-size: 11px; }
+
+  /* === QUOTE CALLOUT === */
+  .quote {
+    background: linear-gradient(180deg, transparent, var(--cyan-soft), transparent);
+    padding: 64px 32px; text-align: center;
+    border-radius: 6px; position: relative; overflow: hidden;
+  }
+  .quote__mark {
+    font-family: var(--serif); font-size: 96px; line-height: 0.6;
+    color: var(--cyan); opacity: 0.35; margin-bottom: 12px;
+  }
+  .quote__body {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: clamp(22px, 3vw, 32px); line-height: 1.4;
+    color: var(--ink); max-width: 720px; margin: 0 auto 18px;
+    letter-spacing: -0.01em;
+  }
+  .quote__body em { color: var(--cyan); }
+  .quote__attr {
+    font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .quote__attr .cyan { color: var(--cyan); }
+  .quote__ph {
+    font-family: var(--mono); font-style: normal !important; font-size: 16px;
+    color: var(--muted) !important; letter-spacing: 0.04em;
+  }
+
+  /* === BACK LINK / FOOTER CTA === */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 60px; font: 500 12px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--cyan); transition: gap .25s;
+    padding: 12px 0;
+  }
+  .back-link:hover { gap: 14px; color: var(--ink); }
+
+  /* Footer */
+  .footer { border-top: 1px solid var(--rule); padding: 22px 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 400 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); position: relative; z-index: 1; }
+  .footer strong { color: var(--ink); }
+  .footer a { color: var(--cyan); }
+
+  @media (max-width: 1000px) {
+    .life-cards { grid-template-columns: 1fr; }
+    .bookshelf__row { grid-template-columns: repeat(4, 1fr); }
+    .treks { grid-template-columns: repeat(2, 1fr); }
+    .influence { grid-template-columns: 64px 1fr; gap: 18px; padding: 18px; }
+  }
+  @media (max-width: 700px) {
+    .nav__links { display: none; }
+    .mc-strip .right { display: none; }
+    .page { padding: 56px 22px 40px; }
+    .bookshelf__row { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .treks { grid-template-columns: 1fr; }
+    .quote { padding: 40px 22px; }
+    .quote__mark { font-size: 64px; }
+    .hero__title { font-size: 32px; }
+  }
+
+  /* =====================================================
+     PAGE TRANSITIONS · View Transitions API for modern browsers
+     + page-load fade-in fallback for everything else
+     ===================================================== */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) {
+    animation: pt-fade-out 220ms cubic-bezier(0.4, 0.0, 0.6, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: pt-fade-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes pt-fade-out { to { opacity: 0; } }
+  @keyframes pt-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Fallback: every fresh page paint fades up subtly */
+  @keyframes page-rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  body { animation: page-rise 500ms cubic-bezier(0.16, 1, 0.3, 1); }
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- Mission control strip -->
+  <div class="mc-strip">
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Section</span><span class="v">Off-mission</span></span>
+    <div class="right">
+      <span><span class="key">UTC</span><span class="v" id="utc">--:--:--</span></span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </a>
+      <div class="nav__links">
+        <a href="index.html">mission</a>
+        <a href="index.html#dossier">about</a>
+        <a href="builds.html">builds</a>
+        <a href="writing.html">writing</a>
+        <a href="#" class="now">off-mission</a>
+        <a href="index.html#comms">contact</a>
+      </div>
+      <a href="index.html#comms" class="nav__btn">Book a call →</a>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <!-- HERO -->
+    <header class="hero">
+      <p class="hero__eyebrow"><span class="dot"></span>Off-mission · the human side</p>
+      <h1 class="hero__title">What I do when I'm <em>away from Robots.</em></h1>
+      <p class="hero__sub">Things outside of work that don't have a PRD. <strong>Books I'm reading, mountains I'm climbing, side-projects I'm tinkering with, quotes that have stuck.</strong> Updated when life changes — which, lately, is often.</p>
+    </header>
+
+    <!-- 3 LIFE CARDS -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">Three threads of a non-work life</h2>
+        <p class="section__sub">Reader · Builder · Explorer</p>
+      </div>
+      <div class="life-cards">
+        <div class="life-card">
+          <div class="life-card__icon">📚</div>
+          <p class="life-card__pill">Reader</p>
+          <p class="life-card__caption">Currently rotating between leadership, business, and the mind. Mostly non-fiction. The shelf below is the active rotation.</p>
+        </div>
+        <div class="life-card">
+          <div class="life-card__icon">🔧</div>
+          <p class="life-card__pill">Builder</p>
+          <p class="life-card__caption">Right now, building <strong>ComplianceOS</strong> — an AI-powered compliance tool for the EU AI Act.</p>
+          <a class="life-card__embed" href="https://www.aiactsolutions.com/" target="_blank" rel="noopener">
+            <span class="life-card__embed-status"><span class="dot"></span>MVP Live</span>
+            <span class="life-card__embed-name">aiactsolutions.com</span>
+            <span class="life-card__embed-arrow">↗</span>
+          </a>
+        </div>
+        <div class="life-card">
+          <div class="life-card__icon">🌍</div>
+          <p class="life-card__pill">Explorer</p>
+          <p class="life-card__caption">Shipped robots across 5 countries. Trek the Himalayas when home in India. Prefer factories and ridgelines to beaches.</p>
+          <div class="life-card__flags">
+            <span class="flag-chip"><span class="flag-chip__flag">🇮🇳</span><span class="flag-chip__code">IN</span><span class="flag-chip__count">11</span></span>
+            <span class="flag-chip"><span class="flag-chip__flag">🇹🇭</span><span class="flag-chip__code">TH</span><span class="flag-chip__count">1</span></span>
+            <span class="flag-chip"><span class="flag-chip__flag">🇸🇬</span><span class="flag-chip__code">SG</span><span class="flag-chip__count">1</span></span>
+            <span class="flag-chip"><span class="flag-chip__flag">🇦🇪</span><span class="flag-chip__code">AE</span><span class="flag-chip__count">1</span></span>
+            <span class="flag-chip"><span class="flag-chip__flag">🇩🇪</span><span class="flag-chip__code">DE</span><span class="flag-chip__count">1</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVE READING SHELF -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">Active reading shelf</h2>
+        <p class="section__sub">07 titles · the current rotation</p>
+      </div>
+      <div class="bookshelf">
+        <p class="bookshelf__head">Currently in rotation <span class="count">07 titles</span></p>
+        <div class="bookshelf__row">
+          <a class="book" href="https://openlibrary.org/works/OL15291807W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9780876120835-M.jpg" alt="Autobiography of a Yogi"></div>
+            <span class="book__title">Autobiography of a Yogi</span>
+            <span class="book__author">Paramahansa Yogananda</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL16887354W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9781591845324-M.jpg" alt="Leaders Eat Last"></div>
+            <span class="book__title">Leaders Eat Last</span>
+            <span class="book__author">Simon Sinek</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL16190681W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9781591845829-M.jpg" alt="Built to Sell"></div>
+            <span class="book__title">Built to Sell</span>
+            <span class="book__author">John Warrillow</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL17081421W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9780804139298-M.jpg" alt="Zero to One"></div>
+            <span class="book__title">Zero to One</span>
+            <span class="book__author">Peter Thiel</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL14903116W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9781582701707-M.jpg" alt="The Secret"></div>
+            <span class="book__title">The Secret</span>
+            <span class="book__author">Rhonda Byrne</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL17730742W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9780671027032-M.jpg" alt="How to Win Friends and Influence People"></div>
+            <span class="book__title">How to Win Friends &amp; Influence People</span>
+            <span class="book__author">Dale Carnegie</span>
+          </a>
+          <a class="book" href="https://openlibrary.org/works/OL2654441W" target="_blank" rel="noopener">
+            <div class="book__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9781614270195-M.jpg" alt="The Power of Your Subconscious Mind"></div>
+            <span class="book__title">The Power of Your Subconscious Mind</span>
+            <span class="book__author">Joseph Murphy</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFLUENCES -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">Most-formative reads</h2>
+        <p class="section__sub">03 titles · books that re-wired something</p>
+      </div>
+      <div class="influences">
+        <article class="influence">
+          <div class="influence__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9780876120835-M.jpg" alt="Autobiography of a Yogi"></div>
+          <div class="influence__body">
+            <div class="influence__head">
+              <h3 class="influence__title">Autobiography of a Yogi</h3>
+              <span class="influence__author">Paramahansa Yogananda</span>
+            </div>
+            <p class="influence__note"><span class="ph">— add a one-line note about why this book mattered to you.</span></p>
+          </div>
+        </article>
+        <article class="influence">
+          <div class="influence__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9780804139298-M.jpg" alt="Zero to One"></div>
+          <div class="influence__body">
+            <div class="influence__head">
+              <h3 class="influence__title">Zero to One</h3>
+              <span class="influence__author">Peter Thiel</span>
+            </div>
+            <p class="influence__note"><span class="ph">— add a one-line note about why this book mattered to you.</span></p>
+          </div>
+        </article>
+        <article class="influence">
+          <div class="influence__cover"><img loading="lazy" src="https://covers.openlibrary.org/b/isbn/9781591845324-M.jpg" alt="Leaders Eat Last"></div>
+          <div class="influence__body">
+            <div class="influence__head">
+              <h3 class="influence__title">Leaders Eat Last</h3>
+              <span class="influence__author">Simon Sinek</span>
+            </div>
+            <p class="influence__note"><span class="ph">— add a one-line note about why this book mattered to you.</span></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TREK LOG -->
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">Trek log</h2>
+        <p class="section__sub">03 entries · ridgelines that reset the brain</p>
+      </div>
+      <div class="treks">
+        <article class="trek">
+          <div class="trek__photo">
+            <span class="icon">⛰</span>
+            <span class="ph">Photo · add later</span>
+          </div>
+          <div class="trek__body">
+            <div class="trek__head">
+              <span class="trek__name">— add trek name</span>
+              <span class="trek__date">— date</span>
+            </div>
+            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+          </div>
+        </article>
+        <article class="trek">
+          <div class="trek__photo">
+            <span class="icon">⛰</span>
+            <span class="ph">Photo · add later</span>
+          </div>
+          <div class="trek__body">
+            <div class="trek__head">
+              <span class="trek__name">— add trek name</span>
+              <span class="trek__date">— date</span>
+            </div>
+            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+          </div>
+        </article>
+        <article class="trek">
+          <div class="trek__photo">
+            <span class="icon">⛰</span>
+            <span class="ph">Photo · add later</span>
+          </div>
+          <div class="trek__body">
+            <div class="trek__head">
+              <span class="trek__name">— add trek name</span>
+              <span class="trek__date">— date</span>
+            </div>
+            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- QUOTE CALLOUT -->
+    <section class="section">
+      <div class="quote">
+        <div class="quote__mark">"</div>
+        <p class="quote__body"><span class="ph quote__ph">— add a quote that means something to you. Could be from a book on the shelf, a mentor, or a line that's stuck for years.</span></p>
+        <p class="quote__attr">— <span class="cyan">attribution</span></p>
+      </div>
+    </section>
+
+    <!-- BACK -->
+    <a href="index.html" class="back-link">← back to mission</a>
+
+  </main>
+
+  <footer class="footer">
+    <span><strong>Mukul Dharpure</strong> · Off-mission · what I do when I'm away from Robots</span>
+    <span><a href="index.html">← back to portfolio</a></span>
+  </footer>
+
+  <script>
+    function pad(n){return n.toString().padStart(2,'0');}
+    function tick() {
+      const d = new Date();
+      const el = document.getElementById('utc');
+      if (el) el.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tick(); setInterval(tick, 1000);
+  </script>
+</body>
+</html>

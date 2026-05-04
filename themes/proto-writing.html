@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Writing · Mukul Dharpure — Notes on Product, Robotics, and Shipping Real Things</title>
+<meta name="description" content="Field notes on product management, robotics, and shipping autonomous systems into the real world." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space:    #050816;
+    --space-2:  #0A1228;
+    --space-3:  #0F1A33;
+    --panel:    rgba(15, 26, 51, 0.72);
+    --ink:      #E8EEFA;
+    --ink-dim:  #B5BFD9;
+    --muted:    #6B7A99;
+    --rule:     rgba(232, 238, 250, 0.10);
+    --rule-2:   rgba(232, 238, 250, 0.22);
+    --cyan:     #00D4FF;
+    --cyan-glow:rgba(0, 212, 255, 0.40);
+    --cyan-soft:rgba(0, 212, 255, 0.10);
+    --cyan-mid: rgba(0, 212, 255, 0.30);
+    --green:    #00E676;
+    --amber:    #FFB020;
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--space); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--cyan); color: var(--space); }
+
+  /* Cosmic background */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(2px 2px at 65% 20%, rgba(0,212,255,0.6), transparent),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 30% 15%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.5), transparent);
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,212,255,0.012) 3px, rgba(0,212,255,0.012) 4px);
+  }
+
+  /* Mission control strip */
+  .mc-strip {
+    position: relative; z-index: 5;
+    background: var(--space-2); color: var(--ink-dim);
+    border-bottom: 1px solid var(--rule);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.08em;
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    text-transform: uppercase;
+  }
+  .mc-strip .key { color: var(--muted); margin-right: 6px; font-size: 10px; }
+  .mc-strip .v { color: var(--ink); }
+  .mc-strip .v.cyan { color: var(--cyan); }
+  .mc-strip .v.green { color: var(--green); }
+  .mc-strip .sep { color: var(--rule-2); }
+  .mc-strip .live { display: inline-flex; align-items: center; gap: 8px; }
+  .mc-strip .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .mc-strip .right { margin-left: auto; }
+
+  /* Nav */
+  .nav { position: relative; z-index: 5; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
+  .nav__inner { max-width: 1200px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .nav__brand { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--mono); letter-spacing: 0.04em; }
+  .nav__brand-mark { width: 28px; height: 28px; background: var(--cyan); color: var(--space); border-radius: 6px; display: flex; align-items: center; justify-content: center; font: 700 11px/1 var(--mono); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__links { display: flex; gap: 28px; font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .nav__links a { color: var(--muted); transition: color .2s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
+  .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 16px; border-radius: 6px; background: var(--cyan); color: var(--space); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__btn:hover { background: var(--ink); }
+
+  /* Page wrap */
+  .page { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 80px 32px 60px; }
+
+  /* Hero */
+  .hero { padding-bottom: 56px; border-bottom: 1px solid var(--rule); margin-bottom: 56px; }
+  .hero__eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 24px; padding: 7px 14px; background: var(--cyan-soft); border: 1px solid var(--cyan-mid); border-radius: 100px; }
+  .hero__eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: blink 2s infinite; }
+  .hero__title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 64px);
+    letter-spacing: -0.025em; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hero__title em { font-style: italic; color: var(--cyan); }
+  .hero__sub { font-size: 17px; color: var(--ink-dim); line-height: 1.65; margin-bottom: 28px; max-width: 620px; }
+  .hero__sub strong { color: var(--ink); font-weight: 600; }
+
+  .hero__meta { display: flex; gap: 20px; flex-wrap: wrap; font: 500 12px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); }
+  .hero__meta .item { display: inline-flex; align-items: center; gap: 8px; }
+  .hero__meta .item .v { color: var(--ink); }
+  .hero__meta .item .cyan { color: var(--cyan); }
+
+  /* Article list */
+  .articles { display: flex; flex-direction: column; gap: 0; }
+  .article {
+    padding: 36px 0; border-bottom: 1px solid var(--rule);
+    transition: padding .25s;
+  }
+  .article:first-child { padding-top: 8px; }
+  .article:last-child { border-bottom: none; }
+  .article__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .article__num {
+    font: 600 13px/1 var(--mono); letter-spacing: 0.16em; color: var(--cyan);
+  }
+  .article__status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--amber); padding: 6px 10px; background: rgba(255,176,32,0.10);
+    border: 1px solid rgba(255,176,32,0.30); border-radius: 100px;
+  }
+  .article__status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px rgba(255,176,32,0.5); animation: blink 2s infinite; }
+  .article__title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(28px, 3.5vw, 40px);
+    letter-spacing: -0.02em; line-height: 1.15;
+    margin-bottom: 16px; max-width: 760px;
+  }
+  .article__title em { font-style: italic; color: var(--cyan); }
+  .article__teaser {
+    font-size: 16px; color: var(--ink-dim); line-height: 1.65;
+    margin-bottom: 20px; max-width: 720px;
+  }
+  .article__teaser strong { color: var(--ink); }
+  .article__meta {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    font: 500 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted);
+    align-items: center;
+  }
+  .article__meta .v { color: var(--ink-dim); }
+  .article__meta a { color: var(--cyan); transition: gap .2s; display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; }
+  .article__meta a:hover { gap: 10px; color: var(--ink); }
+
+  /* Subscribe block */
+  .subscribe {
+    margin-top: 64px; padding: 32px;
+    background: var(--space-2); border: 1px solid var(--cyan-mid);
+    border-radius: 6px; box-shadow: 0 0 32px -16px var(--cyan-glow);
+    position: relative; overflow: hidden;
+  }
+  .subscribe::before {
+    content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 240px;
+    background: radial-gradient(circle at top right, var(--cyan-soft), transparent 70%);
+    pointer-events: none;
+  }
+  .subscribe__pre { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; position: relative; }
+  .subscribe__title { font: 600 22px/1.25 var(--sans); letter-spacing: -0.01em; color: var(--ink); margin-bottom: 10px; max-width: 640px; position: relative; }
+  .subscribe__sub { font-size: 14px; color: var(--ink-dim); line-height: 1.6; margin-bottom: 22px; max-width: 580px; position: relative; }
+  .subscribe__row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; position: relative; }
+  .subscribe__btn {
+    background: var(--cyan); color: var(--space); padding: 13px 22px;
+    font: 600 13px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+    border-radius: 6px; transition: background .25s; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 0 24px var(--cyan-glow);
+  }
+  .subscribe__btn:hover { background: var(--ink); }
+  .subscribe__alt { font: 500 12px/1.4 var(--mono); color: var(--muted); }
+  .subscribe__alt a { color: var(--cyan); }
+  .subscribe__alt a:hover { color: var(--ink); }
+
+  /* Footer */
+  .footer { border-top: 1px solid var(--rule); padding: 22px 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 400 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); position: relative; z-index: 1; }
+  .footer strong { color: var(--ink); }
+  .footer a { color: var(--cyan); }
+
+  @media (max-width: 700px) {
+    .nav__links { display: none; }
+    .mc-strip .right { display: none; }
+    .page { padding: 56px 22px 40px; }
+    .hero__title { font-size: 32px; }
+    .article__title { font-size: 24px; }
+    .article__teaser { font-size: 15px; }
+    .subscribe { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Mission control strip -->
+  <div class="mc-strip">
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Section</span><span class="v">Writing</span></span>
+    <div class="right">
+      <span><span class="key">UTC</span><span class="v" id="utc">--:--:--</span></span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="proto-space-globe.html" class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </a>
+      <div class="nav__links">
+        <a href="proto-space-globe.html">mission</a>
+        <a href="proto-space-globe.html#dossier">about</a>
+        <a href="proto-builds.html">builds</a>
+        <a href="#" class="now">writing</a>
+        <a href="proto-off-mission.html">off-mission</a>
+        <a href="proto-space-globe.html#comms">contact</a>
+      </div>
+      <a href="proto-space-globe.html#comms" class="nav__btn">Book a call →</a>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <!-- HERO -->
+    <header class="hero">
+      <p class="hero__eyebrow"><span class="dot"></span>Field notes · drafts in motion</p>
+      <h1 class="hero__title">Notes on product, robotics, and <em>shipping real things.</em></h1>
+      <p class="hero__sub">Things I've learned the hard way — at customer sites, on production floors, in arguments with engineers about path-planning edge cases. <strong>Three drafts are in the queue.</strong> First one drops soon.</p>
+      <div class="hero__meta">
+        <span class="item"><span>In progress</span><span class="cyan">03</span></span>
+        <span class="item"><span>Cadence</span><span class="v">monthly</span></span>
+        <span class="item"><span>Next drop</span><span class="v">June 2026</span></span>
+      </div>
+    </header>
+
+    <!-- ARTICLES -->
+    <section class="articles">
+
+      <article class="article">
+        <div class="article__head">
+          <span class="article__num">01</span>
+          <span class="article__status"><span class="dot"></span>Drafting</span>
+        </div>
+        <h2 class="article__title">Technical credibility is a PM <em>superpower.</em></h2>
+        <p class="article__teaser">Why being able to read a ROS log changes the kind of PM you become — and the kind of decisions your engineering team trusts you to make. <strong>Receipts from four years on the floor at Flo Mobility and Botsync.</strong></p>
+        <div class="article__meta">
+          <span>Est. read · 06 min</span>
+          <span class="v">·</span>
+          <span>Targeting · June 2026</span>
+          <span class="v">·</span>
+          <a href="#subscribe">Notify me when it ships →</a>
+        </div>
+      </article>
+
+      <article class="article">
+        <div class="article__head">
+          <span class="article__num">02</span>
+          <span class="article__status"><span class="dot"></span>Drafting</span>
+        </div>
+        <h2 class="article__title"><em>0→1 in robotics:</em> what's different, what's the same.</h2>
+        <p class="article__teaser">Lessons from launching two commercial robotics products at Flo Mobility — autonomous lawnmower (Nov 2021–Apr 2023) and the MMR (Apr 2023–Apr 2025). Where SaaS playbooks help, where they break, and what to do about it. <strong>Especially around customer-readiness.</strong></p>
+        <div class="article__meta">
+          <span>Est. read · 09 min</span>
+          <span class="v">·</span>
+          <span>Targeting · July 2026</span>
+          <span class="v">·</span>
+          <a href="#subscribe">Notify me when it ships →</a>
+        </div>
+      </article>
+
+      <article class="article">
+        <div class="article__head">
+          <span class="article__num">03</span>
+          <span class="article__status"><span class="dot"></span>Drafting</span>
+        </div>
+        <h2 class="article__title">What the <em>factory floor</em> teaches you about product decisions.</h2>
+        <p class="article__teaser">Notes from delivering at Ford Thailand, Caterpillar Singapore, and Coca-Cola India. The thing about product strategy is that it has to survive the plant floor — <strong>where a single miscalibrated sensor can halt a shift</strong> and your roadmap has to match what the customer is actually willing to accept on Day 1.</p>
+        <div class="article__meta">
+          <span>Est. read · 07 min</span>
+          <span class="v">·</span>
+          <span>Targeting · August 2026</span>
+          <span class="v">·</span>
+          <a href="#subscribe">Notify me when it ships →</a>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- SUBSCRIBE / NOTIFY -->
+    <section class="subscribe" id="subscribe">
+      <p class="subscribe__pre">— Get a heads-up</p>
+      <h3 class="subscribe__title">Be the first to read the next drop.</h3>
+      <p class="subscribe__sub">No newsletter. No spam. When the next essay ships, I'll send you a one-line note with the link. Roughly once a month.</p>
+      <div class="subscribe__row">
+        <a href="mailto:mukuldharpure@gmail.com?subject=Notify%20me%20when%20your%20next%20essay%20drops" class="subscribe__btn">Email me to subscribe →</a>
+        <span class="subscribe__alt">or follow on <a href="https://www.linkedin.com/in/mukuldharpure/" target="_blank" rel="noopener">LinkedIn ↗</a></span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span><strong>Mukul Dharpure</strong> · Product Manager · Robotics &amp; Fleet Ops</span>
+    <span><a href="proto-space-globe.html">← back to portfolio</a> · <a href="index.html">theme menu</a></span>
+  </footer>
+
+  <script>
+    function pad(n){return n.toString().padStart(2,'0');}
+    function tick() {
+      const d = new Date();
+      const el = document.getElementById('utc');
+      if (el) el.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tick(); setInterval(tick, 1000);
+  </script>
+</body>
+</html>

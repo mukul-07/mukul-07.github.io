@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mukul Dharpure — Senior PM · Industrial Robotics · Datasheet Rev 2.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE;
+    --paper: #FFFFFF;
+    --paper-2: #FAF8F4;
+    --carbon: #1A1A1A;
+    --body: #3A3A3A;
+    --muted: #807A70;
+    --rule: rgba(26,26,26,0.10);
+    --rule-strong: rgba(26,26,26,0.22);
+    --signal: #2C6EE6;
+    --green: #16A34A;
+    --amber: #D97706;
+    --red: #C0392B;
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --pad-x: 40px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--carbon); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--signal); color: var(--paper); }
+
+  .ds-strip {
+    background: var(--carbon); color: var(--paper);
+    font: 500 11px/1 var(--mono); letter-spacing: 0.06em;
+    padding: 10px var(--pad-x);
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  .ds-strip__brand { color: var(--signal); }
+  .ds-strip__sep { color: rgba(255,255,255,0.25); }
+  .ds-strip__rev { margin-left: auto; color: rgba(255,255,255,0.55); }
+  .ds-strip__rev strong { color: var(--paper); }
+  .ds-strip__open { display: inline-flex; align-items: center; gap: 6px; color: #56D695; }
+  .ds-strip__open .pulse { width: 6px; height: 6px; border-radius: 50%; background: #56D695; box-shadow: 0 0 0 0 rgba(86,214,149,0.5); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(86,214,149,0); } }
+
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(244,242,238,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--rule); }
+  .nav__inner { max-width: 1280px; margin: 0 auto; padding: 14px var(--pad-x); display: flex; align-items: center; justify-content: space-between; }
+  .nav__brand { font: 600 14px/1 var(--mono); display: flex; align-items: center; gap: 10px; }
+  .nav__brand-mark { width: 22px; height: 22px; background: var(--carbon); color: var(--paper); border-radius: 5px; display: flex; align-items: center; justify-content: center; font: 700 10px/1 var(--mono); }
+  .nav__links { display: flex; gap: 28px; font: 500 13px/1 var(--mono); }
+  .nav__links a { color: var(--muted); transition: color .2s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--signal); }
+  .nav__actions { display: flex; gap: 10px; }
+  .nav__btn { font: 500 12px/1 var(--mono); border: 1px solid var(--rule-strong); padding: 9px 14px; border-radius: 6px; background: var(--paper); }
+  .nav__btn:hover { border-color: var(--carbon); }
+  .nav__btn--prim { background: var(--carbon); color: var(--paper); border-color: var(--carbon); }
+  .nav__btn--prim:hover { background: var(--signal); border-color: var(--signal); }
+
+  /* COVER */
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 var(--pad-x); }
+  .cover { padding: 80px 0 60px; }
+  .cover__grid { display: grid; grid-template-columns: 1fr 380px; gap: 64px; align-items: start; }
+
+  .cover__part { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
+  .cover__part .signal { color: var(--signal); }
+  .cover__name { font-family: var(--mono); font-size: 14px; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 16px; }
+  .cover__name strong { color: var(--carbon); font-weight: 600; letter-spacing: -0.01em; font-family: var(--sans); font-size: 16px; margin-right: 10px; }
+  .cover__title {
+    font-size: clamp(48px, 6.2vw, 92px); font-weight: 600;
+    letter-spacing: -0.04em; line-height: 0.95;
+    margin-bottom: 24px;
+  }
+  .cover__title .signal { color: var(--signal); }
+  .cover__abstract { font-size: 18px; color: var(--body); line-height: 1.6; max-width: 640px; margin-bottom: 36px; }
+  .cover__abstract strong { color: var(--carbon); font-weight: 600; }
+  .cover__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
+  .chip { font: 500 11px/1 var(--mono); letter-spacing: 0.04em; padding: 7px 12px; border-radius: 6px; background: var(--paper); border: 1px solid var(--rule); color: var(--body); }
+  .cover__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 500 14px/1 var(--sans); padding: 13px 22px; border-radius: 8px; cursor: pointer; transition: all .2s; border: none; }
+  .btn--primary { background: var(--carbon); color: var(--paper); box-shadow: 0 4px 12px rgba(26,26,26,0.18); }
+  .btn--primary:hover { background: var(--signal); }
+  .btn--ghost { background: var(--paper); color: var(--carbon); border: 1px solid var(--rule-strong); }
+  .btn--ghost:hover { border-color: var(--carbon); }
+
+  /* COVER · spec card sidebar (about HIM) */
+  .speccard { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; position: sticky; top: 80px; box-shadow: 0 30px 60px -30px rgba(26,26,26,0.10); }
+  .speccard__head { background: var(--carbon); color: var(--paper); padding: 14px 18px; font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+  .speccard__head .pill { background: var(--green); color: var(--paper); padding: 4px 8px; border-radius: 100px; font-size: 10px; letter-spacing: 0.08em; display: inline-flex; align-items: center; gap: 6px; }
+  .speccard__head .pill::before { content: ""; width: 5px; height: 5px; background: var(--paper); border-radius: 50%; }
+  .speccard__row { display: grid; grid-template-columns: 110px 1fr; padding: 12px 18px; border-bottom: 1px dashed var(--rule); font: 400 13px/1.4 var(--mono); }
+  .speccard__row:last-child { border-bottom: none; }
+  .speccard__row dt { color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-size: 11px; padding-top: 2px; }
+  .speccard__row dd { color: var(--carbon); }
+  .speccard__row dd .signal { color: var(--signal); font-weight: 500; }
+
+  /* SECTION */
+  .section { padding: 60px 0; border-top: 1px solid var(--carbon); }
+  .section__head { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid var(--rule); margin-bottom: 36px; gap: 32px; flex-wrap: wrap; }
+  .section__num { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); }
+  .section__title { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 6px; }
+  .section__hint { font: 400 12px/1.5 var(--mono); color: var(--muted); }
+
+  /* PERFORMANCE · with receipts */
+  .perf { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .perf__cell { padding: 24px; border-right: 1px solid var(--rule); }
+  .perf__cell:last-child { border-right: none; }
+  .perf__key { font: 500 10px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .perf__num { font-family: var(--mono); font-size: 44px; font-weight: 500; line-height: 1; letter-spacing: -0.04em; color: var(--carbon); margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .perf__num .accent { color: var(--signal); }
+  .perf__lbl { font-size: 13px; color: var(--body); line-height: 1.4; }
+
+  .receipt { position: relative; cursor: help; border-bottom: 1px dotted var(--signal); }
+  .receipt::after { content: ""; display: inline-block; width: 5px; height: 5px; background: var(--signal); border-radius: 50%; transform: translateY(-12px); margin-left: 3px; }
+  .receipt__pop { position: absolute; left: 0; top: calc(100% + 8px); background: var(--carbon); color: var(--paper); padding: 12px 14px; border-radius: 8px; font: 400 12px/1.5 var(--mono); width: 280px; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .18s, transform .18s; z-index: 30; box-shadow: 0 20px 40px -20px rgba(26,26,26,0.4); }
+  .receipt__pop::before { content: ""; position: absolute; top: -5px; left: 18px; width: 10px; height: 10px; background: var(--carbon); transform: rotate(45deg); }
+  .receipt__pop strong { color: var(--signal); display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .receipt:hover .receipt__pop, .receipt:focus .receipt__pop { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  /* OPERATING CONDITIONS · the environment HE works best in */
+  .spec-table { width: 100%; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; border-collapse: separate; border-spacing: 0; }
+  .spec-table th, .spec-table td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--rule); font-size: 14px; }
+  .spec-table thead th { background: var(--paper-2); font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 12px 20px; }
+  .spec-table tbody tr:last-child td { border-bottom: none; }
+  .spec-table td:first-child { font: 500 13px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; width: 220px; }
+  .spec-table td:nth-child(2) { color: var(--carbon); font-family: var(--mono); }
+  .spec-table td:nth-child(3) { color: var(--body); }
+
+  /* BLOCK DIAGRAM · his operating system */
+  .blockdiag { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 36px; overflow: auto; }
+  .blockdiag svg { display: block; max-width: 100%; height: auto; min-width: 760px; }
+  .blockdiag-cap { font: 400 12px/1.5 var(--mono); color: var(--muted); margin-top: 16px; }
+  .blockdiag-cap strong { color: var(--carbon); }
+
+  /* DEPLOYMENTS · his case studies as a list */
+  .deployments { display: grid; gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .dep { display: grid; grid-template-columns: 110px 1fr 200px 160px 28px; gap: 24px; padding: 22px 24px; border-bottom: 1px solid var(--rule); align-items: center; transition: background .15s; }
+  .dep:last-child { border-bottom: none; }
+  .dep:hover { background: var(--paper-2); }
+  .dep__yr { font: 500 12px/1.4 var(--mono); color: var(--muted); }
+  .dep__yr strong { display: block; color: var(--carbon); font-size: 13px; }
+  .dep__name { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .dep__name span { display: block; font: 400 12px/1.4 var(--mono); color: var(--muted); margin-top: 4px; font-weight: 400; }
+  .dep__role { font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--body); text-transform: uppercase; }
+  .dep__metric { font: 500 13px/1.3 var(--mono); color: var(--carbon); text-align: right; }
+  .dep__metric span { display: block; font-size: 11px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 4px; }
+  .dep__arrow { font: 500 16px/1 var(--mono); color: var(--muted); text-align: right; }
+  .dep:hover .dep__arrow { color: var(--signal); }
+
+  /* DECISION LOG · career-level */
+  .decisions { display: grid; gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .decision { display: grid; grid-template-columns: 130px 1fr 110px; gap: 24px; padding: 22px 24px; border-bottom: 1px solid var(--rule); }
+  .decision:last-child { border-bottom: none; }
+  .decision__date { font: 500 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); padding-top: 4px; }
+  .decision__date strong { display: block; color: var(--carbon); font-size: 13px; margin-bottom: 2px; }
+  .decision__body h4 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .decision__body p { font-size: 14px; color: var(--body); line-height: 1.65; margin-bottom: 8px; }
+  .decision__body p:last-child { margin-bottom: 0; }
+  .decision__body p strong { color: var(--carbon); font-weight: 600; }
+  .decision__body .hindsight { font: 400 12px/1.5 var(--mono); color: var(--muted); border-left: 2px solid var(--signal); padding-left: 12px; margin-top: 10px; }
+  .decision__body .hindsight strong { color: var(--signal); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; font-size: 10px; }
+  .decision__tag { font: 500 10px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 10px; border-radius: 100px; align-self: flex-start; justify-self: end; white-space: nowrap; }
+  .decision__tag--win { background: rgba(22,163,74,0.10); color: var(--green); }
+  .decision__tag--mixed { background: rgba(217,119,6,0.10); color: var(--amber); }
+  .decision__tag--miss { background: rgba(192,57,43,0.10); color: var(--red); }
+
+  /* STACK · his actual PM toolkit */
+  .stack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stack__col { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 22px 24px; }
+  .stack__col h4 { font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); display: flex; align-items: center; gap: 8px; }
+  .stack__col h4::before { content: ""; width: 8px; height: 8px; background: var(--signal); border-radius: 2px; }
+  .stack__col ul { list-style: none; }
+  .stack__col li { font-size: 14px; padding: 8px 0; color: var(--body); display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--rule); }
+  .stack__col li:last-child { border-bottom: none; }
+  .stack__col li span { font: 400 12px/1 var(--mono); color: var(--muted); }
+
+  /* RETROSPECTIVE · career */
+  .retro { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 36px; }
+  .retro__row { display: grid; grid-template-columns: 100px 1fr; gap: 32px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+  .retro__row:last-child { border-bottom: none; }
+  .retro__row:first-child { padding-top: 0; }
+  .retro__lbl { font: 500 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; padding-top: 4px; }
+  .retro__row.win .retro__lbl { color: var(--green); }
+  .retro__row.miss .retro__lbl { color: var(--red); }
+  .retro__row.next .retro__lbl { color: var(--signal); }
+  .retro__body { font-size: 15px; color: var(--carbon); line-height: 1.6; }
+
+  /* CTA */
+  .cta { padding: 80px 0 60px; }
+  .cta__inner { background: var(--carbon); color: var(--paper); border-radius: 14px; padding: 56px; position: relative; overflow: hidden; }
+  .cta__inner::before { content: ""; position: absolute; top: 0; right: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(44,110,230,0.20) 0%, transparent 60%); }
+  .cta__pre { font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); margin-bottom: 18px; position: relative; }
+  .cta__title { font-size: clamp(36px, 4.5vw, 56px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; margin-bottom: 20px; max-width: 760px; position: relative; }
+  .cta__sub { font-size: 17px; color: rgba(255,255,255,0.65); max-width: 580px; line-height: 1.55; margin-bottom: 32px; position: relative; }
+  .cta__btns { display: flex; gap: 12px; flex-wrap: wrap; position: relative; }
+  .btn--signal { background: var(--signal); color: var(--paper); }
+  .btn--signal:hover { background: var(--paper); color: var(--carbon); }
+  .btn--ghost-d { background: transparent; color: var(--paper); border: 1px solid rgba(255,255,255,0.20); }
+  .btn--ghost-d:hover { border-color: var(--paper); }
+
+  .revfoot { border-top: 1px solid var(--rule); padding: 22px var(--pad-x); display: flex; justify-content: space-between; align-items: center; font: 400 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.06em; flex-wrap: wrap; gap: 12px; }
+  .revfoot strong { color: var(--carbon); }
+  .revfoot a { color: var(--signal); }
+
+  @media (max-width: 1000px) {
+    .cover__grid { grid-template-columns: 1fr; gap: 36px; }
+    .speccard { position: static; }
+    .perf { grid-template-columns: repeat(2, 1fr); }
+    .perf__cell:nth-child(2) { border-right: none; }
+    .perf__cell:nth-child(1), .perf__cell:nth-child(2) { border-bottom: 1px solid var(--rule); }
+    .stack { grid-template-columns: 1fr; }
+    .dep { grid-template-columns: 100px 1fr 28px; }
+    .dep__role, .dep__metric { display: none; }
+  }
+  @media (max-width: 640px) {
+    :root { --pad-x: 22px; }
+    .perf { grid-template-columns: 1fr; }
+    .perf__cell { border-right: none; border-bottom: 1px solid var(--rule); }
+    .perf__cell:last-child { border-bottom: none; }
+    .decision { grid-template-columns: 1fr; gap: 8px; }
+    .decision__tag { justify-self: start; }
+    .retro__row { grid-template-columns: 1fr; gap: 8px; }
+    .cta__inner { padding: 36px 28px; }
+    .nav__links { display: none; }
+    .spec-table td:first-child { width: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="ds-strip">
+    <span><span class="ds-strip__brand">●</span> mukuldharpure.com</span>
+    <span class="ds-strip__sep">/</span>
+    <span>about</span>
+    <span class="ds-strip__sep">/</span>
+    <span>datasheet</span>
+    <span class="ds-strip__open"><span class="pulse"></span>OPEN · EU + USA</span>
+    <span class="ds-strip__rev">REV <strong>2.4</strong> · MAY 2026</span>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </div>
+      <div class="nav__links">
+        <a href="#" class="now">datasheet</a>
+        <a href="#">work</a>
+        <a href="#">writing</a>
+        <a href="#">contact</a>
+      </div>
+      <div class="nav__actions">
+        <a href="#" class="nav__btn">CV PDF ↓</a>
+        <a href="#" class="nav__btn nav__btn--prim">Book 30 min →</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============ COVER ============ -->
+    <section class="cover">
+      <div class="wrap">
+        <div class="cover__grid">
+
+          <div>
+            <p class="cover__part">Part № <span class="signal">MD–PM–04</span> · Senior Product Manager · Industrial Robotics &amp; Autonomous Systems</p>
+            <p class="cover__name"><strong>Mukul Dharpure</strong>Bengaluru, IN · open to relocation</p>
+            <h1 class="cover__title">I ship autonomous robots and AI products that <span class="signal">actually work</span> in the real world.</h1>
+            <p class="cover__abstract">Five years building hardware-software products end-to-end. <strong>Founding PM at Flo Mobility</strong>; led two 0→1 product launches and a fleet that now runs in 11 cities across India and the UAE. Comfortable from problem-framing in a customer factory through OTA cadence at scale. Looking for senior Robotics PM / Product Lead roles in the EU or USA.</p>
+            <div class="cover__chips">
+              <span class="chip">Founding PM</span>
+              <span class="chip">0→1 + scale</span>
+              <span class="chip">AMR · autonomous outdoor</span>
+              <span class="chip">B2B Enterprise · Fortune 500</span>
+              <span class="chip">Hardware + software</span>
+              <span class="chip">EU + USA · sponsorship required</span>
+            </div>
+            <div class="cover__ctas">
+              <a href="#work" class="btn btn--primary">View deployments →</a>
+              <a href="#" class="btn btn--ghost">Download CV ↓</a>
+            </div>
+          </div>
+
+          <aside class="speccard">
+            <div class="speccard__head">
+              <span>Spec sheet</span>
+              <span class="pill">Open</span>
+            </div>
+            <dl>
+              <div class="speccard__row"><dt>Role</dt><dd>Senior PM / Product Lead</dd></div>
+              <div class="speccard__row"><dt>Domain</dt><dd>Industrial robotics, AMR, autonomous systems</dd></div>
+              <div class="speccard__row"><dt>Stage</dt><dd>0→1 + early scaling (5–50 units)</dd></div>
+              <div class="speccard__row"><dt>Tenure</dt><dd>5+ yrs · 2020 → present</dd></div>
+              <div class="speccard__row"><dt>Status</dt><dd><span class="signal">●</span> Open · actively interviewing</dd></div>
+              <div class="speccard__row"><dt>Locations</dt><dd>EU · USA · sponsorship req.</dd></div>
+              <div class="speccard__row"><dt>Mode</dt><dd>On-site / Hybrid preferred</dd></div>
+              <div class="speccard__row"><dt>Notice</dt><dd>30 days</dd></div>
+              <div class="speccard__row"><dt>Languages</dt><dd>English · Hindi · Marathi</dd></div>
+              <div class="speccard__row"><dt>Compensation</dt><dd>On request</dd></div>
+            </dl>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 01 · CAREER PERFORMANCE ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">01 · Career performance</p>
+            <h2 class="section__title">What I've shipped, by the numbers</h2>
+          </div>
+          <p class="section__hint">Hover any number for the receipt.</p>
+        </div>
+
+        <div class="perf">
+          <div class="perf__cell">
+            <div class="perf__key">Tenure</div>
+            <div class="perf__num">
+              <span class="receipt" tabindex="0">5<span class="accent">+</span>
+                <span class="receipt__pop"><strong>Source · LinkedIn / CV</strong>5 years 2 months in robotics PM roles, 2020 to present. Founding PM at Flo Mobility throughout.</span>
+              </span>
+            </div>
+            <div class="perf__lbl">Years building autonomous systems end-to-end</div>
+          </div>
+          <div class="perf__cell">
+            <div class="perf__key">0→1 launches</div>
+            <div class="perf__num">
+              <span class="receipt" tabindex="0">02
+                <span class="receipt__pop"><strong>Source · Flo Mobility</strong>Indoor MMR (Q3 2022) and outdoor autonomous lawnmower (Q4 2023). Both shipped to paying customers under my product ownership.</span>
+              </span>
+            </div>
+            <div class="perf__lbl">Commercial products taken from research → release</div>
+          </div>
+          <div class="perf__cell">
+            <div class="perf__key">Fleet shipped</div>
+            <div class="perf__num">
+              <span class="receipt" tabindex="0">35<span class="accent">+</span>
+                <span class="receipt__pop"><strong>Source · Flo FMS dashboard</strong>Robots in commercial production, snapshot Apr 2024. Excludes returned and staging units.</span>
+              </span>
+            </div>
+            <div class="perf__lbl">Robots deployed across enterprise customers</div>
+          </div>
+          <div class="perf__cell">
+            <div class="perf__key">Footprint</div>
+            <div class="perf__num">
+              <span class="receipt" tabindex="0">5
+                <span class="receipt__pop"><strong>Source · Deployment register</strong>India, UAE, Thailand, Singapore, Germany. Each is a paying enterprise customer with active production deployment.</span>
+              </span>
+            </div>
+            <div class="perf__lbl">Countries with commercial deployments I owned</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 02 · OPERATING CONDITIONS ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">02 · Operating conditions</p>
+            <h2 class="section__title">Where I do my best work</h2>
+          </div>
+          <p class="section__hint">The shape of role I'm built for.</p>
+        </div>
+
+        <table class="spec-table">
+          <thead>
+            <tr><th>Parameter</th><th>Range</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Stage</td><td>0→1 through early scaling · 5–50 units</td><td>Strongest in the messy middle: post-MVP, pre-process</td></tr>
+            <tr><td>Team size</td><td>8 – 30 engineers</td><td>One PM owning the surface, working directly with hardware + software leads</td></tr>
+            <tr><td>Org type</td><td>Robotics startup · industrial OEM · autonomy spin-out</td><td>Need direct customer access and authority over scope</td></tr>
+            <tr><td>Problem class</td><td>Hardware + software + ops, real environments</td><td>I take roles where shipping means a robot doing a job in a factory, not a demo</td></tr>
+            <tr><td>Customer</td><td>B2B Enterprise · often Fortune 500</td><td>Comfortable in procurement cycles, security reviews, on-site deployments</td></tr>
+            <tr><td>Sectors</td><td>Automotive · construction · FMCG · real-estate · logistics</td><td>Sectors where labour shortage + safety drive ROI</td></tr>
+            <tr><td>Cycle</td><td>3 – 12 month commercial deployment cycles</td><td>Faster than enterprise SaaS; slower than consumer</td></tr>
+            <tr><td>Decision style</td><td>Opinionated · written-first · customer-tested</td><td>Bias to PRDs, decision logs, and shipping the smaller thing first</td></tr>
+            <tr><td>Communication</td><td>Async-first writing · weekly customer call notes · demo-Friday</td><td>Eng, sales, and customers all read the same docs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 03 · OPERATING SYSTEM ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">03 · Operating system</p>
+            <h2 class="section__title">How I get from problem to ship</h2>
+          </div>
+          <p class="section__hint">Repeated across MMR, lawnmower, Ford, CAT.</p>
+        </div>
+
+        <div class="blockdiag">
+          <svg viewBox="0 0 940 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PM operating system diagram">
+            <defs>
+              <marker id="arrM" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                <path d="M0,0 L9,3 L0,6 z" fill="#1A1A1A"/>
+              </marker>
+              <style>
+                .blk { fill: #FFFFFF; stroke: #1A1A1A; stroke-width: 1.2; }
+                .blk-accent { fill: #2C6EE6; }
+                .blk-soft { fill: #F4F2EE; stroke: #1A1A1A; stroke-width: 1.2; }
+                .lbl { font: 600 13px "Geist", sans-serif; fill: #1A1A1A; }
+                .lbl-w { fill: #FFFFFF; }
+                .sub { font: 400 10px "Geist Mono", monospace; fill: #807A70; letter-spacing: 0.04em; }
+                .key { font: 500 10px "Geist Mono", monospace; fill: #2C6EE6; letter-spacing: 0.12em; text-transform: uppercase; }
+                .ln { stroke: #1A1A1A; stroke-width: 1.2; fill: none; }
+              </style>
+            </defs>
+
+            <!-- 1 Discover -->
+            <rect class="blk" x="20" y="80" width="150" height="90" rx="8"/>
+            <text class="key" x="34" y="104">01 · Discover</text>
+            <text class="lbl" x="34" y="128">Customer site</text>
+            <text class="sub" x="34" y="146">interviews · obs.</text>
+            <text class="sub" x="34" y="160">JTBD · pain map</text>
+
+            <!-- 2 Frame -->
+            <rect class="blk" x="195" y="80" width="150" height="90" rx="8"/>
+            <text class="key" x="209" y="104">02 · Frame</text>
+            <text class="lbl" x="209" y="128">PRD · tradeoffs</text>
+            <text class="sub" x="209" y="146">kill criteria</text>
+            <text class="sub" x="209" y="160">success metrics</text>
+
+            <!-- 3 Bet -->
+            <rect class="blk blk-accent" x="370" y="80" width="150" height="90" rx="8"/>
+            <text class="key" x="384" y="104" fill="#FFFFFF">03 · Bet</text>
+            <text class="lbl lbl-w" x="384" y="128">Decision log</text>
+            <text class="sub" x="384" y="146" fill="#C9D9F7">scope · BOM</text>
+            <text class="sub" x="384" y="160" fill="#C9D9F7">timeline · risk</text>
+
+            <!-- 4 Build -->
+            <rect class="blk" x="545" y="80" width="150" height="90" rx="8"/>
+            <text class="key" x="559" y="104">04 · Build</text>
+            <text class="lbl" x="559" y="128">Eng + HW + Ops</text>
+            <text class="sub" x="559" y="146">2-week cadence</text>
+            <text class="sub" x="559" y="160">demo-Friday</text>
+
+            <!-- 5 Ship -->
+            <rect class="blk" x="720" y="80" width="100" height="90" rx="8"/>
+            <text class="key" x="734" y="104">05 · Ship</text>
+            <text class="lbl" x="734" y="128">Site SAT</text>
+            <text class="sub" x="734" y="146">handover</text>
+            <text class="sub" x="734" y="160">SLA in place</text>
+
+            <!-- 6 Scale loop -->
+            <rect class="blk-soft" x="845" y="80" width="80" height="90" rx="8"/>
+            <text class="key" x="859" y="104">06</text>
+            <text class="lbl" x="859" y="128">Scale</text>
+            <text class="sub" x="859" y="146">OTA</text>
+            <text class="sub" x="859" y="160">retro</text>
+
+            <!-- arrows -->
+            <path class="ln" d="M170 125 H 195" marker-end="url(#arrM)"/>
+            <path class="ln" d="M345 125 H 370" marker-end="url(#arrM)"/>
+            <path class="ln" d="M520 125 H 545" marker-end="url(#arrM)"/>
+            <path class="ln" d="M695 125 H 720" marker-end="url(#arrM)"/>
+            <path class="ln" d="M820 125 H 845" marker-end="url(#arrM)"/>
+
+            <!-- feedback loop -->
+            <path class="ln" d="M885 80 C 885 30, 95 30, 95 80" marker-end="url(#arrM)" stroke-dasharray="4 4"/>
+            <text class="sub" x="430" y="22">telemetry · escalations · roadmap input</text>
+          </svg>
+          <p class="blockdiag-cap"><strong>Diagram 03.</strong> Same loop whether the unit count is 1 or 35. Stage 03 (Bet) is where I add the most leverage — choosing what not to build is 80% of the job.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 04 · DEPLOYMENTS ============ -->
+    <section class="section" id="work">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">04 · Deployments</p>
+            <h2 class="section__title">Where the work has actually shipped</h2>
+          </div>
+          <p class="section__hint">Each row links to its own datasheet.</p>
+        </div>
+
+        <div class="deployments">
+          <a href="proto-datasheet.html" class="dep">
+            <div class="dep__yr"><strong>2020 — 2024</strong>4 yrs</div>
+            <div class="dep__name">Flo Mobility · MMR + Lawnmower<span>Bengaluru · India + UAE · founding PM, two 0→1 launches</span></div>
+            <div class="dep__role">Founding PM</div>
+            <div class="dep__metric">35+ robots / 11 cities<span>fleet</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+          <a href="#" class="dep">
+            <div class="dep__yr"><strong>2024 · Q2</strong>60 days</div>
+            <div class="dep__name">Ford Motors · Body Shop forklifts<span>Rayong, Thailand · Fortune 500 automotive · 14 trips/hr</span></div>
+            <div class="dep__role">Program lead</div>
+            <div class="dep__metric">2 units / 60 days<span>delivery</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+          <a href="#" class="dep">
+            <div class="dep__yr"><strong>2024 · Q3</strong>15 days</div>
+            <div class="dep__name">Caterpillar · Production-ready forklifts<span>Singapore · Fortune 500 construction · 6× cycle compression</span></div>
+            <div class="dep__role">Program lead</div>
+            <div class="dep__metric">2 units / 15 days<span>delivery</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+          <a href="#" class="dep">
+            <div class="dep__yr"><strong>2023</strong></div>
+            <div class="dep__name">Coca-Cola · MMR pilot<span>Pune, India · FMCG · finished-goods movement</span></div>
+            <div class="dep__role">Owner</div>
+            <div class="dep__metric">Pilot → expansion<span>status</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+          <a href="#" class="dep">
+            <div class="dep__yr"><strong>2023</strong></div>
+            <div class="dep__name">Sobha + L&amp;T + Godrej + K2K · MMR rollouts<span>Bengaluru, Mumbai, Hyderabad, Dubai · construction + RE</span></div>
+            <div class="dep__role">Owner</div>
+            <div class="dep__metric">20+ units<span>cumulative</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+          <a href="#" class="dep">
+            <div class="dep__yr"><strong>2024</strong></div>
+            <div class="dep__name">Everest Carbon · Custom autonomous unit<span>Berlin, Germany · climate hardware · bespoke build</span></div>
+            <div class="dep__role">Owner</div>
+            <div class="dep__metric">1 custom unit<span>delivery</span></div>
+            <div class="dep__arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 · DECISION LOG ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">05 · Decision log</p>
+            <h2 class="section__title">Career-level bets I've made</h2>
+          </div>
+          <p class="section__hint">The product-level log lives inside each deployment.</p>
+        </div>
+
+        <div class="decisions">
+
+          <article class="decision">
+            <div class="decision__date"><strong>2020 · Q3</strong>Career move</div>
+            <div class="decision__body">
+              <h4>Joined Flo Mobility as founding PM instead of going to a tier-1 SaaS company.</h4>
+              <p>Two offers on the table: a senior PM seat at a well-funded SaaS scale-up, and the founding-PM seat at a 6-person robotics startup with no revenue. <strong>Took Flo.</strong> Bet that hardware + autonomy was a wave that would matter more than another vertical SaaS, and that founding-PM exposure would compound faster than ladder-climbing.</p>
+              <div class="hindsight"><strong>Hindsight</strong> · Right call. The five years gave me end-to-end ownership most PMs spend a decade trying to earn.</div>
+            </div>
+            <span class="decision__tag decision__tag--win">Win</span>
+          </article>
+
+          <article class="decision">
+            <div class="decision__date"><strong>2022 · Q1</strong>Product strategy</div>
+            <div class="decision__body">
+              <h4>Pushed Flo to ship MMR before the lawnmower, against initial founder preference.</h4>
+              <p>The founders favoured the outdoor lawnmower as the wedge — bigger TAM, more glamorous demo. <strong>Argued for indoor MMR first:</strong> shorter sales cycle, faster iteration loop, customers already willing to pay. Took two months of disagreement to land it.</p>
+              <div class="hindsight"><strong>Hindsight</strong> · Right call. MMR became the company's revenue engine; lawnmower followed once the FMS was hardened by MMR's deployments.</div>
+            </div>
+            <span class="decision__tag decision__tag--win">Win</span>
+          </article>
+
+          <article class="decision">
+            <div class="decision__date"><strong>2023 · Q2</strong>Org design</div>
+            <div class="decision__body">
+              <h4>Built a customer-ops function instead of hiring a third PM.</h4>
+              <p>Fleet hit ~20 units; eng was getting buried in customer escalations. The default move was to hire another PM. <strong>Hired two field application engineers (FAEs) instead</strong> — closer to customers, took the unstructured load off product.</p>
+              <div class="hindsight"><strong>Hindsight</strong> · Mixed. FAEs were the right move, but I should have shipped remote-diagnostics tooling first so they had something to use.</div>
+            </div>
+            <span class="decision__tag decision__tag--mixed">Mixed</span>
+          </article>
+
+          <article class="decision">
+            <div class="decision__date"><strong>2023 · Q4</strong>Personal</div>
+            <div class="decision__body">
+              <h4>Under-invested in writing and external presence for two years.</h4>
+              <p>Heads-down on product. <strong>Wrote almost nothing public</strong> — no blog posts, no LinkedIn, no talks. Optimised for shipping over visibility.</p>
+              <div class="hindsight"><strong>Hindsight</strong> · Wrong call. Made the EU/USA job search harder; recruiters can't find what isn't published. Fixing now.</div>
+            </div>
+            <span class="decision__tag decision__tag--miss">Miss</span>
+          </article>
+
+          <article class="decision">
+            <div class="decision__date"><strong>2026 · Q1</strong>Career move</div>
+            <div class="decision__body">
+              <h4>Looking outside India for the next role, with sponsorship needed.</h4>
+              <p>Strong offers exist in India. <strong>Choosing to look at EU and USA</strong> instead — closer to the next wave of robotics customers (auto, logistics, warehousing) and to the talent density that will define the field for the next decade.</p>
+              <div class="hindsight"><strong>Hindsight</strong> · Pending. Will rev this entry in 12 months.</div>
+            </div>
+            <span class="decision__tag decision__tag--mixed">In progress</span>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 06 · STACK ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">06 · Stack</p>
+            <h2 class="section__title">How I actually work, day to day</h2>
+          </div>
+          <p class="section__hint">Tools, frameworks, and the boring infrastructure of shipping.</p>
+        </div>
+
+        <div class="stack">
+          <div class="stack__col">
+            <h4>Tools</h4>
+            <ul>
+              <li>Linear · backlog &amp; bugs <span>daily</span></li>
+              <li>Notion · PRDs &amp; decision log <span>daily</span></li>
+              <li>Figma · flows &amp; sketches <span>weekly</span></li>
+              <li>Looker · fleet metrics <span>weekly</span></li>
+              <li>ROS / RViz · read-level <span>as needed</span></li>
+              <li>Slack &amp; WhatsApp · customers <span>daily</span></li>
+              <li>Cal · booking &amp; calls <span>—</span></li>
+            </ul>
+          </div>
+          <div class="stack__col">
+            <h4>Frameworks</h4>
+            <ul>
+              <li>Jobs-to-be-done <span>discovery</span></li>
+              <li>Kill criteria <span>scoping</span></li>
+              <li>Decision logs <span>retro</span></li>
+              <li>Pre-mortems <span>before launch</span></li>
+              <li>RICE-lite <span>prioritisation</span></li>
+              <li>Wardley mapping <span>strategy</span></li>
+              <li>Cost of delay <span>tradeoffs</span></li>
+            </ul>
+          </div>
+          <div class="stack__col">
+            <h4>Cadence</h4>
+            <ul>
+              <li>2-week eng sprints <span>—</span></li>
+              <li>Weekly customer call notes <span>—</span></li>
+              <li>Demo Friday <span>weekly</span></li>
+              <li>Monthly OTA release <span>fleet</span></li>
+              <li>Quarterly retro · public <span>team</span></li>
+              <li>Field SLA · 5 days <span>p90</span></li>
+              <li>Written-first PRD <span>always</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 · RETROSPECTIVE ============ -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <div>
+            <p class="section__num">07 · Retrospective</p>
+            <h2 class="section__title">Honest read on the last 5 years</h2>
+          </div>
+          <p class="section__hint">What I'm proud of, what I'd redo, what comes next.</p>
+        </div>
+
+        <div class="retro">
+          <div class="retro__row win">
+            <div class="retro__lbl">+ Won</div>
+            <div class="retro__body">Picked the right wave. Industrial robotics + AI moved from hype to revenue while I was building, and I had end-to-end ownership through that transition.</div>
+          </div>
+          <div class="retro__row win">
+            <div class="retro__lbl">+ Won</div>
+            <div class="retro__body">Earned the trust of Fortune-500 customers as a junior company. Procurement, security, on-site safety — I learned the muscles most PMs only encounter at scale.</div>
+          </div>
+          <div class="retro__row miss">
+            <div class="retro__lbl">– Missed</div>
+            <div class="retro__body">Wrote almost nothing publicly until 2026. The work was real; the receipts were locked inside Notion. Recruiters can't index what doesn't exist.</div>
+          </div>
+          <div class="retro__row miss">
+            <div class="retro__lbl">– Missed</div>
+            <div class="retro__body">Underinvested in remote diagnostics at Flo for two quarters. Should have shipped the boring infrastructure before the shiny features.</div>
+          </div>
+          <div class="retro__row next">
+            <div class="retro__lbl">→ Next</div>
+            <div class="retro__body">Take this experience to a senior Robotics PM / Product Lead role at a top-tier robotics company in the EU or USA. Build closer to the customers and talent that will define the next decade of the field.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta__inner">
+          <p class="cta__pre">— End of datasheet</p>
+          <h2 class="cta__title">Hiring for a Robotics PM role? Let's talk.</h2>
+          <p class="cta__sub">If your team builds robots that need to actually work in customer sites, I want to hear about it. Open to EU and USA, sponsorship required, 30 days notice.</p>
+          <div class="cta__btns">
+            <a href="#" class="btn btn--signal">Book a 30-min walkthrough →</a>
+            <a href="#" class="btn btn--ghost-d">mukuldharpure@gmail.com ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="revfoot">
+    <span><strong>Mukul Dharpure · Datasheet Rev 2.4</strong> · Last updated May 2026 · Open to roles · EU + USA</span>
+    <span><a href="proto-datasheet.html">Flo product datasheet →</a> · <a href="index.html">theme menu</a></span>
+  </footer>
+
+</body>
+</html>

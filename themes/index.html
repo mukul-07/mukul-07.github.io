@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Theme previews — Mukul Dharpure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F4F2EE;
+    --paper: #FFFFFF;
+    --carbon: #1A1A1A;
+    --muted: #807A70;
+    --rule: rgba(26,26,26,0.10);
+  }
+  body {
+    font-family: "Geist", -apple-system, system-ui, sans-serif;
+    background: var(--bg); color: var(--carbon);
+    padding: 80px 40px; min-height: 100vh; line-height: 1.5;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  .pre { font: 500 11px/1 "Geist Mono", monospace; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+  h1 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 56px; letter-spacing: -0.025em; line-height: 1; margin-bottom: 18px; }
+  .lede { color: #4A4A4A; font-size: 18px; line-height: 1.55; margin-bottom: 56px; max-width: 640px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  a.card {
+    display: block; padding: 28px 26px 32px;
+    border-radius: 12px; background: var(--paper);
+    border: 1px solid var(--rule);
+    text-decoration: none; color: inherit;
+    transition: transform .25s, box-shadow .25s;
+  }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 30px 60px -30px rgba(26,26,26,0.15); }
+  .swatches { display: flex; gap: 5px; margin-bottom: 22px; }
+  .sw { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.06); }
+  .label { font: 500 11px/1 "Geist Mono", monospace; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  .name { font-family: "Instrument Serif", Georgia, serif; font-size: 28px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 10px; }
+  .desc { font-size: 14px; color: #4A4A4A; line-height: 1.55; margin-bottom: 16px; }
+  .refs { font: 500 11px/1.4 "Geist Mono", monospace; color: var(--muted); letter-spacing: 0.04em; }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    body { padding: 56px 24px; }
+    h1 { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="pre">— Theme previews</p>
+    <h1>Three directions for the redesign.</h1>
+    <p class="lede">Same content, three design languages. Each builds on a real reference set — the kind of portfolios that win robotics-PM interviews. Pick a direction and we'll port it into the live site.</p>
+
+    <div class="grid">
+      <a class="card" href="theme-1-ivory.html">
+        <div class="swatches">
+          <span class="sw" style="background:#FAF6F0"></span>
+          <span class="sw" style="background:#0E0E0C"></span>
+          <span class="sw" style="background:#D8521A"></span>
+          <span class="sw" style="background:#3A3733"></span>
+        </div>
+        <div class="label">A · Editorial</div>
+        <div class="name">Engineer's Notebook</div>
+        <div class="desc">Paper-white with grain, ink headlines, signal-orange accent. Instrument Serif + Geist + Geist Mono. Spec-sheet stats, hairline rules, square corners.</div>
+        <div class="refs">Refs · Stripe Press, Pentagram</div>
+      </a>
+
+      <a class="card" href="theme-2-slate.html">
+        <div class="swatches">
+          <span class="sw" style="background:#F2EDE4"></span>
+          <span class="sw" style="background:#1C2118"></span>
+          <span class="sw" style="background:#A77C2E"></span>
+          <span class="sw" style="background:#3D4438"></span>
+        </div>
+        <div class="label">B · Premium</div>
+        <div class="name">Operator</div>
+        <div class="desc">Deep cream with bone-white cards, aged-brass accent, Fraunces editorial display. Italic display weights, big numerics, generous space. Reads as senior.</div>
+        <div class="refs">Refs · The New Yorker, Anthropic</div>
+      </a>
+
+      <a class="card" href="theme-3-espresso.html">
+        <div class="swatches">
+          <span class="sw" style="background:#F4F2EE"></span>
+          <span class="sw" style="background:#1A1A1A"></span>
+          <span class="sw" style="background:#2C6EE6"></span>
+          <span class="sw" style="background:#4A4A4A"></span>
+        </div>
+        <div class="label">C · Modern-tech</div>
+        <div class="name">Workshop</div>
+        <div class="desc">Off-white, carbon ink, electric-blue used like wayfinding paint. All-Geist. Spec-sheet impact card, mono numerics, sharp 8px radii. Recruiter-legible.</div>
+        <div class="refs">Refs · Linear, Vercel, Rauno Freiberg</div>
+      </a>
+
+      <a class="card" href="proto-cinematic.html" style="grid-column: span 3; background: radial-gradient(ellipse at top right, rgba(0,224,255,0.18), transparent 60%), #030616; color: #ECF1FA; border-color: #00E0FF; box-shadow: 0 0 60px rgba(0,224,255,0.30);">
+        <div class="swatches">
+          <span class="sw" style="background:#030616;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#08112A;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#00E0FF"></span>
+          <span class="sw" style="background:#7FF0FF"></span>
+          <span class="sw" style="background:#ECF1FA"></span>
+          <span class="sw" style="background:#A8B4D0"></span>
+        </div>
+        <div class="label" style="color:#00E0FF">Prototype · Cinematic edition · Three.js 3D globe</div>
+        <div class="name" style="color:#FFFFFF">Hero with breathing space — Outcrowd-inspired</div>
+        <div class="desc" style="color:rgba(232,238,250,0.65)">Real 3D Earth: dark navy sphere, cyan land outlines with additive bloom, fresnel atmosphere glow, drifting stars, animated cyan data-packet particles flowing along Bezier arcs from Bengaluru to each deployment. Hero headline reveals word-by-word, sections fade up on scroll. Single cyan palette, generous breathing space, minimal chrome. Drag to rotate, auto-resumes after 4s.</div>
+        <div class="refs" style="color:rgba(232,238,250,0.45)">→ Open prototype · Three.js + topojson · cinematic motion throughout</div>
+      </a>
+
+      <a class="card" href="proto-space-convert.html" style="grid-column: span 3; background: linear-gradient(135deg, #050816, #0F1A33); color: #E8EEFA; border-color: #FF8B3D; box-shadow: 0 0 32px rgba(255,139,61,0.25);">
+        <div class="swatches">
+          <span class="sw" style="background:#050816;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#0F1A33;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#FF8B3D"></span>
+          <span class="sw" style="background:#FF6BCB"></span>
+          <span class="sw" style="background:#00D4FF"></span>
+          <span class="sw" style="background:#00E676"></span>
+        </div>
+        <div class="label" style="color:#FF8B3D">Prototype · Conversion-optimised · Space-tech</div>
+        <div class="name" style="color:#FFFFFF">Hire-me edition — psychology + warm CTAs</div>
+        <div class="desc" style="color:rgba(232,238,250,0.65)">Same space-tech aesthetic, layered with conversion psychology: reading-progress bar, time-based greeting, live activity toasts ("Recruiter from Boston Dynamics just viewed"), Fortune 500 logo wall, "why this profile is rare" pillars, value-stack ("worth $400 — free for hiring teams"), scarcity calendar (3 slots this week), sticky bottom CTA. Warm coral CTAs against cool space palette for maximum eye-pull.</div>
+        <div class="refs" style="color:rgba(232,238,250,0.45)">→ Open prototype · designed for the booking, not just the read</div>
+      </a>
+
+      <a class="card" href="proto-space-globe.html" style="grid-column: span 3; background: #050816; color: #E8EEFA; border-color: #00D4FF; box-shadow: 0 0 32px rgba(0,212,255,0.2);">
+        <div class="swatches">
+          <span class="sw" style="background:#050816;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#0F1A33;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#00D4FF"></span>
+          <span class="sw" style="background:#FFB020"></span>
+          <span class="sw" style="background:#00E676"></span>
+          <span class="sw" style="background:#E8EEFA"></span>
+        </div>
+        <div class="label" style="color:#00D4FF">Prototype · Mission control · Space-tech</div>
+        <div class="name" style="color:#FFFFFF">Mission MD-PM-04 — Interactive Globe</div>
+        <div class="desc" style="color:rgba(232,238,250,0.65)">Full-bleed orthographic globe (D3, draggable, auto-rotates). Six pins — Bengaluru HQ, Mumbai, Dubai, Rayong, Singapore, Berlin — with arcs from HQ. Click any deployment in the right panel to lock and focus the globe. Mission control HUD: live UTC clock, mission elapsed time, telemetry strip, deployment registry.</div>
+        <div class="refs" style="color:rgba(232,238,250,0.45)">→ Open prototype · D3 + TopoJSON · drag to rotate · click pins</div>
+      </a>
+
+      <a class="card" href="proto-datasheet-self.html" style="grid-column: span 3; background: #1A1A1A; color: #FFFFFF; border-color: #1A1A1A;">
+        <div class="swatches">
+          <span class="sw" style="background:#FFFFFF"></span>
+          <span class="sw" style="background:#1A1A1A;border-color:rgba(255,255,255,0.2)"></span>
+          <span class="sw" style="background:#2C6EE6"></span>
+          <span class="sw" style="background:#16A34A"></span>
+          <span class="sw" style="background:#D97706"></span>
+          <span class="sw" style="background:#C0392B"></span>
+        </div>
+        <div class="label" style="color:#2C6EE6">Prototype · Homepage as Mukul's datasheet</div>
+        <div class="name" style="color:#FFFFFF">Mukul Dharpure — Datasheet, Rev 2.4</div>
+        <div class="desc" style="color:rgba(255,255,255,0.65)">The PM as the subject, not the product. Cover spec card (role, status, sponsorship), career performance with receipts, operating conditions (where you do best work), PM operating-system diagram, deployments index, career-level decision log, stack, retrospective.</div>
+        <div class="refs" style="color:rgba(255,255,255,0.45)">→ Open homepage prototype · Flo product datasheet linked inside</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
