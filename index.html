@@ -219,6 +219,14 @@
   .globe-overlay-tl .cyan, .globe-overlay-tr .cyan, .globe-overlay-bl .cyan, .globe-overlay-br .cyan { color: var(--cyan); }
   .globe-overlay-bl .live, .globe-overlay-br .live { display: inline-flex; align-items: center; gap: 6px; }
   .globe-overlay-bl .live .dot, .globe-overlay-br .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  /* Hide verbose globe instructions on narrow screens — they collide with the
+     bottom-right distance overlay and "drag" doesn't apply on touch anyway */
+  @media (max-width: 700px) {
+    .globe-help { display: none; }
+    .globe-overlay-tl, .globe-overlay-tr, .globe-overlay-bl, .globe-overlay-br {
+      font-size: 9px; letter-spacing: 0.10em;
+    }
+  }
 
   .globe-svg { width: 100%; height: 100%; display: block; cursor: grab; }
   .globe-svg:active { cursor: grabbing; }
@@ -1409,7 +1417,7 @@
         <div id="selCoords">LAT … · LON …</div>
       </div>
       <div class="globe-overlay-bl">
-        <div class="live"><span class="dot"></span><span class="v">LIVE</span> · drag to rotate · click pin to focus</div>
+        <div class="live"><span class="dot"></span><span class="v">LIVE</span><span class="globe-help"> · drag to rotate · click pin to focus</span></div>
       </div>
       <div class="globe-overlay-br">
         <div>Distance from HQ</div>
@@ -2277,10 +2285,10 @@
       if (!distEl || !distSuffix) return;
       if (km === 0) {
         distEl.textContent = 'HQ';
-        distSuffix.textContent = ' · ORIGIN';
+        distSuffix.textContent = ' · origin';
       } else {
         distEl.textContent = km.toLocaleString();
-        distSuffix.textContent = ' km from HQ';
+        distSuffix.textContent = ' km';
       }
     }
 
