@@ -134,6 +134,40 @@
     border: 1px solid rgba(255,176,32,0.30); border-radius: 100px;
   }
   .article__status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px rgba(255,176,32,0.5); animation: blink 2s infinite; }
+
+  /* Published variant — green status pill */
+  .article__status--published {
+    color: var(--green);
+    background: rgba(0,230,118,0.10);
+    border-color: rgba(0,230,118,0.30);
+  }
+  .article__status--published .dot {
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(0,230,118,0.5);
+  }
+
+  /* Published article = whole card is a clickable link */
+  .article--published {
+    display: block;
+    padding: 36px 0 36px;
+    margin: 0 -24px;
+    padding-left: 24px; padding-right: 24px;
+    border-radius: 8px;
+    transition: background .25s, transform .25s;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .article--published:hover {
+    background: rgba(0,212,255,0.04);
+    transform: translateY(-1px);
+  }
+  .article--published .article__title { transition: color .2s; }
+  .article--published:hover .article__title em { text-shadow: 0 0 24px var(--cyan-glow); }
+  .article__cta {
+    color: var(--cyan); font-weight: 600;
+    transition: gap .25s;
+  }
+  .article--published:hover .article__cta { color: var(--ink); }
   .article__title {
     font-family: var(--serif); font-weight: 400;
     font-size: clamp(28px, 3.5vw, 40px);
@@ -264,9 +298,10 @@
     <header class="hero">
       <p class="hero__eyebrow"><span class="dot"></span>Field notes · drafts in motion</p>
       <h1 class="hero__title">Notes on product, robotics, and <em>shipping real things.</em></h1>
-      <p class="hero__sub">Things I've learned the hard way — at customer sites, on production floors, in arguments with engineers about path-planning edge cases. <strong>Three drafts are in the queue.</strong> First one drops soon.</p>
+      <p class="hero__sub">Things I've learned the hard way — at customer sites, on production floors, in arguments with engineers about path-planning edge cases. <strong>First essay is live.</strong> Two more drafts in motion.</p>
       <div class="hero__meta">
-        <span class="item"><span>In progress</span><span class="cyan">03</span></span>
+        <span class="item"><span>Published</span><span class="cyan">01</span></span>
+        <span class="item"><span>In motion</span><span class="v">02</span></span>
         <span class="item"><span>Cadence</span><span class="v">monthly</span></span>
         <span class="item"><span>Next drop</span><span class="v">June 2026</span></span>
       </div>
@@ -275,9 +310,25 @@
     <!-- ARTICLES -->
     <section class="articles">
 
-      <article class="article">
+      <a class="article article--published" href="/writing/0-to-1-in-robotics/">
         <div class="article__head">
           <span class="article__num">01</span>
+          <span class="article__status article__status--published"><span class="dot"></span>Published · May 5, 2026</span>
+        </div>
+        <h2 class="article__title"><em>0→1 in robotics:</em> what's different, what's the same.</h2>
+        <p class="article__teaser">Lessons from launching two commercial robotics products at Flo Mobility — autonomous lawnmower (Nov 2021–Apr 2023) and the MMR (Apr 2023–Apr 2025). Where SaaS playbooks help, where they break, and what to do about it. <strong>Especially around customer-readiness.</strong></p>
+        <div class="article__meta">
+          <span>09 min read</span>
+          <span class="v">·</span>
+          <span>3 illustrations</span>
+          <span class="v">·</span>
+          <span class="article__cta">Read the essay →</span>
+        </div>
+      </a>
+
+      <article class="article">
+        <div class="article__head">
+          <span class="article__num">02</span>
           <span class="article__status"><span class="dot"></span>Drafting</span>
         </div>
         <h2 class="article__title">Technical credibility is a PM <em>superpower.</em></h2>
@@ -286,22 +337,6 @@
           <span>Est. read · 06 min</span>
           <span class="v">·</span>
           <span>Targeting · June 2026</span>
-          <span class="v">·</span>
-          <a href="#subscribe">Notify me when it ships →</a>
-        </div>
-      </article>
-
-      <article class="article">
-        <div class="article__head">
-          <span class="article__num">02</span>
-          <span class="article__status"><span class="dot"></span>Drafting</span>
-        </div>
-        <h2 class="article__title"><em>0→1 in robotics:</em> what's different, what's the same.</h2>
-        <p class="article__teaser">Lessons from launching two commercial robotics products at Flo Mobility — autonomous lawnmower (Nov 2021–Apr 2023) and the MMR (Apr 2023–Apr 2025). Where SaaS playbooks help, where they break, and what to do about it. <strong>Especially around customer-readiness.</strong></p>
-        <div class="article__meta">
-          <span>Est. read · 09 min</span>
-          <span class="v">·</span>
-          <span>Targeting · July 2026</span>
           <span class="v">·</span>
           <a href="#subscribe">Notify me when it ships →</a>
         </div>
