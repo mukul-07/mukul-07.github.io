@@ -888,15 +888,21 @@
   .timeline-item--sub { padding: 16px 0 16px 0; }
   .timeline-item--sub .timeline-card__year { color: var(--muted); }
 
-  /* Peak/valley · COMMS as climax (#21) */
-  #comms { padding-top: 100px; padding-bottom: 100px; }
-  .comms { padding: 72px 64px; box-shadow: 0 60px 120px -40px rgba(0,212,255,0.25), 0 0 0 1px var(--cyan-mid, rgba(0,212,255,0.30)) inset; border: 1px solid var(--cyan); }
-  .comms__title { font-size: clamp(40px, 5vw, 64px); }
-  .comms__sub { font-size: 18px; }
-  .comms__email { font-size: 24px; padding: 18px 24px; }
-  /* Reduce intermediate sections' visual weight */
-  #payloads, #transmissions { padding: 80px 0; }
-  #payloads .section__title, #transmissions .section__title { font-size: 28px; }
+  /* Peak/valley · COMMS as climax (#21) — desktop only; mobile uses tighter rules above */
+  @media (min-width: 901px) {
+    #comms { padding-top: 100px; padding-bottom: 100px; }
+    .comms { padding: 72px 64px; box-shadow: 0 60px 120px -40px rgba(0,212,255,0.25), 0 0 0 1px var(--cyan-mid, rgba(0,212,255,0.30)) inset; border: 1px solid var(--cyan); }
+    .comms__title { font-size: clamp(40px, 5vw, 64px); }
+    .comms__sub { font-size: 18px; }
+    .comms__email { font-size: 24px; padding: 18px 24px; }
+    /* Reduce intermediate sections' visual weight */
+    #payloads, #transmissions { padding: 80px 0; }
+    #payloads .section__title, #transmissions .section__title { font-size: 28px; }
+  }
+  /* Mobile/tablet · keep climax visual emphasis without the breakage */
+  @media (max-width: 900px) {
+    .comms { box-shadow: 0 30px 80px -40px rgba(0,212,255,0.25), 0 0 0 1px rgba(0,212,255,0.25) inset; border: 1px solid var(--cyan-mid, rgba(0,212,255,0.30)); }
+  }
 
   /* Border-radius system (#13) */
   .payload, .trans, .case, .dossier__portrait, .dossier__cv, .booking, .nav__btn, .subnav__cta, .subnav__item, .booking__btn, .skill-tile, .skills-tiles, .op__hl, .nav__hamburger, .log-card__item, .telemetry, .log, .log-card { border-radius: 6px; }
