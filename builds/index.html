@@ -132,25 +132,29 @@
     color: var(--cyan); letter-spacing: -0.04em; opacity: 0.55;
     text-shadow: 0 0 32px var(--cyan-glow);
   }
-  /* Screenshot-mode visual: image fills the panel, corner badge replaces the giant mark */
-  .build__visual--shot { aspect-ratio: 4/3; }
-  .build__visual--shot::before {
-    background: linear-gradient(180deg, rgba(5,8,22,0) 60%, rgba(5,8,22,0.55) 100%);
-    z-index: 2;
+  /* Screenshot-mode visual: full screenshot fits, per-card backdrop matches product palette */
+  .build__visual--shot {
+    aspect-ratio: 4/3;
+    padding: 18px;
+    background: var(--shot-bg, var(--space-3));
+    transition: background .3s;
   }
+  .build__visual--shot::before { display: none; } /* drop the cyan glow + dark gradient overlay */
   .build__shot {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; z-index: 0;
-    filter: saturate(0.95) brightness(0.94);
-    transition: transform .45s cubic-bezier(0.16,1,0.3,1), filter .35s;
+    position: relative; z-index: 1;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 12px 28px -12px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.05);
+    transition: transform .45s cubic-bezier(0.16,1,0.3,1);
   }
-  .build:hover .build__shot { transform: scale(1.025); filter: saturate(1) brightness(1); }
+  .build:hover .build__shot { transform: scale(1.018); }
   .build__visual-mark--badge {
     position: absolute; top: 14px; left: 14px; z-index: 3;
     font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
     padding: 7px 10px; border-radius: 6px;
-    background: rgba(5,8,22,0.78); backdrop-filter: blur(8px);
-    border: 1px solid var(--rule-2);
+    background: rgba(5,8,22,0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
     color: var(--cyan); text-shadow: none; opacity: 1;
   }
   .build__body { padding: 36px 36px 32px; display: flex; flex-direction: column; gap: 0; }
@@ -328,8 +332,8 @@
 
       <!-- COMPLIANCEOS -->
       <article class="build">
-        <div class="build__visual build__visual--shot">
-          <img class="build__shot" src="/builds/shots/complianceos.png" alt="ComplianceOS landing page" loading="lazy" style="object-position: center 28%;">
+        <div class="build__visual build__visual--shot" style="--shot-bg: #000000;">
+          <img class="build__shot" src="/builds/shots/complianceos.png" alt="ComplianceOS landing page" loading="lazy">
           <div class="build__visual-mark build__visual-mark--badge">CO</div>
         </div>
         <div class="build__body">
@@ -355,8 +359,8 @@
 
       <!-- OPENSOURCE-SALES-OPS -->
       <article class="build">
-        <div class="build__visual build__visual--shot">
-          <img class="build__shot" src="/builds/shots/sales-ops.png" alt="opensource-sales-ops flow diagram" loading="lazy" style="object-position: 60% center;">
+        <div class="build__visual build__visual--shot" style="--shot-bg: #F7F4E9;">
+          <img class="build__shot" src="/builds/shots/sales-ops.png" alt="opensource-sales-ops flow diagram" loading="lazy">
           <div class="build__visual-mark build__visual-mark--badge">SO</div>
         </div>
         <div class="build__body">
@@ -382,8 +386,8 @@
 
       <!-- VANTARA FARMS -->
       <article class="build">
-        <div class="build__visual build__visual--shot">
-          <img class="build__shot" src="/builds/shots/vantara-farms.png" alt="Vantara Farms storefront" loading="lazy" style="object-position: center 30%;">
+        <div class="build__visual build__visual--shot" style="--shot-bg: #FBF6E9;">
+          <img class="build__shot" src="/builds/shots/vantara-farms.png" alt="Vantara Farms storefront" loading="lazy">
           <div class="build__visual-mark build__visual-mark--badge">VF</div>
         </div>
         <div class="build__body">
