@@ -536,6 +536,10 @@
   .nav__hamburger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
   .nav__hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
   .nav__hamburger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  /* Smaller variant for the sticky sub-nav, which has tighter vertical padding */
+  .subnav__hamburger { width: 30px; height: 30px; padding: 6px; gap: 4px; }
+  .subnav__hamburger.is-open span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+  .subnav__hamburger.is-open span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
 
   /* Mobile drawer */
   .nav__drawer {
@@ -793,9 +797,13 @@
     .mc-mobile { display: flex; }
     body { padding-bottom: 56px; }
 
-    /* Subnav: keep brand+items, drop CTA */
-    .subnav__cta { padding: 8px 10px; font-size: 10px; }
-    .subnav { padding: 8px 14px; gap: 14px; }
+    /* Subnav on mobile: items overflow at this width, so collapse them
+       behind the same hamburger drawer used by the top nav. Brand stays
+       on the left, hamburger on the right — consistent with top nav. */
+    .subnav { padding: 8px 14px; gap: 14px; justify-content: space-between; }
+    .subnav__items { display: none; }
+    .subnav__cta { display: none; }
+    .subnav__hamburger { display: flex; }
 
     /* Inline CTA: compact */
     .inline-cta { padding: 18px 20px; flex-direction: column; align-items: stretch; gap: 14px; margin: 40px 0; }
@@ -1360,6 +1368,9 @@
       <a class="subnav__item" href="/off-mission/">Off-mission</a>
     </div>
     <a class="subnav__cta" href="#comms">Book a call →</a>
+    <button class="nav__hamburger subnav__hamburger" id="hamburgerSub" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 
   <!-- =========================================
@@ -2361,20 +2372,19 @@
     }
     tickMobile(); setInterval(tickMobile, 1000);
 
-    // Hamburger toggle
-    const hamburger = document.getElementById('hamburger');
+    // Hamburger toggle — top nav and sub-nav share the same drawer
+    const hamburgers = [document.getElementById('hamburger'), document.getElementById('hamburgerSub')].filter(Boolean);
     const drawer = document.getElementById('navDrawer');
-    if (hamburger && drawer) {
-      hamburger.addEventListener('click', () => {
-        const open = drawer.classList.toggle('is-open');
-        hamburger.classList.toggle('is-open', open);
-        hamburger.setAttribute('aria-expanded', open);
-      });
-      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-        drawer.classList.remove('is-open');
-        hamburger.classList.remove('is-open');
-        hamburger.setAttribute('aria-expanded', 'false');
-      }));
+    if (hamburgers.length && drawer) {
+      const setOpen = (open) => {
+        drawer.classList.toggle('is-open', open);
+        hamburgers.forEach(h => {
+          h.classList.toggle('is-open', open);
+          h.setAttribute('aria-expanded', open);
+        });
+      };
+      hamburgers.forEach(h => h.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open'))));
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
     }
 
     // Sticky sub-nav + hide mc-strip when sub-nav shows
