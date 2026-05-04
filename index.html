@@ -32,7 +32,7 @@
     --serif: "Instrument Serif", Georgia, serif;
     --mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
   }
-  /* Smooth in-page anchor scroll (e.g., nav → #dossier, → #comms) */
+  /* Smooth in-page anchor scroll (e.g., nav → #about, → #comms) */
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
@@ -1300,7 +1300,7 @@
       </div>
       <div class="nav__links">
         <a href="#" class="now">mission</a>
-        <a href="#dossier">about</a>
+        <a href="#about">about</a>
         <a href="builds.html">builds</a>
         <a href="writing.html">writing</a>
         <a href="off-mission.html">off-mission</a>
@@ -1317,7 +1317,7 @@
     <div class="nav__drawer" id="navDrawer">
       <ul>
         <li><a href="#"><span>Mission</span><span class="num">01</span></a></li>
-        <li><a href="#dossier"><span>About</span><span class="num">02</span></a></li>
+        <li><a href="#about"><span>About</span><span class="num">02</span></a></li>
         <li><a href="builds.html"><span>Builds</span><span class="num">03</span></a></li>
         <li><a href="writing.html"><span>Writing</span><span class="num">04</span></a></li>
         <li><a href="off-mission.html"><span>Off-mission</span><span class="num">05</span></a></li>
@@ -1330,7 +1330,7 @@
   <div class="subnav" id="subnav">
     <span class="subnav__brand"><span class="subnav__brand-mark">M</span> mukuldharpure</span>
     <div class="subnav__items">
-      <a class="subnav__item" href="#dossier" data-target="dossier">About</a>
+      <a class="subnav__item" href="#about" data-target="about">About</a>
       <a class="subnav__item" href="builds.html">Builds</a>
       <a class="subnav__item" href="writing.html">Writing</a>
       <a class="subnav__item" href="off-mission.html">Off-mission</a>
@@ -1375,7 +1375,7 @@
           <a href="mukul-dharpure-cv.pdf" class="btn btn--ghost" download><span>Download CV</span><span>↓</span></a>
         </div>
 
-        <a href="#dossier" class="op__more">
+        <a href="#about" class="op__more">
           <span>Full dossier · skills · trajectory</span>
           <span class="op__more-arrow">↓</span>
         </a>
@@ -1592,7 +1592,7 @@
     <!-- =========================================
          05 · OPERATOR DOSSIER
          ========================================= -->
-    <section class="section" id="dossier" data-reveal-2>
+    <section class="section" id="about" data-reveal-2>
       <div class="section__head">
         <div>
           <p class="section__num">05 · About</p>
@@ -2369,7 +2369,7 @@
 
     // Sub-nav active section tracking · IntersectionObserver-based (#15)
     const subItems = document.querySelectorAll('.subnav__item');
-    const sectionsToTrack = ['dossier', 'payloads', 'transmissions']
+    const sectionsToTrack = ['about', 'payloads']
       .map(id => document.getElementById(id))
       .filter(Boolean);
     const activeIO = new IntersectionObserver((entries) => {
