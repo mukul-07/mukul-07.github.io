@@ -72,7 +72,7 @@
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   }
 
-  /* ============ READING PROGRESS BAR ============ */
+  /* ============ READING PROGRESS BAR + TIME REMAINING ============ */
   .read-prog {
     position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 100;
     background: rgba(232,238,250,0.06);
@@ -83,6 +83,55 @@
     box-shadow: 0 0 8px var(--cyan-glow);
     transition: width .15s ease-out;
   }
+  .read-time {
+    position: fixed; top: 14px; right: 18px; z-index: 99;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--muted); padding: 8px 12px;
+    background: rgba(5,8,22,0.82); backdrop-filter: blur(8px);
+    border: 1px solid var(--rule); border-radius: 100px;
+    opacity: 0; transition: opacity .35s;
+    pointer-events: none;
+  }
+  .read-time.show { opacity: 1; }
+  .read-time .v { color: var(--cyan); font-weight: 600; }
+  @media (max-width: 1100px) { .read-time { display: none; } }
+
+  /* ============ FLOATING SECTION TOC (right rail, desktop only) ============ */
+  .toc {
+    position: fixed; top: 50%; right: 28px; transform: translateY(-50%);
+    z-index: 40; pointer-events: none;
+    opacity: 0; transition: opacity .4s;
+    max-width: 200px;
+  }
+  .toc.show { opacity: 1; pointer-events: auto; }
+  .toc__head {
+    font: 500 9px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px; padding-left: 14px;
+  }
+  .toc__list { list-style: none; padding: 0; margin: 0; }
+  .toc__item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0 8px 14px;
+    border-left: 1px solid var(--rule);
+    font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em;
+    color: var(--muted); cursor: pointer;
+    transition: color .25s, border-color .25s, padding-left .25s;
+    text-decoration: none;
+    position: relative;
+  }
+  .toc__item:hover { color: var(--ink-dim); }
+  .toc__item.active {
+    color: var(--cyan); border-left-color: var(--cyan);
+    padding-left: 18px;
+  }
+  .toc__item.active::before {
+    content: ""; position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow);
+  }
+  .toc__num { color: var(--cyan); font-weight: 600; opacity: 0.7; flex-shrink: 0; }
+  .toc__item.active .toc__num { opacity: 1; }
+  @media (max-width: 1280px) { .toc { display: none; } }
 
   /* ============ MISSION STRIP + NAV ============ */
   .mc-strip {
@@ -182,20 +231,52 @@
   .article__body a:hover { color: var(--ink); border-color: var(--ink); }
   .article__body p { margin-bottom: 28px; }
 
-  /* Section headers */
+  /* Section headers — animate cyan rule + slide-in title on scroll */
   .article__body h2 {
     font-family: var(--serif); font-weight: 400;
     font-size: clamp(26px, 3vw, 32px);
     letter-spacing: -0.02em; line-height: 1.15;
-    color: var(--ink); margin: 64px 0 24px;
+    color: var(--ink); margin: 72px 0 24px;
     position: relative;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .article__body h2.in-view {
+    opacity: 1; transform: translateY(0);
   }
   .article__body h2::before {
-    content: ""; position: absolute; left: 0; top: -28px;
-    width: 28px; height: 1px; background: var(--cyan);
+    content: ""; position: absolute; left: 0; top: -32px;
+    width: 0; height: 1px; background: var(--cyan);
     box-shadow: 0 0 6px var(--cyan-glow);
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
   }
+  .article__body h2.in-view::before { width: 56px; }
   .article__body h2 em { font-style: italic; color: var(--cyan); }
+
+  /* Drop cap · large italic-cyan first letter on opening paragraph */
+  .article__body > p.lead::first-letter {
+    font-family: var(--serif); font-style: italic;
+    font-size: 4.6em; line-height: 0.85;
+    color: var(--cyan); float: left;
+    margin: 6px 14px 0 0;
+    text-shadow: 0 0 32px var(--cyan-glow);
+    font-weight: 400;
+  }
+
+  /* Bold-lead paragraphs · subtle cyan left border on entry */
+  .article__body p.bold-lead {
+    border-left: 2px solid transparent;
+    padding-left: 18px;
+    margin-left: -20px;
+    transition: border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s;
+  }
+  .article__body p.bold-lead.in-view {
+    border-left-color: var(--cyan-mid);
+  }
+  .article__body p.bold-lead.in-view strong:first-child {
+    color: var(--cyan);
+  }
 
   /* Pull quote */
   .pullquote {
@@ -319,6 +400,19 @@
 <body>
 
   <div class="read-prog"><div class="read-prog__bar" id="prog"></div></div>
+  <div class="read-time" id="readTime">~<span class="v" id="readTimeVal">9</span> min left</div>
+
+  <!-- Floating TOC (desktop only) -->
+  <nav class="toc" id="toc" aria-label="Article sections">
+    <p class="toc__head">— Sections</p>
+    <ul class="toc__list">
+      <li><a href="#transfers"  class="toc__item" data-section="transfers"><span class="toc__num">01</span> Parts that transfer</a></li>
+      <li><a href="#breaks"     class="toc__item" data-section="breaks"><span class="toc__num">02</span> Where it breaks</a></li>
+      <li><a href="#readiness"  class="toc__item" data-section="readiness"><span class="toc__num">03</span> Customer-readiness</a></li>
+      <li><a href="#different"  class="toc__item" data-section="different"><span class="toc__num">04</span> What I'd do differently</a></li>
+      <li><a href="#closing"    class="toc__item" data-section="closing"><span class="toc__num">05</span> Closing</a></li>
+    </ul>
+  </nav>
 
   <div class="mc-strip">
     <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
@@ -367,7 +461,7 @@
 
     <div class="article__body">
 
-      <p>In about three and a half years at Flo Mobility, I worked on two commercial products from the ground up: an autonomous lawnmower (Nov 2021 – Apr 2023) and the MMR (Apr 2023 – Apr 2025). Different form factors, different customers, different failure modes. But by the second one, I started recognizing the patterns: the places where startup playbooks I'd absorbed from years of reading SaaS post-mortems still worked, and the places where they very loudly didn't.</p>
+      <p class="lead">In about three and a half years at Flo Mobility, I worked on two commercial products from the ground up: an autonomous lawnmower (Nov 2021 – Apr 2023) and the MMR (Apr 2023 – Apr 2025). Different form factors, different customers, different failure modes. But by the second one, I started recognizing the patterns: the places where startup playbooks I'd absorbed from years of reading SaaS post-mortems still worked, and the places where they very loudly didn't.</p>
 
       <p>This is a dump of what I think transfers, what doesn't, and what I'd tell anyone going 0→1 in robotics today — especially around the thing that nobody warns you about, which is <em>customer-readiness.</em></p>
 
@@ -401,7 +495,7 @@
         <figcaption>Two products, four years. Each one taught me which playbooks travel and which don't.</figcaption>
       </figure>
 
-      <h2>The parts that transfer cleanly</h2>
+      <h2 id="transfers">The parts that transfer cleanly</h2>
 
       <p>A lot of the standard advice still holds. Talk to customers before you build. Build the smallest thing that delivers value. Ship early, instrument everything, decide based on data instead of vibes. Keep the team small and the feedback loop tight. None of this becomes wrong just because there's a chassis involved.</p>
 
@@ -413,9 +507,9 @@
 
       <p><em>The other sixty is where it gets interesting.</em></p>
 
-      <h2>Where the playbook breaks</h2>
+      <h2 id="breaks">Where the playbook breaks</h2>
 
-      <p><strong>Iteration is not symmetric.</strong> In SaaS, the gap between "I think this might be the bug" and "I've shipped a fix to all users" can be hours. In robotics, that gap is at minimum a deploy-to-fleet cycle, and at worst it's <em>"we need to physically retrieve the unit, swap the mount, and ship it back."</em> The asymmetry isn't just speed; it's that some bugs cost a truck roll or a dead unit. You learn very quickly to over-test the things you can't easily roll back.</p>
+      <p class="bold-lead"><strong>Iteration is not symmetric.</strong> In SaaS, the gap between "I think this might be the bug" and "I've shipped a fix to all users" can be hours. In robotics, that gap is at minimum a deploy-to-fleet cycle, and at worst it's <em>"we need to physically retrieve the unit, swap the mount, and ship it back."</em> The asymmetry isn't just speed; it's that some bugs cost a truck roll or a dead unit. You learn very quickly to over-test the things you can't easily roll back.</p>
 
       <figure class="figure-anim fig-iter">
         <svg viewBox="0 0 680 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t2-title t2-desc">
@@ -466,17 +560,17 @@
         <figcaption>The dots loop continuously — SaaS in seconds, robotics in nearly a minute. Same scale, very different speeds.</figcaption>
       </figure>
 
-      <p><strong>"Move fast and break things" stops being a metaphor.</strong> Things with wheels, motors, and inertia can break themselves, the customer's property, or a person. There is no robotics equivalent of <code style="font-family: var(--mono); font-size: 0.92em; color: var(--cyan); background: var(--cyan-soft); padding: 1px 6px; border-radius: 3px;">git revert</code>. Once a heavy machine has rolled into a flowerbed, the flowerbed is in the bug report. This forces a culture of pre-flight checks, simulation gates, and conservative defaults that feels slow until the day it saves you from a lawsuit.</p>
+      <p class="bold-lead"><strong>"Move fast and break things" stops being a metaphor.</strong> Things with wheels, motors, and inertia can break themselves, the customer's property, or a person. There is no robotics equivalent of <code style="font-family: var(--mono); font-size: 0.92em; color: var(--cyan); background: var(--cyan-soft); padding: 1px 6px; border-radius: 3px;">git revert</code>. Once a heavy machine has rolled into a flowerbed, the flowerbed is in the bug report. This forces a culture of pre-flight checks, simulation gates, and conservative defaults that feels slow until the day it saves you from a lawsuit.</p>
 
-      <p><strong>Beta is a more dangerous word.</strong> A beta SaaS product can lose data, crash, embarrass the user. A beta robot can hurt someone. The implicit contract of <em>"early access, things will be janky"</em> doesn't survive contact with physical risk. We had to be much more careful about what "early customer" meant. For the mower, an early customer was someone whose lawn we'd scouted, whose expectations we'd carefully managed, and whose installation we'd personally supervised. That's a very different motion from clicking <em>"join the beta."</em></p>
+      <p class="bold-lead"><strong>Beta is a more dangerous word.</strong> A beta SaaS product can lose data, crash, embarrass the user. A beta robot can hurt someone. The implicit contract of <em>"early access, things will be janky"</em> doesn't survive contact with physical risk. We had to be much more careful about what "early customer" meant. For the mower, an early customer was someone whose lawn we'd scouted, whose expectations we'd carefully managed, and whose installation we'd personally supervised. That's a very different motion from clicking <em>"join the beta."</em></p>
 
-      <p><strong>The customer's environment is part of the product surface.</strong> This is the one nobody warned me about. A SaaS product's environment is a browser. A robot's environment is a lawn with three slopes, a tree the GPS doesn't quite see, a fence with a gap the kid leaves open, and a customer who likes to leave the hose stretched across the path. Every one of those is now in scope. Your operating envelope isn't defined by your code; it's defined by the intersection of your code and the messiest version of your customer's site.</p>
+      <p class="bold-lead"><strong>The customer's environment is part of the product surface.</strong> This is the one nobody warned me about. A SaaS product's environment is a browser. A robot's environment is a lawn with three slopes, a tree the GPS doesn't quite see, a fence with a gap the kid leaves open, and a customer who likes to leave the hose stretched across the path. Every one of those is now in scope. Your operating envelope isn't defined by your code; it's defined by the intersection of your code and the messiest version of your customer's site.</p>
 
-      <p><strong>Demos are nearly worthless as predictors.</strong> A demo proves the robot can do the thing once, in a place you've controlled. A product is the robot doing the thing reliably, in a place the customer controls, while you sleep. The gap between those is enormous, and it's where most early robotics companies die. Both products I worked on crossed that gap eventually, but it took longer than any of the early plans assumed it would. It always does.</p>
+      <p class="bold-lead"><strong>Demos are nearly worthless as predictors.</strong> A demo proves the robot can do the thing once, in a place you've controlled. A product is the robot doing the thing reliably, in a place the customer controls, while you sleep. The gap between those is enormous, and it's where most early robotics companies die. Both products I worked on crossed that gap eventually, but it took longer than any of the early plans assumed it would. It always does.</p>
 
-      <p><strong>"Support" is not a cost center, it's a product feature.</strong> When a SaaS user is stuck, they file a ticket and wait. When a robot is stuck, the customer's lawn doesn't get mowed today, and they're standing next to an expensive paperweight feeling stupid. Your remote diagnostics, your teleop fallback, your "phone the robot home for help" flow — these aren't ops infrastructure. They are part of how the product feels to own. Skimp on them and your NPS will quietly bleed out.</p>
+      <p class="bold-lead"><strong>"Support" is not a cost center, it's a product feature.</strong> When a SaaS user is stuck, they file a ticket and wait. When a robot is stuck, the customer's lawn doesn't get mowed today, and they're standing next to an expensive paperweight feeling stupid. Your remote diagnostics, your teleop fallback, your "phone the robot home for help" flow — these aren't ops infrastructure. They are part of how the product feels to own. Skimp on them and your NPS will quietly bleed out.</p>
 
-      <h2>The customer-readiness problem</h2>
+      <h2 id="readiness">The customer-readiness problem</h2>
 
       <p>If I had to pick the single biggest gap between SaaS and robotics 0→1, it would be this: <strong>in SaaS, the customer is usually ready to use the product the moment they sign up. In robotics, the customer is rarely ready</strong>, and figuring out how to make them ready, without turning the sales cycle into a six-month consulting engagement, is most of the job.</p>
 
@@ -526,15 +620,15 @@
         <figcaption>Four kinds of readiness. You will get hurt by each one.</figcaption>
       </figure>
 
-      <p><strong>Site readiness.</strong> Does the physical environment actually support the robot? For the mower, that meant boundary mapping, GPS sky-view, slope checks, obstacle audits. For the MMR, the questions were different but no less load-bearing. Skipping a proper site survey to close a sale faster is the most expensive trade you can make in this business; the cost just shows up later, as a churn or a refund or a unit you have to fly back.</p>
+      <p class="bold-lead"><strong>Site readiness.</strong> Does the physical environment actually support the robot? For the mower, that meant boundary mapping, GPS sky-view, slope checks, obstacle audits. For the MMR, the questions were different but no less load-bearing. Skipping a proper site survey to close a sale faster is the most expensive trade you can make in this business; the cost just shows up later, as a churn or a refund or a unit you have to fly back.</p>
 
-      <p><strong>Operator readiness.</strong> Someone on the customer's side has to know what to do when the robot does something unexpected. They don't need to be a roboticist, but they need a mental model. If you can't explain the failure modes in language a non-technical operator can act on, you're going to get 2 a.m. calls. Treat operator training as part of installation, not as documentation you email afterwards.</p>
+      <p class="bold-lead"><strong>Operator readiness.</strong> Someone on the customer's side has to know what to do when the robot does something unexpected. They don't need to be a roboticist, but they need a mental model. If you can't explain the failure modes in language a non-technical operator can act on, you're going to get 2 a.m. calls. Treat operator training as part of installation, not as documentation you email afterwards.</p>
 
-      <p><strong>Expectation readiness.</strong> What does <em>"autonomous"</em> mean to this customer? Most of the time, the customer hears the word and pattern-matches to a sci-fi mental model where the robot figures everything out. Setting honest expectations about the operating envelope, the recovery process, and the role of human-in-the-loop is something you have to do explicitly and repeatedly, ideally before the contract is signed. The customers who churn are usually the ones whose expectations were never reset.</p>
+      <p class="bold-lead"><strong>Expectation readiness.</strong> What does <em>"autonomous"</em> mean to this customer? Most of the time, the customer hears the word and pattern-matches to a sci-fi mental model where the robot figures everything out. Setting honest expectations about the operating envelope, the recovery process, and the role of human-in-the-loop is something you have to do explicitly and repeatedly, ideally before the contract is signed. The customers who churn are usually the ones whose expectations were never reset.</p>
 
-      <p><strong>Recovery readiness.</strong> When, not if, something goes wrong — a stuck robot, a misbehaving sensor, a network outage during an update — what's the playbook? Who calls whom? How fast can you teleoperate in? Can you get a replacement unit on a truck within 24 hours? These are usually thought of as ops problems and solved last. <em>They should be designed first.</em></p>
+      <p class="bold-lead"><strong>Recovery readiness.</strong> When, not if, something goes wrong — a stuck robot, a misbehaving sensor, a network outage during an update — what's the playbook? Who calls whom? How fast can you teleoperate in? Can you get a replacement unit on a truck within 24 hours? These are usually thought of as ops problems and solved last. <em>They should be designed first.</em></p>
 
-      <h2>What I'd actually do differently</h2>
+      <h2 id="different">What I'd actually do differently</h2>
 
       <p>If I were starting a robotics 0→1 today, here's what I'd front-load that I didn't front-load enough the first two times.</p>
 
@@ -550,7 +644,7 @@
 
       <p>And respect the cost of iteration. You don't get to ship and learn at SaaS speeds. You learn instead through simulation, through hardware-in-the-loop, through staged rollouts to a few customers who actually want to be partners. The teams that win are the ones that build the simulation and rollout infrastructure as a first-class part of the product, not as a side project squeezed in between sprints.</p>
 
-      <h2>Closing</h2>
+      <h2 id="closing">Closing</h2>
 
       <p>The thing nobody tells you about robotics 0→1 is that you're not really shipping a robot. <em>You're shipping a small, weird operations company that happens to include a robot.</em> The hardware is the most visible part, but the actual playbook lives in the survey, the install, the telemetry, the teleop, and the support muscle around it.</p>
 
@@ -576,28 +670,69 @@
   </footer>
 
   <script>
-    // Reading progress bar
-    const prog = document.getElementById('prog');
+    /* ============ READING PROGRESS + TIME REMAINING ============ */
+    const prog       = document.getElementById('prog');
+    const readTime   = document.getElementById('readTime');
+    const readTimeV  = document.getElementById('readTimeVal');
+    const TOTAL_MIN  = 9;                      // estimated read time
+
     function updateProg() {
       const h = document.documentElement;
-      const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
-      prog.style.width = `${Math.min(100, scrolled * 100)}%`;
+      const max = h.scrollHeight - h.clientHeight;
+      const ratio = max > 0 ? h.scrollTop / max : 0;
+      prog.style.width = `${Math.min(100, ratio * 100)}%`;
+
+      // Time remaining (ceil to whole minutes; show "<1 min" near end)
+      const remaining = TOTAL_MIN * (1 - ratio);
+      let displayed;
+      if (remaining < 1) displayed = '<1';
+      else displayed = Math.ceil(remaining);
+      readTimeV.textContent = displayed;
+
+      // Show pill once user has scrolled past the hero (>200px)
+      readTime.classList.toggle('show', h.scrollTop > 200 && ratio < 0.98);
     }
     document.addEventListener('scroll', updateProg, { passive: true });
     updateProg();
 
-    // Reveal SVG figures on scroll
-    const io = new IntersectionObserver((entries) => {
+    /* ============ FIGURE & H2 & BOLD-LEAD REVEAL (single observer) ============ */
+    const revealIO = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           e.target.classList.add('in-view');
-          io.unobserve(e.target);
+          revealIO.unobserve(e.target);
         }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.figure-anim').forEach(el => io.observe(el));
+    document.querySelectorAll('.figure-anim, .article__body h2, .article__body p.bold-lead')
+      .forEach(el => revealIO.observe(el));
 
-    // UTC clock
+    /* ============ FLOATING TOC · active-section tracking ============ */
+    const toc      = document.getElementById('toc');
+    const tocItems = document.querySelectorAll('.toc__item');
+    const sections = ['transfers','breaks','readiness','different','closing']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    // Show TOC after scrolling past hero
+    function updateTocVisibility() {
+      toc.classList.toggle('show', window.scrollY > 240);
+    }
+    document.addEventListener('scroll', updateTocVisibility, { passive: true });
+    updateTocVisibility();
+
+    // Highlight section currently centered in viewport
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          tocItems.forEach(item => item.classList.toggle('active', item.dataset.section === id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+    sections.forEach(s => sectionIO.observe(s));
+
+    /* ============ UTC clock ============ */
     function pad(n){return n.toString().padStart(2,'0');}
     function tick() {
       const d = new Date();
