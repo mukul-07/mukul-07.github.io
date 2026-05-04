@@ -149,14 +149,6 @@
     transition: transform .45s cubic-bezier(0.16,1,0.3,1);
   }
   .build:hover .build__shot { transform: scale(1.018); }
-  .build__visual-mark--badge {
-    position: absolute; top: 14px; left: 14px; z-index: 3;
-    font: 600 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 7px 10px; border-radius: 6px;
-    background: rgba(5,8,22,0.85); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: var(--cyan); text-shadow: none; opacity: 1;
-  }
   .build__body { padding: 36px 36px 32px; display: flex; flex-direction: column; gap: 0; }
   .build__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
   .build__name { font: 700 22px/1.15 var(--sans); letter-spacing: -0.015em; color: var(--ink); }
@@ -236,6 +228,7 @@
   @media (max-width: 1000px) {
     .build { grid-template-columns: 1fr; }
     .build__visual { aspect-ratio: 16/9; border-right: none; border-bottom: 1px solid var(--rule); }
+    .build__visual--shot { aspect-ratio: 16/9; padding: 12px; }
     .build__visual-mark { font-size: 56px; }
     .build__body { padding: 28px 24px 24px; }
   }
@@ -244,9 +237,18 @@
     .mc-strip .right { display: none; }
     .page { padding: 56px 22px 40px; }
     .hero__title { font-size: 32px; }
+    .build__visual--shot { padding: 10px; }
     .build__name { font-size: 19px; }
-    .build__meta { grid-template-columns: 1fr; gap: 4px 0; }
+    .build__head { gap: 8px; margin-bottom: 4px; }
+    .build__status { padding: 5px 8px; font-size: 9px; }
+    .build__tagline { font-size: 17px; }
+    .build__desc { font-size: 13.5px; line-height: 1.6; }
+    .build__meta { grid-template-columns: 1fr; gap: 4px 0; padding: 14px 0; margin-bottom: 16px; }
     .build__meta dt { padding-top: 8px; }
+    .build__meta dt:first-child { padding-top: 0; }
+    .build__actions { gap: 8px; }
+    .build__btn { padding: 10px 12px; font-size: 11px; letter-spacing: 0.06em; }
+    .build__btn--ghost { word-break: break-all; }
     .bench { padding: 24px 20px; }
     .bench__item { grid-template-columns: 1fr; gap: 4px; }
     .bench__when { text-align: left; }
@@ -334,7 +336,6 @@
       <article class="build">
         <div class="build__visual build__visual--shot" style="--shot-bg: #000000;">
           <img class="build__shot" src="/builds/shots/complianceos.png" alt="ComplianceOS landing page" loading="lazy">
-          <div class="build__visual-mark build__visual-mark--badge">CO</div>
         </div>
         <div class="build__body">
           <div class="build__head">
@@ -361,7 +362,6 @@
       <article class="build">
         <div class="build__visual build__visual--shot" style="--shot-bg: #F7F4E9;">
           <img class="build__shot" src="/builds/shots/sales-ops.png" alt="opensource-sales-ops flow diagram" loading="lazy">
-          <div class="build__visual-mark build__visual-mark--badge">SO</div>
         </div>
         <div class="build__body">
           <div class="build__head">
@@ -388,7 +388,6 @@
       <article class="build">
         <div class="build__visual build__visual--shot" style="--shot-bg: #FBF6E9;">
           <img class="build__shot" src="/builds/shots/vantara-farms.png" alt="Vantara Farms storefront" loading="lazy">
-          <div class="build__visual-mark build__visual-mark--badge">VF</div>
         </div>
         <div class="build__body">
           <div class="build__head">
