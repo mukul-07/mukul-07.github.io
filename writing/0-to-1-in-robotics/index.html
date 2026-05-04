@@ -6,9 +6,9 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="theme-color" content="#00D4FF" />
 <title>0→1 in Robotics: what's different, what's the same — Mukul Dharpure</title>
-<meta name="description" content="Notes from launching two commercial robotics products at Flo Mobility — where the SaaS playbook helps, where it breaks, and what to do about it." />
+<meta name="description" content="Notes from owning delivery for two commercial robotics product launches and a string of autonomous-fleet programs at Fortune 500 plants. Where the SaaS playbook helps, where it breaks, and what to do about it." />
 <meta property="og:title" content="0→1 in Robotics: what's different, what's the same" />
-<meta property="og:description" content="Notes from launching two commercial robotics products at Flo Mobility — autonomous lawnmower and the MMR. Where the SaaS playbook helps, where it breaks." />
+<meta property="og:description" content="Five years of commercial robotics: two product launches and autonomous-fleet programs at three Fortune 500 plants on three continents. Where the SaaS playbook helps, where it breaks." />
 <meta property="og:type" content="article" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -315,9 +315,27 @@
     transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
   }
   .fig-timeline.in-view .box-1 { opacity: 1; transform: translateX(0); transition-delay: 0.15s; }
-  .fig-timeline.in-view .box-2 { opacity: 1; transform: translateX(0); transition-delay: 0.45s; }
+  .fig-timeline.in-view .box-2 { opacity: 1; transform: translateX(0); transition-delay: 0.40s; }
+  .fig-timeline.in-view .box-3 { opacity: 1; transform: translateX(0); transition-delay: 0.65s; }
   .fig-timeline .box-text { opacity: 0; transition: opacity 0.5s; }
-  .fig-timeline.in-view .box-text { opacity: 1; transition-delay: 0.7s; }
+  .fig-timeline.in-view .box-text { opacity: 1; transition-delay: 0.9s; }
+
+  /* ============ SVG 4 · DECISION LOG ENTRY ============ */
+  .fig-log .log-row {
+    opacity: 0; transform: translateX(-8px);
+    transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+  }
+  .fig-log.in-view .log-row-1 { opacity: 1; transform: translateX(0); transition-delay: 0.20s; }
+  .fig-log.in-view .log-row-2 { opacity: 1; transform: translateX(0); transition-delay: 0.35s; }
+  .fig-log.in-view .log-row-3 { opacity: 1; transform: translateX(0); transition-delay: 0.50s; }
+  .fig-log.in-view .log-row-4 { opacity: 1; transform: translateX(0); transition-delay: 0.65s; }
+  .fig-log.in-view .log-row-5 { opacity: 1; transform: translateX(0); transition-delay: 0.80s; }
+  .fig-log .log-cursor {
+    fill: var(--cyan);
+    animation: log-blink 1.1s steps(1) infinite;
+  }
+  @keyframes log-blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .fig-log .log-cursor { animation: none; } }
 
   /* ============ SVG 2 · ITERATION CYCLES (with flowing dots) ============ */
   .fig-iter .step { opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s; }
@@ -400,7 +418,7 @@
 <body>
 
   <div class="read-prog"><div class="read-prog__bar" id="prog"></div></div>
-  <div class="read-time" id="readTime">~<span class="v" id="readTimeVal">9</span> min left</div>
+  <div class="read-time" id="readTime">~<span class="v" id="readTimeVal">12</span> min left</div>
 
   <!-- Floating TOC (desktop only) -->
   <nav class="toc" id="toc" aria-label="Article sections">
@@ -449,11 +467,11 @@
     <header class="article__hero">
       <p class="article__eyebrow"><span class="dot"></span>Field note · 01</p>
       <h1 class="article__title">0→1 in Robotics: <em>what's different, what's the same.</em></h1>
-      <p class="article__subtitle">Notes from launching two commercial robotics products at Flo Mobility, and where the SaaS playbook helps, where it breaks, and what to do about it.</p>
+      <p class="article__subtitle">Notes from owning delivery for two commercial product launches and a string of autonomous-fleet programs at Fortune 500 plants. Where the SaaS playbook helps, where it breaks, and what to do about it.</p>
       <div class="article__meta">
         <span><span class="pub-dot"></span> Published <span class="v">May 5, 2026</span></span>
         <span class="sep" style="color: var(--rule-2)">·</span>
-        <span><span class="v">9 min</span> read</span>
+        <span><span class="v">12 min</span> read</span>
         <span class="sep" style="color: var(--rule-2)">·</span>
         <span>by <span class="cyan">Mukul Dharpure</span></span>
       </div>
@@ -461,47 +479,58 @@
 
     <div class="article__body">
 
-      <p class="lead">In about three and a half years at Flo Mobility, I worked on two commercial products from the ground up: an autonomous lawnmower (Nov 2021 – Apr 2023) and the MMR (Apr 2023 – Apr 2025). Different form factors, different customers, different failure modes. But by the second one, I started recognizing the patterns: the places where startup playbooks I'd absorbed from years of reading SaaS post-mortems still worked, and the places where they very loudly didn't.</p>
+      <p class="lead">Across roughly five years of commercial robotics work, I've owned delivery for two product launches and a string of autonomous-fleet programs at Fortune 500 customer sites. The first commercial product was an autonomous lawnmower (Nov 2021 to Apr 2023). The second was an outdoor material-movement robot (Apr 2023 to Apr 2025), which scaled to 35+ units across 10+ cities. After that came autonomous-forklift programs at three Fortune 500 plants in three different industries, on three different continents.</p>
 
-      <p>This is a dump of what I think transfers, what doesn't, and what I'd tell anyone going 0→1 in robotics today — especially around the thing that nobody warns you about, which is <em>customer-readiness.</em></p>
+      <p>Different form factors, different customers, different failure modes. But by the third or fourth deployment I started recognizing the patterns: the places where startup playbooks I'd absorbed from years of reading SaaS post-mortems still worked, and the places where they very loudly didn't.</p>
+
+      <p>This is what I think transfers, what doesn't, and what I'd tell anyone going 0→1 in robotics today — especially around the thing nobody warns you about, which is <em>customer-readiness.</em></p>
 
       <figure class="figure-anim fig-timeline">
         <svg viewBox="0 0 680 200" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t1-title t1-desc">
-          <title id="t1-title">Two robotics products at Flo Mobility, 2021 to 2025</title>
-          <desc id="t1-desc">Autonomous lawnmower from November 2021 to April 2023, then the MMR from April 2023 to April 2025.</desc>
+          <title id="t1-title">Five years of commercial robotics programs</title>
+          <desc id="t1-desc">Autonomous lawnmower November 2021 to April 2023, then a material movement robot April 2023 to April 2025 scaling to 35+ units across 10+ cities, then autonomous forklift programs at three Fortune 500 plants April 2025 to March 2026.</desc>
           <!-- Track baseline -->
           <line x1="40" y1="170" x2="640" y2="170" stroke="rgba(0,212,255,0.18)" stroke-width="1" stroke-dasharray="3 4"/>
           <text x="40" y="190" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="0.5">2021</text>
-          <text x="640" y="190" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="0.5">2025</text>
+          <text x="640" y="190" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="0.5">2026</text>
 
-          <!-- Box 1 · Lawnmower -->
+          <!-- Box 1 · Lawnmower (Nov 2021 – Apr 2023, 17 mo of 53 mo span ≈ 32%) -->
           <g class="box box-1">
-            <rect x="50" y="50" width="225" height="80" rx="6" fill="rgba(0,212,255,0.05)" stroke="rgba(0,212,255,0.45)" stroke-width="1"/>
-            <text x="162.5" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="18" fill="#E8EEFA">Autonomous Lawnmower</text>
-            <text x="162.5" y="103" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#00D4FF" letter-spacing="1">NOV 2021 — APR 2023</text>
-            <text x="162.5" y="156" text-anchor="middle" class="box-text" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1">17 MONTHS · 1ST PRODUCT</text>
-            <circle cx="162.5" cy="170" r="3" fill="#00D4FF"/>
+            <rect x="50" y="50" width="186" height="80" rx="6" fill="rgba(0,212,255,0.05)" stroke="rgba(0,212,255,0.45)" stroke-width="1"/>
+            <text x="143" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#E8EEFA">Autonomous Lawnmower</text>
+            <text x="143" y="102" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="#00D4FF" letter-spacing="1">NOV 2021 — APR 2023</text>
+            <text x="143" y="156" text-anchor="middle" class="box-text" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1">17 MO · 10+ UNITS</text>
+            <circle cx="143" cy="170" r="3" fill="#00D4FF"/>
           </g>
 
-          <!-- Box 2 · MMR -->
+          <!-- Box 2 · MMR (Apr 2023 – Apr 2025, 24 mo ≈ 45%) -->
           <g class="box box-2">
-            <rect x="295" y="50" width="335" height="80" rx="6" fill="rgba(0,212,255,0.10)" stroke="rgba(0,212,255,0.65)" stroke-width="1.2"/>
-            <text x="462" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="18" fill="#E8EEFA">MMR · indoor AMR</text>
-            <text x="462" y="103" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#00D4FF" letter-spacing="1">APR 2023 — APR 2025</text>
-            <text x="462" y="156" text-anchor="middle" class="box-text" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1">24 MONTHS · 2ND PRODUCT · 35+ UNITS</text>
-            <circle cx="462" cy="170" r="3.5" fill="#00D4FF"/>
+            <rect x="244" y="50" width="240" height="80" rx="6" fill="rgba(0,212,255,0.10)" stroke="rgba(0,212,255,0.65)" stroke-width="1.2"/>
+            <text x="364" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#E8EEFA">Material movement robot</text>
+            <text x="364" y="102" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="#00D4FF" letter-spacing="1">APR 2023 — APR 2025</text>
+            <text x="364" y="156" text-anchor="middle" class="box-text" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1">24 MO · 35+ UNITS · 10+ CITIES</text>
+            <circle cx="364" cy="170" r="3.5" fill="#00D4FF"/>
+          </g>
+
+          <!-- Box 3 · Forklifts (Apr 2025 – Mar 2026, 11 mo ≈ 21%) -->
+          <g class="box box-3">
+            <rect x="492" y="50" width="138" height="80" rx="6" fill="rgba(0,212,255,0.07)" stroke="rgba(0,212,255,0.50)" stroke-width="1"/>
+            <text x="561" y="80" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="16" fill="#E8EEFA">Forklift programs</text>
+            <text x="561" y="102" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="#00D4FF" letter-spacing="1">2025 — 2026</text>
+            <text x="561" y="156" text-anchor="middle" class="box-text" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1">3 F500 PLANTS · 3 COUNTRIES</text>
+            <circle cx="561" cy="170" r="3" fill="#00D4FF"/>
           </g>
         </svg>
-        <figcaption>Two products, four years. Each one taught me which playbooks travel and which don't.</figcaption>
+        <figcaption>Two products, three Fortune 500 fleet programs, five years. Each one taught me which playbooks travel and which don't.</figcaption>
       </figure>
 
       <h2 id="transfers">The parts that transfer cleanly</h2>
 
       <p>A lot of the standard advice still holds. Talk to customers before you build. Build the smallest thing that delivers value. Ship early, instrument everything, decide based on data instead of vibes. Keep the team small and the feedback loop tight. None of this becomes wrong just because there's a chassis involved.</p>
 
-      <p>The software layers, in particular, behave like software. The fleet management dashboard, the telemetry pipeline, the OTA update system, the customer portal, the sales tooling — these all benefit from the same iterative, ship-fast culture you'd apply to any product. When I was building Mission Control, the React/Socket.IO/Redis side of the stack moved at SaaS speeds because that's what it actually was: a SaaS layer wrapped around a fleet of physical things.</p>
+      <p>The software layers, in particular, behave like software. The fleet management dashboard, the telemetry pipeline, the OTA update system, the customer portal, the sales tooling — these all benefit from the same iterative, ship-fast culture you'd apply to any product. Our fleet management system, built by a small dev team, moved at SaaS speeds because that's what it actually was: a software layer wrapped around a fleet of physical things.</p>
 
-      <p>You also get the meta-benefits: observability, feature flags, gradual rollouts. We could ship a new path-planner version to one robot, watch what happened, then promote it. That's classic deployment hygiene applied to autonomy code, and it works.</p>
+      <p>You also get the meta-benefits: observability, feature flags, gradual rollouts. We could push a new path-planner version to one robot, watch what happened, then promote across the fleet. That's classic deployment hygiene applied to autonomy code, and it works.</p>
 
       <p>So if you're coming from SaaS into robotics, you're not starting from zero. About forty percent of the muscle memory transfers.</p>
 
@@ -562,19 +591,19 @@
 
       <p class="bold-lead"><strong>"Move fast and break things" stops being a metaphor.</strong> Things with wheels, motors, and inertia can break themselves, the customer's property, or a person. There is no robotics equivalent of <code style="font-family: var(--mono); font-size: 0.92em; color: var(--cyan); background: var(--cyan-soft); padding: 1px 6px; border-radius: 3px;">git revert</code>. Once a heavy machine has rolled into a flowerbed, the flowerbed is in the bug report. This forces a culture of pre-flight checks, simulation gates, and conservative defaults that feels slow until the day it saves you from a lawsuit.</p>
 
-      <p class="bold-lead"><strong>Beta is a more dangerous word.</strong> A beta SaaS product can lose data, crash, embarrass the user. A beta robot can hurt someone. The implicit contract of <em>"early access, things will be janky"</em> doesn't survive contact with physical risk. We had to be much more careful about what "early customer" meant. For the mower, an early customer was someone whose lawn we'd scouted, whose expectations we'd carefully managed, and whose installation we'd personally supervised. That's a very different motion from clicking <em>"join the beta."</em></p>
+      <p class="bold-lead"><strong>Beta is a more dangerous word.</strong> A beta SaaS product can lose data, crash, embarrass the user. A beta robot can hurt someone. The implicit contract of <em>"early access, things will be janky"</em> doesn't survive contact with physical risk. We had to be much more careful about what "early customer" meant. For the lawnmower, an early customer was someone whose site we'd scouted, whose expectations we'd carefully managed, and whose installation we'd personally supervised. That's a very different motion from clicking <em>"join the beta."</em></p>
 
-      <p class="bold-lead"><strong>The customer's environment is part of the product surface.</strong> This is the one nobody warned me about. A SaaS product's environment is a browser. A robot's environment is a lawn with three slopes, a tree the GPS doesn't quite see, a fence with a gap the kid leaves open, and a customer who likes to leave the hose stretched across the path. Every one of those is now in scope. Your operating envelope isn't defined by your code; it's defined by the intersection of your code and the messiest version of your customer's site.</p>
+      <p class="bold-lead"><strong>The customer's environment is part of the product surface.</strong> This is the one nobody warned me about. A SaaS product's environment is a browser. A robot's environment is a lawn with three slopes, a tree the GPS doesn't quite see, a fence with a gap the kid leaves open, and a customer who likes to leave the hose stretched across the path. Or, on an automotive plant floor: lighting that changes every shift, a forklift driver who parks in the docking lane, a roll cage that arrives 20 cm off-spec. Every one of those is now in scope. Your operating envelope isn't defined by your code; it's defined by the intersection of your code and the messiest version of your customer's site.</p>
 
-      <p class="bold-lead"><strong>Demos are nearly worthless as predictors.</strong> A demo proves the robot can do the thing once, in a place you've controlled. A product is the robot doing the thing reliably, in a place the customer controls, while you sleep. The gap between those is enormous, and it's where most early robotics companies die. Both products I worked on crossed that gap eventually, but it took longer than any of the early plans assumed it would. It always does.</p>
+      <p class="bold-lead"><strong>Demos are nearly worthless as predictors.</strong> A demo proves the robot can do the thing once, in a place you've controlled. A product is the robot doing the thing reliably, in a place the customer controls, while you sleep. The gap between those is enormous, and it's where most early robotics companies die. The site acceptance test (SAT) is where that gap gets measured. By the time we delivered an autonomous forklift to a Fortune 500 plant, every fault mode, recovery sequence, and emergency stop had been signed off on the customer's actual floor, at production tempo, for two automated shifts. A demo on a clean test pad tells you nothing about a robot doing 14 trips per hour for 16 hours a day under real safety constraints.</p>
 
-      <p class="bold-lead"><strong>"Support" is not a cost center, it's a product feature.</strong> When a SaaS user is stuck, they file a ticket and wait. When a robot is stuck, the customer's lawn doesn't get mowed today, and they're standing next to an expensive paperweight feeling stupid. Your remote diagnostics, your teleop fallback, your "phone the robot home for help" flow — these aren't ops infrastructure. They are part of how the product feels to own. Skimp on them and your NPS will quietly bleed out.</p>
+      <p class="bold-lead"><strong>"Support" is not a cost center, it's a product feature.</strong> When a SaaS user is stuck, they file a ticket and wait. When a robot is stuck, the customer's production line doesn't move today, and they're standing next to an expensive paperweight feeling stupid. Your remote diagnostics, your teleop fallback, your "phone the robot home for help" flow — these aren't ops infrastructure. They are part of how the product feels to own. Skimp on them and your NPS will quietly bleed out.</p>
 
       <h2 id="readiness">The customer-readiness problem</h2>
 
       <p>If I had to pick the single biggest gap between SaaS and robotics 0→1, it would be this: <strong>in SaaS, the customer is usually ready to use the product the moment they sign up. In robotics, the customer is rarely ready</strong>, and figuring out how to make them ready, without turning the sales cycle into a six-month consulting engagement, is most of the job.</p>
 
-      <p>There are at least four kinds of readiness, and you will get hurt by each one.</p>
+      <p>I learned this slowly across two product launches and 10+ customer cities. Then I learned it again, faster and more expensively, deploying autonomous forklifts at three Fortune 500 plants in a single year, in three different industries and three different countries. Different scales, different stakes, but the same four kinds of gap show up every time.</p>
 
       <figure class="figure-anim fig-readiness">
         <svg viewBox="0 0 680 320" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t3-title t3-desc">
@@ -620,9 +649,9 @@
         <figcaption>Four kinds of readiness. You will get hurt by each one.</figcaption>
       </figure>
 
-      <p class="bold-lead"><strong>Site readiness.</strong> Does the physical environment actually support the robot? For the mower, that meant boundary mapping, GPS sky-view, slope checks, obstacle audits. For the MMR, the questions were different but no less load-bearing. Skipping a proper site survey to close a sale faster is the most expensive trade you can make in this business; the cost just shows up later, as a churn or a refund or a unit you have to fly back.</p>
+      <p class="bold-lead"><strong>Site readiness.</strong> Does the physical environment actually support the robot? For the mower, that meant boundary mapping, GPS sky-view, slope checks, obstacle audits. For the forklift, it meant lane widths, dock heights, lighting consistency, network coverage in concrete-walled corners, and integration with the existing safety perimeter. Skipping a proper site survey to close a sale faster is the most expensive trade you can make in this business; the cost just shows up later, as a churn or a refund or a unit you have to fly back. A 15-day deployment of two production-ready forklifts at a heavy-equipment plant only worked because the survey was airtight before the first commit.</p>
 
-      <p class="bold-lead"><strong>Operator readiness.</strong> Someone on the customer's side has to know what to do when the robot does something unexpected. They don't need to be a roboticist, but they need a mental model. If you can't explain the failure modes in language a non-technical operator can act on, you're going to get 2 a.m. calls. Treat operator training as part of installation, not as documentation you email afterwards.</p>
+      <p class="bold-lead"><strong>Operator readiness.</strong> Someone on the customer's side has to know what to do when the robot does something unexpected. They don't need to be a roboticist, but they need a mental model. If you can't explain the failure modes in language a non-technical operator can act on, you're going to get 2 a.m. calls. Treat operator training as part of installation, not as documentation you email afterwards. On every Fortune 500 deployment I've run, the customer's shift supervisor had hands-on time with our pendant before the robot ever ran live.</p>
 
       <p class="bold-lead"><strong>Expectation readiness.</strong> What does <em>"autonomous"</em> mean to this customer? Most of the time, the customer hears the word and pattern-matches to a sci-fi mental model where the robot figures everything out. Setting honest expectations about the operating envelope, the recovery process, and the role of human-in-the-loop is something you have to do explicitly and repeatedly, ideally before the contract is signed. The customers who churn are usually the ones whose expectations were never reset.</p>
 
@@ -636,22 +665,75 @@
 
       <p>Define the operating envelope brutally and publish it. Slopes up to X degrees, GPS visibility above Y, temperatures between A and B, obstacles larger than Z must be marked. <strong>Customers respect honesty about limits more than they respect optimism.</strong> And it gives your engineers a clean target to harden against.</p>
 
+      <p>Hold the line on standardization. The hardest call I've made was holding a tier-1 construction customer to three standard payload trims when their procurement team wanted bespoke. The bespoke trim would have closed the deal in week 2. The three standard trims kept us shippable in week 12, and across the next ten customers after that. Bespoke doesn't scale; standardization is product, customization is consulting. <em>Say no early.</em></p>
+
       <p>Build the unhappy paths first, or at least early. The day-1 demo is the happy path. The day-180 retention is the unhappy path. Recovery, teleop, fault diagnosis, and remote intervention should not be v2 features. They are v1 features, dressed in different clothes.</p>
 
       <p>Treat telemetry as non-negotiable from the very first deployed unit. You cannot debug a robot you cannot see. Every sensor stream, every plan, every failure mode should be retrievable after the fact. The first time you have to ask a customer <em>"can you describe what the robot did?"</em> should also be the last.</p>
 
       <p>Assume the teleoperator is part of v1. For most autonomy products, full autonomy is a destination, not a starting point. Plan for a human in the loop — remote, on-call, well-tooled — and design the product around that being normal, not embarrassing. The companies that pretend they're more autonomous than they are tend to ship worse products than the ones that admit they aren't.</p>
 
+      <p>Keep a decision log. Most of what kills 0→1 robotics companies isn't the technical bug; it's the decision that should have been made in week 1 and was instead deferred until week 12. Write down what you decided, why, and what you're explicitly choosing <em>not</em> to do. The hardest decisions to defend later are the ones you never wrote down.</p>
+
+      <figure class="figure-anim fig-log">
+        <svg viewBox="0 0 680 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="t4-title t4-desc">
+          <title id="t4-title">A decision log entry</title>
+          <desc id="t4-desc">A sample decision log entry recording date, the decision, why it was made, what is explicitly not being done, and the owner.</desc>
+
+          <!-- Card -->
+          <rect x="40" y="20" width="600" height="240" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/>
+
+          <!-- Header strip -->
+          <rect x="40" y="20" width="600" height="38" rx="8" fill="rgba(0,212,255,0.08)"/>
+          <rect x="40" y="50" width="600" height="8" fill="rgba(0,212,255,0.08)"/>
+          <text x="60" y="44" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="2">DECISION LOG · ENTRY 023</text>
+          <text x="620" y="44" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1">PRODUCT</text>
+
+          <!-- Row 1 · Date -->
+          <g class="log-row log-row-1">
+            <text x="60" y="90" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">DATE</text>
+            <text x="180" y="90" font-family="Instrument Serif, serif" font-style="italic" font-size="15" fill="#E8EEFA">2024 · Q1</text>
+          </g>
+
+          <!-- Row 2 · Decision -->
+          <g class="log-row log-row-2">
+            <text x="60" y="124" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">DECISION</text>
+            <text x="180" y="124" font-family="Instrument Serif, serif" font-style="italic" font-size="15" fill="#E8EEFA">Hold to 3 standard payload trims.</text>
+          </g>
+
+          <!-- Row 3 · Why -->
+          <g class="log-row log-row-3">
+            <text x="60" y="158" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">WHY</text>
+            <text x="180" y="158" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#B5BFD9">Bespoke trims don't scale. Three standard trims keep us</text>
+            <text x="180" y="178" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#B5BFD9">shippable across the next ten customers.</text>
+          </g>
+
+          <!-- Row 4 · Not doing -->
+          <g class="log-row log-row-4">
+            <text x="60" y="212" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">NOT DOING</text>
+            <text x="180" y="212" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#B5BFD9">Custom trim work for any single customer.</text>
+          </g>
+
+          <!-- Row 5 · Owner -->
+          <g class="log-row log-row-5">
+            <text x="60" y="244" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">OWNER</text>
+            <text x="180" y="244" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#B5BFD9">Product</text>
+            <rect class="log-cursor" x="232" y="232" width="8" height="14"/>
+          </g>
+        </svg>
+        <figcaption>The hardest decisions to defend later are the ones you never wrote down.</figcaption>
+      </figure>
+
       <p>And respect the cost of iteration. You don't get to ship and learn at SaaS speeds. You learn instead through simulation, through hardware-in-the-loop, through staged rollouts to a few customers who actually want to be partners. The teams that win are the ones that build the simulation and rollout infrastructure as a first-class part of the product, not as a side project squeezed in between sprints.</p>
 
       <h2 id="closing">Closing</h2>
 
-      <p>The thing nobody tells you about robotics 0→1 is that you're not really shipping a robot. <em>You're shipping a small, weird operations company that happens to include a robot.</em> The hardware is the most visible part, but the actual playbook lives in the survey, the install, the telemetry, the teleop, and the support muscle around it.</p>
+      <p>The thing nobody tells you about robotics 0→1 is that you're not really shipping a robot. <em>You're shipping a small, weird operations company that happens to include a robot.</em> The hardware is the most visible part, but the actual playbook lives in the survey, the install, the SAT, the telemetry, the teleop, and the support muscle around it.</p>
 
       <p>The SaaS playbook gets you about forty percent of the way there. The other sixty is figuring out — slowly, painfully, and usually in production — that the customer's environment is your real codebase, and customer-readiness is the real loading screen.</p>
 
       <blockquote class="pullquote">
-        If you're going 0→1 on a robot right now, my one piece of advice would be: spend at least as much time on the customer-readiness side of the product as you do on the autonomy side. <em>The robot is the easy part. Everything around it is where the company actually lives.</em>
+        If you're thinking about going 0→1 on a robot right now, my one piece of advice would be: spend at least as much time on the customer-readiness side of the product as you do on the autonomy side. <em>The robot is the easy part. Everything around it is where the company actually lives.</em>
       </blockquote>
 
     </div>
@@ -674,7 +756,7 @@
     const prog       = document.getElementById('prog');
     const readTime   = document.getElementById('readTime');
     const readTimeV  = document.getElementById('readTimeVal');
-    const TOTAL_MIN  = 9;                      // estimated read time
+    const TOTAL_MIN  = 12;                     // estimated read time
 
     function updateProg() {
       const h = document.documentElement;
