@@ -246,6 +246,18 @@
     color: var(--muted); padding: 5px 8px; background: rgba(5,8,22,0.7);
     border: 1px dashed var(--rule); border-radius: 100px; z-index: 2;
   }
+  .trek__photo img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0;
+    filter: saturate(0.95) brightness(0.92);
+    transition: transform .45s cubic-bezier(0.16,1,0.3,1), filter .35s;
+  }
+  .trek:hover .trek__photo img { transform: scale(1.04); filter: saturate(1) brightness(1); }
+  /* Hide the placeholder gradient when a real photo is present */
+  .trek__photo:has(img)::before {
+    background: linear-gradient(180deg, rgba(5,8,22,0) 60%, rgba(5,8,22,0.55) 100%);
+    z-index: 1;
+  }
   .trek__body { padding: 16px 18px; }
   .trek__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; gap: 10px; }
   .trek__name { font: 600 15px/1.25 var(--sans); letter-spacing: -0.005em; color: var(--ink); }
@@ -524,46 +536,43 @@
     <section class="section">
       <div class="section__head">
         <h2 class="section__title">Trek log</h2>
-        <p class="section__sub">03 entries · ridgelines that reset the brain</p>
+        <p class="section__sub">03 entries · Himalayan ridgelines that reset the brain</p>
       </div>
       <div class="treks">
         <article class="trek">
           <div class="trek__photo">
-            <span class="icon">⛰</span>
-            <span class="ph">Photo · add later</span>
+            <img loading="lazy" src="/off-mission/treks/valley-of-flowers.jpg" alt="Valley of Flowers, Uttarakhand">
           </div>
           <div class="trek__body">
             <div class="trek__head">
-              <span class="trek__name">— add trek name</span>
-              <span class="trek__date">— date</span>
+              <span class="trek__name">Valley of Flowers</span>
+              <span class="trek__date">Aug 2022</span>
             </div>
-            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+            <p class="trek__meta">Uttarakhand · 14,000+ ft · 6 days, 38 km · alpine blooms only show up Jul–Sep, the whole valley flips colour overnight.</p>
           </div>
         </article>
         <article class="trek">
           <div class="trek__photo">
-            <span class="icon">⛰</span>
-            <span class="ph">Photo · add later</span>
+            <img loading="lazy" src="/off-mission/treks/kedarnath.jpg" alt="Kedarnath temple yatra">
           </div>
           <div class="trek__body">
             <div class="trek__head">
-              <span class="trek__name">— add trek name</span>
-              <span class="trek__date">— date</span>
+              <span class="trek__name">Kedarnath Yatra</span>
+              <span class="trek__date">Jun 2023</span>
             </div>
-            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+            <p class="trek__meta">Uttarakhand · 11,755 ft · Gaurikund → temple, 18 km steep one-way, 7 hours up. The kind of climb that resets what "tired" means.</p>
           </div>
         </article>
         <article class="trek">
           <div class="trek__photo">
-            <span class="icon">⛰</span>
-            <span class="ph">Photo · add later</span>
+            <img loading="lazy" src="/off-mission/treks/hemkund-sahib.jpg" alt="Shri Hemkund Sahib Ji Yatra">
           </div>
           <div class="trek__body">
             <div class="trek__head">
-              <span class="trek__name">— add trek name</span>
-              <span class="trek__date">— date</span>
+              <span class="trek__name">Hemkund Sahib Ji</span>
+              <span class="trek__date">Sep 2023</span>
             </div>
-            <p class="trek__meta"><span class="ph">— region · altitude · note · what stuck</span></p>
+            <p class="trek__meta">Uttarakhand · 14,200 ft · 19 km via Govindghat → Ghangaria. Glacial lake at the top, stone steps the whole way, thin cold air.</p>
           </div>
         </article>
       </div>
