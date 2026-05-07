@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#00D4FF" />
+<title>Don't Guess. Let the Customer Tell You. — Mukul Dharpure</title>
+<meta name="description" content="Notes on building robotics observability without inventing the detection system the customer should own." />
+<meta property="og:title" content="Don't Guess. Let the Customer Tell You." />
+<meta property="og:description" content="Why I shipped a configurable rule framework instead of an ML-based anomaly detector — and why most robotics observability products are about to build the wrong thing here." />
+<meta property="og:type" content="article" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space:    #050816;
+    --space-2:  #0A1228;
+    --space-3:  #0F1A33;
+    --ink:      #E8EEFA;
+    --ink-dim:  #B5BFD9;
+    --reading:  #CDD5E8;
+    --muted:    #6B7A99;
+    --rule:     rgba(232, 238, 250, 0.10);
+    --rule-2:   rgba(232, 238, 250, 0.22);
+    --cyan:     #00D4FF;
+    --cyan-2:   #7FE7FF;
+    --cyan-glow:rgba(0, 212, 255, 0.40);
+    --cyan-soft:rgba(0, 212, 255, 0.10);
+    --cyan-mid: rgba(0, 212, 255, 0.30);
+    --green:    #00E676;
+    --amber:    #FFB020;
+    --coral:    #FF7A45;
+    --coral-soft: rgba(255, 122, 69, 0.10);
+    --coral-mid:  rgba(255, 122, 69, 0.40);
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--space); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--cyan); color: var(--space); }
+
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.40), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.30), transparent),
+      radial-gradient(2px 2px at 65% 20%, rgba(0,212,255,0.5), transparent),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.30), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.50), transparent),
+      radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.40), transparent);
+    opacity: 0.6;
+  }
+
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: pt-fade-out 220ms cubic-bezier(0.4, 0.0, 0.6, 1) both; }
+  ::view-transition-new(root) { animation: pt-fade-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes pt-fade-out { to { opacity: 0; } }
+  @keyframes pt-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes page-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  body { animation: page-rise 500ms cubic-bezier(0.16, 1, 0.3, 1); }
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+
+  /* READING PROGRESS */
+  .read-prog { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 100; background: rgba(232,238,250,0.06); }
+  .read-prog__bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--cyan-2)); box-shadow: 0 0 8px var(--cyan-glow); transition: width .15s ease-out; }
+  .read-time { position: fixed; top: 14px; right: 18px; z-index: 99; font: 500 10px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; background: rgba(5,8,22,0.82); backdrop-filter: blur(8px); border: 1px solid var(--rule); border-radius: 100px; opacity: 0; transition: opacity .35s; pointer-events: none; }
+  .read-time.show { opacity: 1; }
+  .read-time .v { color: var(--cyan); font-weight: 600; }
+  @media (max-width: 1100px) { .read-time { display: none; } }
+
+  /* TOC */
+  .toc { position: fixed; top: 50%; right: 28px; transform: translateY(-50%); z-index: 40; pointer-events: none; opacity: 0; transition: opacity .4s; max-width: 200px; }
+  .toc.show { opacity: 1; pointer-events: auto; }
+  .toc__head { font: 500 9px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; padding-left: 14px; }
+  .toc__list { list-style: none; padding: 0; margin: 0; }
+  .toc__item { display: flex; align-items: center; gap: 10px; padding: 8px 0 8px 14px; border-left: 1px solid var(--rule); font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--muted); cursor: pointer; transition: color .25s, border-color .25s, padding-left .25s; text-decoration: none; position: relative; }
+  .toc__item:hover { color: var(--ink-dim); }
+  .toc__item.active { color: var(--cyan); border-left-color: var(--cyan); padding-left: 18px; }
+  .toc__item.active::before { content: ""; position: absolute; left: -4px; top: 50%; transform: translateY(-50%); width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+  .toc__num { color: var(--cyan); font-weight: 600; opacity: 0.7; flex-shrink: 0; }
+  .toc__item.active .toc__num { opacity: 1; }
+  @media (max-width: 1280px) { .toc { display: none; } }
+
+  /* MISSION STRIP + NAV */
+  .mc-strip { position: relative; z-index: 5; background: var(--space-2); color: var(--ink-dim); border-bottom: 1px solid var(--rule); font: 500 11px/1 var(--mono); letter-spacing: 0.08em; padding: 10px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; text-transform: uppercase; }
+  .mc-strip .key { color: var(--muted); margin-right: 6px; font-size: 10px; }
+  .mc-strip .v { color: var(--ink); }
+  .mc-strip .v.cyan { color: var(--cyan); }
+  .mc-strip .v.green { color: var(--green); }
+  .mc-strip .sep { color: var(--rule-2); }
+  .mc-strip .live { display: inline-flex; align-items: center; gap: 8px; }
+  .mc-strip .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .mc-strip .right { margin-left: auto; }
+
+  .nav { position: relative; z-index: 65; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
+  .nav__inner { max-width: 1200px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .nav__brand { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--mono); letter-spacing: 0.04em; }
+  .nav__brand-mark { width: 28px; height: 28px; background: var(--cyan); color: var(--space); border-radius: 6px; display: flex; align-items: center; justify-content: center; font: 700 11px/1 var(--mono); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__links { display: flex; gap: 28px; font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .nav__links a { color: var(--muted); transition: color .2s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
+  .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 16px; border-radius: 6px; background: var(--cyan); color: var(--space); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__btn:hover { background: var(--ink); }
+  /* Mobile hamburger + drawer (shared across pages) */
+  .nav__hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 36px; height: 36px; background: transparent; border: 1px solid var(--rule-2, rgba(232,238,250,0.22)); border-radius: 6px; padding: 8px; cursor: pointer; transition: border-color .2s; }
+  .nav__hamburger:hover { border-color: var(--cyan); }
+  .nav__hamburger span { display: block; width: 100%; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform .25s, opacity .2s; transform-origin: center; }
+  .nav__hamburger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav__hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav__hamburger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .nav__drawer { display: none; position: fixed; left: 0; right: 0; top: 0; z-index: 60; background: rgba(5,8,22,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--rule); padding: 64px 24px 24px; box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6); }
+  .nav__drawer.is-open { display: block; animation: drawer-down .25s ease-out; }
+  @keyframes drawer-down { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .nav__drawer ul { list-style: none; padding: 0; margin: 0; }
+  .nav__drawer li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; font: 500 13px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-dim); border-bottom: 1px solid var(--rule); transition: color .2s; }
+  .nav__drawer li:last-child a { border-bottom: none; }
+  .nav__drawer li a:hover, .nav__drawer li a.now { color: var(--cyan); }
+  .nav__drawer li a .num { font-size: 10px; color: var(--muted); }
+
+  /* ARTICLE LAYOUT */
+  .article { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 56px 32px 48px; }
+  .article__back { display: inline-flex; align-items: center; gap: 8px; font: 500 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-bottom: 36px; transition: gap .25s, color .2s; }
+  .article__back:hover { gap: 14px; color: var(--cyan); }
+  .article__back-arrow { display: inline-block; transition: transform .25s; }
+
+  .article__hero { padding-bottom: 36px; border-bottom: 1px solid var(--rule); margin-bottom: 48px; }
+  .article__eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 28px; padding: 7px 14px; background: var(--cyan-soft); border: 1px solid var(--cyan-mid); border-radius: 100px; }
+  .article__eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: blink 2s infinite; }
+  .article__title { font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 5vw, 60px); letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 20px; max-width: 760px; }
+  .article__title em { font-style: italic; color: var(--cyan); }
+  .article__subtitle { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 21px; line-height: 1.55; color: var(--ink-dim); margin-bottom: 32px; max-width: 660px; }
+  .article__meta { display: flex; gap: 22px; flex-wrap: wrap; font: 500 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); align-items: center; }
+  .article__meta .v { color: var(--ink); }
+  .article__meta .cyan { color: var(--cyan); }
+  .article__meta .pub-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: blink 2s infinite; display: inline-block; margin-right: 4px; }
+
+  .article__body { font-family: var(--serif); font-weight: 400; font-size: 19px; line-height: 1.7; color: var(--reading); max-width: 660px; margin: 0 auto; letter-spacing: 0; }
+  .article__body strong { color: var(--ink); font-weight: 600; }
+  .article__body em { font-style: italic; }
+  .article__body a { color: var(--cyan); border-bottom: 1px solid var(--cyan-mid); transition: color .2s, border-color .2s; }
+  .article__body a:hover { color: var(--ink); border-color: var(--ink); }
+  .article__body p { margin-bottom: 28px; }
+
+  .article__body h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(26px, 3vw, 32px);
+    letter-spacing: -0.02em; line-height: 1.15;
+    color: var(--ink); margin: 72px 0 24px;
+    position: relative;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .article__body h2.in-view { opacity: 1; transform: translateY(0); }
+  .article__body h2::before {
+    content: ""; position: absolute; left: 0; top: -32px;
+    width: 0; height: 1px; background: var(--cyan);
+    box-shadow: 0 0 6px var(--cyan-glow);
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  }
+  .article__body h2.in-view::before { width: 56px; }
+  .article__body h2 em { font-style: italic; color: var(--cyan); }
+
+  .article__body > p.lead::first-letter {
+    font-family: var(--serif); font-style: italic;
+    font-size: 4.6em; line-height: 0.85;
+    color: var(--cyan); float: left;
+    margin: 6px 14px 0 0;
+    text-shadow: 0 0 32px var(--cyan-glow);
+    font-weight: 400;
+  }
+
+  .article__body p.bold-lead {
+    border-left: 2px solid transparent;
+    padding-left: 18px; margin-left: -20px;
+    transition: border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s;
+  }
+  .article__body p.bold-lead.in-view { border-left-color: var(--cyan-mid); }
+  .article__body p.bold-lead.in-view strong:first-child { color: var(--cyan); }
+
+  .pullquote { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 26px; line-height: 1.4; color: var(--ink); border-left: 2px solid var(--cyan); padding: 8px 0 8px 28px; margin: 48px 0; max-width: 600px; }
+  .pullquote em { color: var(--cyan); font-style: italic; }
+
+  .article__body figure { margin: 44px -110px; }
+  .article__body figure svg { display: block; width: 100%; height: auto; background: var(--space-2); border: 1px solid var(--rule); border-radius: 8px; padding: 24px; }
+  .article__body figcaption { font: 500 11px/1.5 var(--mono); letter-spacing: 0.06em; color: var(--muted); margin-top: 12px; text-align: center; }
+
+  .figure-anim { opacity: 0; transform: translateY(20px); transition: opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1); }
+  .figure-anim.in-view { opacity: 1; transform: translateY(0); }
+
+  /* SVG 1 · ANOMALY GRID — 6 domain panels reveal in sequence,
+     8 "common" anomalies pulse cyan to signal load-bearing items */
+  .fig-grid .domain { opacity: 0; transform: translateY(8px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-grid.in-view .d-1 { opacity: 1; transform: translateY(0); transition-delay: 0.10s; }
+  .fig-grid.in-view .d-2 { opacity: 1; transform: translateY(0); transition-delay: 0.22s; }
+  .fig-grid.in-view .d-3 { opacity: 1; transform: translateY(0); transition-delay: 0.34s; }
+  .fig-grid.in-view .d-4 { opacity: 1; transform: translateY(0); transition-delay: 0.46s; }
+  .fig-grid.in-view .d-5 { opacity: 1; transform: translateY(0); transition-delay: 0.58s; }
+  .fig-grid.in-view .d-6 { opacity: 1; transform: translateY(0); transition-delay: 0.70s; }
+  .fig-grid .common { fill: var(--cyan); }
+  .fig-grid.in-view .common { animation: gridPulse 3s ease-in-out infinite; animation-delay: 1s; }
+  @keyframes gridPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  @media (prefers-reduced-motion: reduce) { .fig-grid.in-view .common { animation: none; } }
+
+  /* SVG 2 · AUTO-DETECT vs CONFIGURE — 4 paired rows slide in
+     opposite directions */
+  .fig-vs .row { opacity: 0; transition: opacity 0.55s; }
+  .fig-vs .row .left  { transform: translateX(-12px); transition: transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-vs .row .right { transform: translateX(12px);  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-vs.in-view .row { opacity: 1; }
+  .fig-vs.in-view .row .left, .fig-vs.in-view .row .right { transform: translateX(0); }
+  .fig-vs.in-view .r-1 { transition-delay: 0.10s; }
+  .fig-vs.in-view .r-1 .left, .fig-vs.in-view .r-1 .right { transition-delay: 0.10s; }
+  .fig-vs.in-view .r-2 { transition-delay: 0.25s; }
+  .fig-vs.in-view .r-2 .left, .fig-vs.in-view .r-2 .right { transition-delay: 0.25s; }
+  .fig-vs.in-view .r-3 { transition-delay: 0.40s; }
+  .fig-vs.in-view .r-3 .left, .fig-vs.in-view .r-3 .right { transition-delay: 0.40s; }
+  .fig-vs.in-view .r-4 { transition-delay: 0.55s; }
+  .fig-vs.in-view .r-4 .left, .fig-vs.in-view .r-4 .right { transition-delay: 0.55s; }
+
+  /* SVG 3 · YAML RULE CARD — rows reveal sequentially with terminal cursor */
+  .fig-yaml .row { opacity: 0; transform: translateX(-8px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-yaml.in-view .yr-1 { opacity: 1; transform: translateX(0); transition-delay: 0.20s; }
+  .fig-yaml.in-view .yr-2 { opacity: 1; transform: translateX(0); transition-delay: 0.32s; }
+  .fig-yaml.in-view .yr-3 { opacity: 1; transform: translateX(0); transition-delay: 0.44s; }
+  .fig-yaml.in-view .yr-4 { opacity: 1; transform: translateX(0); transition-delay: 0.56s; }
+  .fig-yaml.in-view .yr-5 { opacity: 1; transform: translateX(0); transition-delay: 0.68s; }
+  .fig-yaml.in-view .yr-6 { opacity: 1; transform: translateX(0); transition-delay: 0.80s; }
+  .fig-yaml .yaml-cursor { fill: var(--cyan); animation: yaml-blink 1.1s steps(1) infinite; }
+  @keyframes yaml-blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .fig-yaml .yaml-cursor { animation: none; } }
+
+  /* SVG 4 · 2x2 MATRIX — 4 quadrants reveal with axis stagger */
+  .fig-matrix .axis { opacity: 0; transition: opacity 0.5s; }
+  .fig-matrix.in-view .axis { opacity: 1; transition-delay: 0.05s; }
+  .fig-matrix .quad { opacity: 0; transform: scale(0.96); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-matrix.in-view .q-1 { opacity: 1; transform: scale(1); transition-delay: 0.20s; }
+  .fig-matrix.in-view .q-2 { opacity: 1; transform: scale(1); transition-delay: 0.40s; }
+  .fig-matrix.in-view .q-3 { opacity: 1; transform: scale(1); transition-delay: 0.60s; }
+  .fig-matrix.in-view .q-4 { opacity: 1; transform: scale(1); transition-delay: 0.80s; }
+
+  /* FOOTER */
+  .article__footer { margin-top: 80px; padding: 32px 0 0; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; max-width: 660px; margin-left: auto; margin-right: auto; }
+  .article__footer-cta { font: 500 12px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--muted); }
+  .article__footer-cta a { color: var(--cyan); border-bottom: 1px solid var(--cyan-mid); }
+  .article__footer-cta a:hover { color: var(--ink); border-color: var(--ink); }
+
+  .footer { border-top: 1px solid var(--rule); padding: 22px 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 400 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); position: relative; z-index: 1; }
+  .footer strong { color: var(--ink); }
+  .footer a { color: var(--cyan); }
+
+  @media (max-width: 800px) {
+    .article__body figure { margin: 36px 0; }
+    .article__body figure svg { padding: 16px; }
+  }
+  @media (max-width: 700px) {
+    .nav__links, .nav__btn { display: none; }
+    .nav__hamburger { display: flex; }
+    .mc-strip .right { display: none; }
+    .article { padding: 36px 22px 40px; }
+    .article__title { font-size: 30px; }
+    .article__subtitle { font-size: 18px; }
+    .article__body { font-size: 17px; line-height: 1.65; }
+    .article__body h2 { font-size: 22px; margin: 44px 0 18px; }
+    .pullquote { font-size: 21px; padding: 6px 0 6px 20px; margin: 36px 0; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="read-prog"><div class="read-prog__bar" id="prog"></div></div>
+  <div class="read-time" id="readTime">~<span class="v" id="readTimeVal">13</span> min left</div>
+
+  <nav class="toc" id="toc" aria-label="Article sections">
+    <p class="toc__head">— Sections</p>
+    <ul class="toc__list">
+      <li><a href="#anomalies" class="toc__item" data-section="anomalies"><span class="toc__num">01</span> The 45-anomaly problem</a></li>
+      <li><a href="#trap"      class="toc__item" data-section="trap"><span class="toc__num">02</span> Why auto-detect is a trap</a></li>
+      <li><a href="#language"  class="toc__item" data-section="language"><span class="toc__num">03</span> Give the customer the language</a></li>
+      <li><a href="#pressure"  class="toc__item" data-section="pressure"><span class="toc__num">04</span> Hard to defend in the building</a></li>
+      <li><a href="#ml"        class="toc__item" data-section="ml"><span class="toc__num">05</span> When ML earns its place</a></li>
+      <li><a href="#closing"   class="toc__item" data-section="closing"><span class="toc__num">06</span> Closing</a></li>
+    </ul>
+  </nav>
+
+  <div class="mc-strip">
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Section</span><span class="v">Writing · Field note 03</span></span>
+    <div class="right">
+      <span><span class="key">UTC</span><span class="v" id="utc">--:--:--</span></span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </a>
+      <div class="nav__links">
+        <a href="/">mission</a>
+        <a href="/#about">about</a>
+        <a href="/builds/">builds</a>
+        <a href="/writing/" class="now">writing</a>
+        <a href="/off-mission/">off-mission</a>
+        <a href="/#comms">contact</a>
+      </div>
+      <a href="/#comms" class="nav__btn">Book a call →</a>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__drawer" id="navDrawer">
+      <ul>
+        <li><a href="/"><span>Mission</span><span class="num">01</span></a></li>
+        <li><a href="/#about"><span>About</span><span class="num">02</span></a></li>
+        <li><a href="/builds/"><span>Builds</span><span class="num">03</span></a></li>
+        <li><a href="/writing/" class="now"><span>Writing</span><span class="num">04</span></a></li>
+        <li><a href="/off-mission/"><span>Off-mission</span><span class="num">05</span></a></li>
+        <li><a href="/#comms"><span style="color:var(--cyan)">Book a call →</span><span class="num">06</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <article class="article">
+    <a href="/writing/" class="article__back"><span class="article__back-arrow">←</span> Field notes</a>
+
+    <header class="article__hero">
+      <p class="article__eyebrow"><span class="dot"></span>Field note · 03</p>
+      <h1 class="article__title">Don't Guess. <em>Let the Customer Tell You.</em></h1>
+      <p class="article__subtitle">Notes on building robotics observability without inventing the detection system the customer should own.</p>
+      <div class="article__meta">
+        <span><span class="pub-dot"></span> Published <span class="v">February 2026</span></span>
+        <span class="sep" style="color: var(--rule-2)">·</span>
+        <span><span class="v">13 min</span> read</span>
+        <span class="sep" style="color: var(--rule-2)">·</span>
+        <span>by <span class="cyan">Mukul Dharpure</span></span>
+      </div>
+    </header>
+
+    <div class="article__body">
+
+      <p class="lead">Three pilots into a robotics observability tool, you start to notice a pattern.</p>
+
+      <p>Every customer arrives with the same first question: <em>"does it detect [our specific thing]?"</em> For one, it was a particular FSM state that meant "the dock alignment failed, retry without escalating." For another, it was an altitude band their drone shouldn't be in during specific phases of a mission. For a third, it was a torque signature on a manipulator that meant the gripper had slipped half a millimeter. None of these were in the tool. None of them could plausibly be in the tool, because no two customers had the same one.</p>
+
+      <p>The tempting move at this point is to build the smart system. Train a model on the customer's data, let it learn what "normal" looks like, surface anomalies automatically. It's the move every PM is told to make in 2026. It demos brilliantly. It reads as visionary in the deck. And it is, almost always, <em>wrong.</em></p>
+
+      <p>This is a post about why I made the opposite call. Why, after watching the customer-specific-detector pattern repeat across deployments, I shipped a configurable rule framework instead of an auto-detection system, why I think most robotics observability companies are going to build the wrong thing here, and what to build instead.</p>
+
+      <h2 id="anomalies">The 45-anomaly problem</h2>
+
+      <p>If you sit down with a senior robotics engineer and ask them to enumerate everything that can go wrong on a real robot in production, you'll end up with something like 45 distinct anomaly types. They decompose pretty cleanly into six domains: locomotion, perception, planning, localization, behavior, and hardware.</p>
+
+      <figure class="figure-anim fig-grid">
+        <svg viewBox="0 0 680 540" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="g1-title g1-desc">
+          <title id="g1-title">The robotics anomaly landscape</title>
+          <desc id="g1-desc">~45 anomaly types across 6 domains. 8 are common across most fleets (cyan, pulsing). The remaining 30+ are customer-specific (muted).</desc>
+
+          <text x="40" y="28" font-family="Geist Mono, monospace" font-size="11" font-weight="600" fill="#E8EEFA" letter-spacing="1.5">~45 ANOMALY TYPES · 6 DOMAINS</text>
+          <text x="40" y="46" font-family="Instrument Serif, serif" font-style="italic" font-size="13" fill="#B5BFD9">8 are common across most fleets (cyan). The other 30+ are customer-specific.</text>
+
+          <!-- LOCOMOTION -->
+          <g class="domain d-1">
+            <rect x="8" y="60" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="20" y="82" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">LOCOMOTION</text>
+            <text x="20" y="98" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">8 anomalies</text>
+            <text class="common" x="20" y="120" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">stall</text>
+            <text x="20" y="138" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">motor failure</text>
+            <text x="20" y="154" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">wheel slip</text>
+            <text x="20" y="170" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">drive fault</text>
+            <text x="20" y="186" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">command timeout</text>
+            <text x="20" y="202" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">velocity divergence</text>
+            <text x="20" y="218" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">traction loss</text>
+            <text x="20" y="234" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">gear failure</text>
+          </g>
+
+          <!-- PERCEPTION -->
+          <g class="domain d-2">
+            <rect x="232" y="60" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="244" y="82" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">PERCEPTION</text>
+            <text x="244" y="98" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">9 anomalies</text>
+            <text class="common" x="244" y="120" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">sensor dropout</text>
+            <text class="common" x="244" y="138" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">collision</text>
+            <text x="244" y="156" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">lidar saturation</text>
+            <text x="244" y="172" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">camera occlusion</text>
+            <text x="244" y="188" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">calibration drift</text>
+            <text x="244" y="204" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">depth holes</text>
+            <text x="244" y="220" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">object misdetection</text>
+            <text x="244" y="236" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">point cloud sparsity</text>
+            <text x="244" y="252" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">exposure failure</text>
+          </g>
+
+          <!-- PLANNING -->
+          <g class="domain d-3">
+            <rect x="456" y="60" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="468" y="82" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">PLANNING</text>
+            <text x="468" y="98" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">7 anomalies</text>
+            <text class="common" x="468" y="120" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">planning failure</text>
+            <text x="468" y="138" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">path not found</text>
+            <text x="468" y="154" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">planner timeout</text>
+            <text x="468" y="170" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">infeasible goal</text>
+            <text x="468" y="186" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">recovery loop</text>
+            <text x="468" y="202" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">deadlock</text>
+            <text x="468" y="218" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">costmap inflation</text>
+          </g>
+
+          <!-- LOCALIZATION -->
+          <g class="domain d-4">
+            <rect x="8" y="295" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="20" y="317" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">LOCALIZATION</text>
+            <text x="20" y="333" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">6 anomalies</text>
+            <text class="common" x="20" y="355" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">localization loss</text>
+            <text x="20" y="373" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">AMCL particle collapse</text>
+            <text x="20" y="389" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">GPS dropout</text>
+            <text x="20" y="405" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">kidnap event</text>
+            <text x="20" y="421" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">frame transform error</text>
+            <text x="20" y="437" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">drift exceeded</text>
+          </g>
+
+          <!-- BEHAVIOR -->
+          <g class="domain d-5">
+            <rect x="232" y="295" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="244" y="317" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">BEHAVIOR</text>
+            <text x="244" y="333" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">7 anomalies</text>
+            <text class="common" x="244" y="355" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">FSM error</text>
+            <text x="244" y="373" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">mission timeout</text>
+            <text x="244" y="389" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">task fail</text>
+            <text x="244" y="405" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">action server error</text>
+            <text x="244" y="421" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">precondition fail</text>
+            <text x="244" y="437" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">postcondition fail</text>
+            <text x="244" y="453" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">state inconsistency</text>
+          </g>
+
+          <!-- HARDWARE -->
+          <g class="domain d-6">
+            <rect x="456" y="295" width="215" height="220" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="1"/>
+            <text x="468" y="317" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="1.5">HARDWARE</text>
+            <text x="468" y="333" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">8 anomalies</text>
+            <text class="common" x="468" y="355" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">battery low</text>
+            <text class="common" x="468" y="373" font-family="Instrument Serif, serif" font-style="italic" font-size="13" font-weight="500">e-stop</text>
+            <text x="468" y="389" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">thermal warning</text>
+            <text x="468" y="405" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">comm bus error</text>
+            <text x="468" y="421" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">peripheral fault</text>
+            <text x="468" y="437" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">firmware mismatch</text>
+            <text x="468" y="453" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">voltage drop</text>
+            <text x="468" y="469" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">current spike</text>
+          </g>
+        </svg>
+        <figcaption>The 8 cyan items show up in almost every fleet. The other 30+ are deeply customer-specific.</figcaption>
+      </figure>
+
+      <p>Mature fleets don't actually monitor all 45. Most monitor between 5 and 15 at any given time. About 8 of those are the same across most fleets: stall, collision, sensor dropout, planning failure, localization loss, FSM error, battery low, e-stop. If you're shipping any kind of mobile autonomy product, you'll meet those 8 in your first month.</p>
+
+      <p>The other 30+ are deeply customer-specific. The drone customer cares about altitude deviation and motor RPM divergence. The surgical arm cares about force exceedance during contact. The picking robot cares about gripper slip and object misdetection. The construction-site AGV cares about lane departure relative to a custom-marked path. None of these are "common." All of them are critical to the customer that has them.</p>
+
+      <p>If you build a robotics observability product, this is the central tension. The 8 common anomalies feel like the floor. They tempt you to ship them, declare victory, call it a day. The 30+ tail is where every customer actually lives, and it's the part that makes them happy or unhappy in the long run.</p>
+
+      <p>The first time I got this wrong, I shipped two hardcoded detectors: stall and path-deviation. Three pilots in, every customer wanted three more of theirs. The math didn't work. I was going to be writing Python forever, one customer at a time, while the engineering team grew angrier and the velocity collapsed.</p>
+
+      <p>That was the moment to rebuild the abstraction.</p>
+
+      <h2 id="trap">Why "the system figures it out" is a trap</h2>
+
+      <p>When you're staring at the long-tail problem, the temptation to reach for ML is strong. Industry conditioning around AI in 2026 makes it almost reflexive. Every adjacent observability product is "AI-powered." Every conference talk is about "intelligent anomaly detection." Every investor wants to know how the model gets smarter over time.</p>
+
+      <p>I almost did it.</p>
+
+      <p>Then I sat down and worked out what shipping an ML-based anomaly detector actually costs the customer. Not in compute. <em>In actual operational burden, distributed over the life of the deployment.</em></p>
+
+      <figure class="figure-anim fig-vs">
+        <svg viewBox="0 0 680 360" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="vs-title vs-desc">
+          <title id="vs-title">Auto-detect cost vs configure cost</title>
+          <desc id="vs-desc">Four dimensions of comparison between ML-based auto-detection and configurable rule-based detection.</desc>
+
+          <text x="180" y="30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#FF7A45" letter-spacing="2">AUTO-DETECT (ML)</text>
+          <text x="500" y="30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="2">CONFIGURE (RULES)</text>
+          <line x1="340" y1="20" x2="340" y2="350" stroke="rgba(232,238,250,0.10)" stroke-width="1" stroke-dasharray="3 4"/>
+
+          <!-- Row 1 · Upfront cost -->
+          <g class="row r-1">
+            <text x="340" y="64" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">UPFRONT COST</text>
+            <g class="left"><rect x="40" y="74" width="280" height="44" rx="8" fill="rgba(255,122,69,0.06)" stroke="rgba(255,122,69,0.35)" stroke-width="1"/><text x="180" y="100" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">training data, labels, validation set</text></g>
+            <g class="right"><rect x="360" y="74" width="280" height="44" rx="8" fill="rgba(0,212,255,0.06)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/><text x="500" y="100" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">one YAML file</text></g>
+          </g>
+
+          <!-- Row 2 · When the robot changes -->
+          <g class="row r-2">
+            <text x="340" y="142" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">WHEN THE ROBOT CHANGES</text>
+            <g class="left"><rect x="40" y="152" width="280" height="44" rx="8" fill="rgba(255,122,69,0.06)" stroke="rgba(255,122,69,0.35)" stroke-width="1"/><text x="180" y="178" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">retrain · relabel · revalidate</text></g>
+            <g class="right"><rect x="360" y="152" width="280" height="44" rx="8" fill="rgba(0,212,255,0.06)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/><text x="500" y="178" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">edit one line</text></g>
+          </g>
+
+          <!-- Row 3 · When it misfires -->
+          <g class="row r-3">
+            <text x="340" y="220" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">WHEN IT MISFIRES</text>
+            <g class="left"><rect x="40" y="230" width="280" height="44" rx="8" fill="rgba(255,122,69,0.06)" stroke="rgba(255,122,69,0.35)" stroke-width="1"/><text x="180" y="256" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">opaque · customer calls vendor</text></g>
+            <g class="right"><rect x="360" y="230" width="280" height="44" rx="8" fill="rgba(0,212,255,0.06)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/><text x="500" y="256" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">read the rule · fix it</text></g>
+          </g>
+
+          <!-- Row 4 · Time to add a new failure mode -->
+          <g class="row r-4">
+            <text x="340" y="298" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">TIME TO ADD A NEW FAILURE MODE</text>
+            <g class="left"><rect x="40" y="308" width="280" height="44" rx="8" fill="rgba(255,122,69,0.06)" stroke="rgba(255,122,69,0.35)" stroke-width="1"/><text x="180" y="334" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">data collection sprint</text></g>
+            <g class="right"><rect x="360" y="308" width="280" height="44" rx="8" fill="rgba(0,212,255,0.06)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/><text x="500" y="334" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="14" fill="#E8EEFA">30 seconds</text></g>
+          </g>
+        </svg>
+        <figcaption>Auto-detect carries a recurring labor tax across all four dimensions. Rules don't.</figcaption>
+      </figure>
+
+      <p class="bold-lead"><strong>Training data.</strong> To detect anomalies, you need a labeled corpus of "normal" and "abnormal" runs. Most customers don't have one. Many can't generate one without a quarter of dedicated work, and even then the labeling is contested ("is that a real anomaly or just a Friday afternoon shift change?"). You either supply your own pre-trained model that may not match the customer's robot, or you push the data-collection problem onto a customer who has many other problems.</p>
+
+      <p class="bold-lead"><strong>Drift.</strong> The customer's robot will change. New product mix on the line, new dock layout, software update, hardware revision. Each of these shifts the distribution your model trained on. False positives spike, the customer loses trust, you have to retrain, and you have <em>a recurring labor cost embedded in every deployment forever.</em></p>
+
+      <p class="bold-lead"><strong>Opacity.</strong> When the model fires for what looks like a wrong reason, no one in the customer's ops team can tell why. They have to call you. You have to look at the inputs, decide whether the model behaved correctly given those inputs, and then explain it. <em>This is consulting work, billed as a product feature.</em></p>
+
+      <p class="bold-lead"><strong>False positives at scale.</strong> A 95%-accurate model on a robot publishing five state messages a second produces a false positive every ten minutes. The customer turns off the alerts within a week. The product is now decorative.</p>
+
+      <p>The "auto-detection" framing makes a promise. The promise is: <em>you, the customer, won't have to specify what an anomaly is. We, the vendor, will figure it out.</em> This is a beautiful promise. It is also a transfer of work that the customer's ops team will eventually catch you on, because in production, the work doesn't disappear. It moves.</p>
+
+      <p>The customer's domain knowledge — the thing the customer actually has and you don't — is the most valuable asset in the room. The auto-detect framing wastes it.</p>
+
+      <h2 id="language">Give the customer the language</h2>
+
+      <p>The opposite move is unsexy and right.</p>
+
+      <p>Don't try to figure out what an anomaly is. <strong>Give the customer a small, sharp language for telling you what an anomaly is, and honor what they tell you.</strong></p>
+
+      <figure class="figure-anim fig-yaml">
+        <svg viewBox="0 0 680 280" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="yaml-title yaml-desc">
+          <title id="yaml-title">A configurable anomaly rule</title>
+          <desc id="yaml-desc">YAML rule with six fields: name, topic, field, condition, duration, cooldown.</desc>
+
+          <rect x="40" y="20" width="600" height="240" rx="8" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/>
+          <rect x="40" y="20" width="600" height="38" rx="8" fill="rgba(0,212,255,0.08)"/>
+          <rect x="40" y="50" width="600" height="8" fill="rgba(0,212,255,0.08)"/>
+          <text x="60" y="44" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#00D4FF" letter-spacing="2">ANOMALY RULE · YAML</text>
+          <text x="620" y="44" text-anchor="end" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1">v1</text>
+
+          <g class="row yr-1">
+            <text x="60" y="86" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">NAME</text>
+            <text x="200" y="86" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">dock-alignment-failed</text>
+          </g>
+
+          <g class="row yr-2">
+            <text x="60" y="116" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">TOPIC</text>
+            <text x="200" y="116" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">/robot/fsm/state</text>
+          </g>
+
+          <g class="row yr-3">
+            <text x="60" y="146" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">FIELD</text>
+            <text x="200" y="146" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">status.status</text>
+          </g>
+
+          <g class="row yr-4">
+            <text x="60" y="176" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">CONDITION</text>
+            <text x="200" y="176" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">equals "DOCK_ALIGN_FAIL"</text>
+          </g>
+
+          <g class="row yr-5">
+            <text x="60" y="206" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">DURATION</text>
+            <text x="200" y="206" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">5 seconds</text>
+          </g>
+
+          <g class="row yr-6">
+            <text x="60" y="236" font-family="Geist Mono, monospace" font-size="10" fill="#6B7A99" letter-spacing="1.5">COOLDOWN</text>
+            <text x="200" y="236" font-family="Geist Mono, monospace" font-size="13" fill="#E8EEFA">30 seconds</text>
+            <rect class="yaml-cursor" x="320" y="224" width="8" height="14"/>
+          </g>
+        </svg>
+        <figcaption>Two rule kinds — state equality and numeric threshold — cover most of the territory.</figcaption>
+      </figure>
+
+      <p>Two rule kinds is enough for most of the territory. <em>State equality</em>: "fire when this field equals this value for at least N seconds." <em>Numeric threshold</em>: "fire when this field is above or below this value for at least N seconds." Add cooldowns to prevent flap. Add a graceful "missing field" handler so a misnamed topic doesn't crash the agent. Ship one Python detector module that loads the rules at startup.</p>
+
+      <p>That's it. That's the framework.</p>
+
+      <p>A customer whose robot publishes a state topic with a field that takes the value "ERROR" when their FSM enters its error state writes one YAML block. The agent fires when it sees that condition for the duration they specified. Cooldown prevents re-firing during a five-minute recovery loop. <strong>The customer didn't need to teach the agent anything. They told it.</strong></p>
+
+      <p>The same module supports thousands of deployed rules across thousands of different robot schemas. The agent doesn't grow. <em>The rules grow.</em></p>
+
+      <p>This is the pattern, and once you see it, you start to see how often it's the right shape for hardware/software products that interact with diverse customer domains. <strong>Don't model the customer's world inside your product. Give the customer a notation for describing their own world, and execute against the description.</strong></p>
+
+      <h2 id="pressure">Why this is hard to defend in the building</h2>
+
+      <p>If letting the customer tell you is so obviously right, why does almost every competitor build the auto-detect version?</p>
+
+      <p>Because the pressures inside the company push the wrong way.</p>
+
+      <p>Engineering wants to build the smart system. It's more interesting work. Auto-detection has papers, conferences, and an ML team that wants something to do. A YAML rule loader has none of that. The senior engineer who could lead an ML platform doesn't want to lead a config parser.</p>
+
+      <p>Sales wants to demo "AI-powered." It sells decks. Saying <em>"the customer writes a config file"</em> loses the room before you've finished the sentence, even though it describes a more durable product.</p>
+
+      <p>Marketing wants to claim the AI category. It wants to show up in analyst reports as an AI-driven observability product. A rule engine reads as commodity.</p>
+
+      <p>The customer's procurement team, who reads buzzword checklists from vendor briefings, will sometimes ask <em>"does it learn?"</em> because they've been told to ask. Saying "no, it's configurable" sounds like the wrong answer.</p>
+
+      <p>Investors want ML in the architecture diagram. It supports the valuation story.</p>
+
+      <p>And the friendly champion in the pilot, the one who is excited about the demo, often wants to feel like the tool is "smart." A YAML file feels less smart than a model.</p>
+
+      <p>Every one of these pressures pushes you toward the auto-detect version. <strong>The PM is the only person in the building whose job is to absorb those pressures and hold the position</strong>, because the actual user — the customer's ops team on day 90 — will be served by the boring, transparent, configurable thing. Not the smart, opaque, retraining-needing thing.</p>
+
+      <p>This is what "decisions over features" looks like in the wild. You write the decision down, you defend it through the bullshit cycle, you ship the version that the day-90 user will thank you for, and you accept that the demo doesn't sparkle as much.</p>
+
+      <h2 id="ml">When ML actually earns its place</h2>
+
+      <p>To be intellectually honest: ML earns its place sometimes.</p>
+
+      <figure class="figure-anim fig-matrix">
+        <svg viewBox="0 0 680 380" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="m-title m-desc">
+          <title id="m-title">When ML earns its place vs when rules win</title>
+          <desc id="m-desc">2x2 matrix. Y-axis: failure frequency. X-axis: easy to express as a rule. Most of the territory is rules-win. ML earns its place only in the upper-left.</desc>
+
+          <!-- Axes -->
+          <g class="axis">
+            <text x="20" y="200" transform="rotate(-90, 20, 200)" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#6B7A99" letter-spacing="1.5">FAILURE FREQUENCY</text>
+            <text x="350" y="365" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" font-weight="600" fill="#6B7A99" letter-spacing="1.5">EASY TO EXPRESS AS A RULE?</text>
+            <text x="50" y="50" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">FREQUENT</text>
+            <text x="50" y="290" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">RARE</text>
+            <text x="220" y="345" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">NO</text>
+            <text x="500" y="345" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="0.5">YES</text>
+          </g>
+
+          <!-- Q1: top-right · WRITE A RULE (frequent + easy) -->
+          <g class="quad q-1">
+            <rect x="380" y="60" width="280" height="135" rx="10" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.55)" stroke-width="1"/>
+            <text x="520" y="98" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" font-weight="500" fill="#E8EEFA">Write a rule</text>
+            <text x="520" y="124" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">stall · FSM error · battery low</text>
+            <text x="520" y="142" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">topic dropout · threshold exceeded</text>
+            <text x="520" y="160" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">most operational anomalies</text>
+            <text x="520" y="184" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#00D4FF" letter-spacing="1">RULE-BASED WINS OUTRIGHT</text>
+          </g>
+
+          <!-- Q2: top-left · ML MAY EARN ITS PLACE (frequent + hard) -->
+          <g class="quad q-2">
+            <rect x="80" y="60" width="280" height="135" rx="10" fill="rgba(255,122,69,0.08)" stroke="rgba(255,122,69,0.55)" stroke-width="1"/>
+            <text x="220" y="98" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" font-weight="500" fill="#E8EEFA">ML may earn its place</text>
+            <text x="220" y="124" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">"the lidar looks weird," subtle drift,</text>
+            <text x="220" y="142" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">cross-modal patterns no operator</text>
+            <text x="220" y="160" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">can write down concretely</text>
+            <text x="220" y="184" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#FF7A45" letter-spacing="1">SMALL SLICE OF FAILURE MODES</text>
+          </g>
+
+          <!-- Q3: bottom-right · WRITE A RULE (rare + easy) -->
+          <g class="quad q-3">
+            <rect x="380" y="210" width="280" height="125" rx="10" fill="rgba(0,212,255,0.06)" stroke="rgba(0,212,255,0.40)" stroke-width="1"/>
+            <text x="520" y="248" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" font-weight="500" fill="#E8EEFA">Write a rule</text>
+            <text x="520" y="274" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">cheap to add · no ongoing burden</text>
+            <text x="520" y="292" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#B5BFD9">one rule per long-tail failure mode</text>
+            <text x="520" y="316" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#00D4FF" letter-spacing="1">LOW MARGINAL COST</text>
+          </g>
+
+          <!-- Q4: bottom-left · DON'T BOTHER (rare + hard) -->
+          <g class="quad q-4">
+            <rect x="80" y="210" width="280" height="125" rx="10" fill="rgba(232,238,250,0.04)" stroke="rgba(232,238,250,0.18)" stroke-width="1"/>
+            <text x="220" y="248" text-anchor="middle" font-family="Instrument Serif, serif" font-size="18" font-weight="500" fill="#6B7A99">Don't bother</text>
+            <text x="220" y="274" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">rare and ineffable. You'll never</text>
+            <text x="220" y="292" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="12" fill="#6B7A99">get enough training data.</text>
+            <text x="220" y="316" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1">ACCEPT THE BLIND SPOT</text>
+          </g>
+        </svg>
+        <figcaption>Three of four quadrants are rules-win. ML earns its place only in the upper-left.</figcaption>
+      </figure>
+
+      <p>The case where rules genuinely lose is the upper-left of that 2×2. A failure mode is frequent enough to matter, AND its signature is genuinely hard to express as a rule. <em>"The lidar point cloud looks weird in a way that correlates with the robot getting lost twenty seconds later."</em> A human operator can sometimes recognize it; nobody can write a clean rule for it.</p>
+
+      <p>That is real ML territory. Cross-modal patterns, subtle drift in high-dimensional sensor data, signatures that humans recognize but can't reduce to a topic-and-field condition. If you have a customer whose primary failure mode lives there, and they have the data to support training, ML may be the right move <em>for that detector.</em></p>
+
+      <p>But notice what you've done. You've earned the right to use ML for one specific detector after exhausting the rule framework, on a problem that genuinely demands it, with a customer whose data supports it. That is a much narrower claim than <em>"we are an AI-powered observability platform,"</em> and it is the only honest one most products can make.</p>
+
+      <p>The rule framework should be the floor. ML, when it's right at all, should be a specific module that earns its place against a specific failure mode for a specific customer. <strong>Not the architectural premise. Not the marketing claim. A tactic, used carefully, in the small slice of the territory where it works.</strong></p>
+
+      <h2 id="closing">Closing</h2>
+
+      <p>The bigger lesson here is about respect.</p>
+
+      <p>The auto-detect framing is, underneath, a quiet claim that the vendor knows the customer's robot better than the customer does. That with enough data and enough cleverness, you can figure out what they should care about. <em>This is almost never true.</em> The customer has been running their robot for years before you arrived. They know its failure modes intimately, in the granular, situational way that is hard to externalize but absolutely real.</p>
+
+      <p>The rule framework is the opposite claim. It says: <em>you know your robot. We know how to capture, replay, and operate observability infrastructure. Your half is the domain knowledge; our half is the substrate. Tell us what to look for in your language, and we'll do the rest.</em></p>
+
+      <p>That posture — treating the customer as the domain expert and yourself as the substrate provider — is one of the most underrated PM positions you can take in a hardware-adjacent product. It's harder to demo. It's harder to market. And in the long run, it's what makes the product survive contact with twenty different customers' twenty different worlds.</p>
+
+      <blockquote class="pullquote">
+        Don't try to guess what the customer means by "broken." <em>Build the language they can use to tell you. Then get out of the way.</em>
+      </blockquote>
+
+    </div>
+
+    <footer class="article__footer">
+      <a href="/writing/" class="article__back"><span class="article__back-arrow">←</span> All field notes</a>
+      <span class="article__footer-cta">
+        Want a heads-up when the next one drops? <a href="mailto:mukuldharpure@gmail.com?subject=Notify%20me%20when%20your%20next%20essay%20drops">Email me to subscribe</a>
+      </span>
+    </footer>
+  </article>
+
+  <footer class="footer">
+    <span><strong>Mukul Dharpure</strong> · Field note 03 · Writing</span>
+    <span><a href="/writing/">← all writing</a> · <a href="/">portfolio home</a></span>
+  </footer>
+
+  <script>
+    /* READING PROGRESS + TIME REMAINING */
+    const prog       = document.getElementById('prog');
+    const readTime   = document.getElementById('readTime');
+    const readTimeV  = document.getElementById('readTimeVal');
+    const TOTAL_MIN  = 13;
+
+    function updateProg() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const ratio = max > 0 ? h.scrollTop / max : 0;
+      prog.style.width = `${Math.min(100, ratio * 100)}%`;
+      const remaining = TOTAL_MIN * (1 - ratio);
+      readTimeV.textContent = remaining < 1 ? '<1' : Math.ceil(remaining);
+      readTime.classList.toggle('show', h.scrollTop > 200 && ratio < 0.98);
+    }
+    document.addEventListener('scroll', updateProg, { passive: true });
+    updateProg();
+
+    /* FIGURE & H2 & BOLD-LEAD REVEAL */
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          revealIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.figure-anim, .article__body h2, .article__body p.bold-lead')
+      .forEach(el => revealIO.observe(el));
+
+    /* TOC */
+    const toc      = document.getElementById('toc');
+    const tocItems = document.querySelectorAll('.toc__item');
+    const sections = ['anomalies','trap','language','pressure','ml','closing']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    function updateTocVisibility() {
+      toc.classList.toggle('show', window.scrollY > 240);
+    }
+    document.addEventListener('scroll', updateTocVisibility, { passive: true });
+    updateTocVisibility();
+
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          tocItems.forEach(item => item.classList.toggle('active', item.dataset.section === id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+    sections.forEach(s => sectionIO.observe(s));
+
+    /* UTC */
+    function pad(n){return n.toString().padStart(2,'0');}
+    function tick() {
+      const d = new Date();
+      const el = document.getElementById('utc');
+      if (el) el.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tick(); setInterval(tick, 1000);
+
+    /* MOBILE DRAWER TOGGLE */
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('navDrawer');
+    if (hamburger && drawer) {
+      const setOpen = (o) => {
+        drawer.classList.toggle('is-open', o);
+        hamburger.classList.toggle('is-open', o);
+        hamburger.setAttribute('aria-expanded', o);
+      };
+      hamburger.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open')));
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+    }
+  </script>
+</body>
+</html>
