@@ -262,6 +262,18 @@
   .dep__country { font: 400 11px/1 var(--mono); color: var(--muted); margin-bottom: 8px; letter-spacing: 0.04em; }
   .dep__coords { font: 400 10px/1.4 var(--mono); color: var(--ink-dim); letter-spacing: 0.04em; opacity: 0.7; }
   .dep__meta { display: flex; gap: 12px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--rule); font: 400 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  /* Show-all toggle (mobile only) */
+  .deps__toggle {
+    display: none; width: 100%; margin-top: 10px;
+    background: transparent; border: 1px dashed var(--cyan-mid, rgba(0,212,255,0.30));
+    color: var(--cyan); padding: 12px 14px; border-radius: 6px;
+    font: 500 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    cursor: pointer;
+    align-items: center; justify-content: space-between; gap: 12px;
+    transition: background .2s, border-color .2s;
+  }
+  .deps__toggle:hover { background: rgba(0,212,255,0.06); border-color: var(--cyan); }
+  .deps__toggle-arrow { font-size: 14px; }
   .dep__meta .v { color: var(--ink-dim); }
 
   .legend { padding: 14px; background: var(--space-2); border: 1px solid var(--rule); margin-top: 12px; flex-shrink: 0; }
@@ -809,6 +821,12 @@
     .subnav__items { display: none; }
     .subnav__cta { display: none; }
     .subnav__hamburger { display: flex; }
+
+    /* Deployment registry: show only HQ + F500 by default; ENT cards
+       hidden behind a "Show all" toggle so the registry doesn't add
+       11+ city cards of scroll on every visit */
+    .deps.is-collapsed .dep--ent { display: none; }
+    .deps__toggle { display: flex; }
 
     /* Inline CTA: compact */
     .inline-cta { padding: 18px 20px; flex-direction: column; align-items: stretch; gap: 14px; margin: 40px 0; }
@@ -2060,7 +2078,7 @@
     const depsEl = document.getElementById('deps');
     sites.forEach(s => {
       const el = document.createElement('div');
-      el.className = 'dep';
+      el.className = `dep dep--${s.type}`;
       el.dataset.id = s.id;
       const typeClass = s.type === 'hq' ? 'dep__type--hq' : s.type === 'f500' ? 'dep__type--f500' : 'dep__type--ent';
       const typeLbl = s.type === 'hq' ? 'HQ' : s.type === 'f500' ? 'F500' : 'ENT';
@@ -2075,6 +2093,22 @@
       el.addEventListener('click', () => focusSite(s.id));
       depsEl.appendChild(el);
     });
+    // Mobile: collapse the long list of ENT cities behind a toggle
+    const entCount = sites.filter(s => s.type === 'ent').length;
+    if (entCount > 0) {
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'deps__toggle';
+      toggle.innerHTML = `<span class="deps__toggle-label">Show all ${sites.length} sites</span><span class="deps__toggle-arrow">↓</span>`;
+      depsEl.parentNode.insertBefore(toggle, depsEl.nextSibling);
+      depsEl.classList.add('is-collapsed');
+      toggle.addEventListener('click', () => {
+        const collapsed = depsEl.classList.toggle('is-collapsed');
+        toggle.querySelector('.deps__toggle-label').textContent =
+          collapsed ? `Show all ${sites.length} sites` : 'Show only HQ + F500';
+        toggle.querySelector('.deps__toggle-arrow').textContent = collapsed ? '↓' : '↑';
+      });
+    }
 
     // ============ GLOBE ============
     const svg = d3.select('#globe');
