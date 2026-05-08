@@ -713,6 +713,19 @@
     box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
   }
   .nav__drawer.is-open { display: block; animation: drawer-down .25s ease-out; }
+  /* Close X — always visible inside the drawer, regardless of which
+     hamburger opened it (top-nav vs sub-nav) */
+  .nav__drawer-close {
+    position: absolute; top: 16px; right: 16px; z-index: 1;
+    width: 32px; height: 32px;
+    background: rgba(232, 238, 250, 0.04);
+    border: 1px solid var(--rule-2, rgba(232, 238, 250, 0.22));
+    border-radius: 6px; cursor: pointer;
+    color: var(--ink); font: 500 18px/1 var(--mono);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+  .nav__drawer-close:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 212, 255, 0.06); }
   @keyframes drawer-down { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
   .nav__drawer ul { list-style: none; }
   .nav__drawer li a {
@@ -961,13 +974,12 @@
     .mc-mobile { display: flex; }
     body { padding-bottom: 56px; }
 
-    /* Subnav on mobile: items overflow at this width, so collapse them
-       behind the same hamburger drawer used by the top nav. Brand stays
-       on the left, hamburger on the right — consistent with top nav. */
-    .subnav { padding: 8px 14px; gap: 14px; justify-content: space-between; }
-    .subnav__items { display: none; }
-    .subnav__cta { display: none; }
-    .subnav__hamburger { display: flex; }
+    /* Pin the nav on mobile so brand + hamburger stay tappable at any
+       scroll depth — unified with the secondary pages */
+    .nav { position: sticky; top: 0; }
+    /* Mobile uses the sticky .nav for nav access; hide the slide-in
+       subnav since it would duplicate with brand + hamburger */
+    .subnav { display: none !important; }
 
     /* Deployment registry: show only HQ + F500 by default; ENT cards
        hidden behind a "Show all" toggle so the registry doesn't add
@@ -1486,7 +1498,7 @@
 
   <!-- Mission Control strip -->
   <div class="mc-strip" id="mcStrip">
-    <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-07</span></span>
     <span class="sep">│</span>
     <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
     <div class="right">
@@ -1517,6 +1529,7 @@
       </button>
     </div>
     <div class="nav__drawer" id="navDrawer">
+      <button class="nav__drawer-close" id="navDrawerClose" aria-label="Close menu">×</button>
       <ul>
         <li><a href="#"><span>Mission</span><span class="num">01</span></a></li>
         <li><a href="#about"><span>About</span><span class="num">02</span></a></li>
@@ -1859,7 +1872,7 @@
           <p class="section__num">05 · About</p>
           <h2 class="section__title">The human behind the mission.</h2>
         </div>
-        <p class="section__hint">Bio · skills · trajectory · MD-PM-04</p>
+        <p class="section__hint">Bio · skills · trajectory · MD-PM-07</p>
       </div>
 
       <div class="dossier">
@@ -2237,7 +2250,7 @@
   </div>
 
   <footer class="footer">
-    <span><strong>Mission MD-PM-04</strong> · Operator: Mukul Dharpure · Comms: <a href="mailto:mukuldharpure@gmail.com">mukuldharpure@gmail.com</a></span>
+    <span><strong>Mission MD-PM-07</strong> · Operator: Mukul Dharpure · Comms: <a href="mailto:mukuldharpure@gmail.com">mukuldharpure@gmail.com</a></span>
     <span>© 2026 Mukul Dharpure · Built in Bengaluru · All rights reserved · No reuse without permission</span>
   </footer>
 
@@ -2655,6 +2668,7 @@
     // Hamburger toggle — top nav and sub-nav share the same drawer
     const hamburgers = [document.getElementById('hamburger'), document.getElementById('hamburgerSub')].filter(Boolean);
     const drawer = document.getElementById('navDrawer');
+    const drawerClose = document.getElementById('navDrawerClose');
     if (hamburgers.length && drawer) {
       const setOpen = (open) => {
         drawer.classList.toggle('is-open', open);
@@ -2663,8 +2677,17 @@
           h.setAttribute('aria-expanded', open);
         });
       };
-      hamburgers.forEach(h => h.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open'))));
+      hamburgers.forEach(h => h.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOpen(!drawer.classList.contains('is-open'));
+      }));
       drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+      if (drawerClose) drawerClose.addEventListener('click', () => setOpen(false));
+      // ESC closes; tap on drawer backdrop (outside the menu list) closes
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+      drawer.addEventListener('click', (e) => {
+        if (e.target === drawer) setOpen(false);
+      });
     }
 
     // Sticky sub-nav + hide mc-strip when sub-nav shows

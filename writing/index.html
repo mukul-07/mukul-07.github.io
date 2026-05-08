@@ -104,6 +104,8 @@
   .nav__drawer li:last-child a { border-bottom: none; }
   .nav__drawer li a:hover, .nav__drawer li a.now { color: var(--cyan); }
   .nav__drawer li a .num { font-size: 10px; color: var(--muted); }
+  .nav__drawer-close { position: absolute; top: 16px; right: 16px; z-index: 1; width: 32px; height: 32px; background: rgba(232,238,250,0.04); border: 1px solid var(--rule-2, rgba(232,238,250,0.22)); border-radius: 6px; cursor: pointer; color: var(--ink); font: 500 18px/1 var(--mono); display: flex; align-items: center; justify-content: center; transition: border-color .2s, color .2s, background .2s; }
+  .nav__drawer-close:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.06); }
 
   /* Page wrap */
   .page { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 80px 32px 60px; }
@@ -239,6 +241,8 @@
   @media (max-width: 700px) {
     .nav__links, .nav__btn { display: none; }
     .nav__hamburger { display: flex; }
+    /* Pin the nav so brand + hamburger stay tappable at any scroll depth */
+    .nav { position: sticky; top: 0; }
     .mc-strip .right { display: none; }
     .page { padding: 56px 22px 40px; }
     .hero__title { font-size: 32px; }
@@ -280,11 +284,9 @@
 
   <!-- Mission control strip -->
   <div class="mc-strip">
-    <span><span class="key">Mission</span><span class="v cyan">MD-PM-04</span></span>
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-07</span></span>
     <span class="sep">│</span>
     <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
-    <span class="sep">│</span>
-    <span><span class="key">Section</span><span class="v">Writing</span></span>
     <div class="right">
       <span><span class="key">UTC</span><span class="v" id="utc">--:--:--</span></span>
     </div>
@@ -310,6 +312,7 @@
       </button>
     </div>
     <div class="nav__drawer" id="navDrawer">
+      <button class="nav__drawer-close" id="navDrawerClose" aria-label="Close menu">×</button>
       <ul>
         <li><a href="/"><span>Mission</span><span class="num">01</span></a></li>
         <li><a href="/#about"><span>About</span><span class="num">02</span></a></li>
@@ -452,14 +455,18 @@
     // Mobile drawer toggle
     const hamburger = document.getElementById('hamburger');
     const drawer = document.getElementById('navDrawer');
+    const drawerClose = document.getElementById('navDrawerClose');
     if (hamburger && drawer) {
       const setOpen = (o) => {
         drawer.classList.toggle('is-open', o);
         hamburger.classList.toggle('is-open', o);
         hamburger.setAttribute('aria-expanded', o);
       };
-      hamburger.addEventListener('click', () => setOpen(!drawer.classList.contains('is-open')));
+      hamburger.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!drawer.classList.contains('is-open')); });
       drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+      if (drawerClose) drawerClose.addEventListener('click', () => setOpen(false));
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+      drawer.addEventListener('click', (e) => { if (e.target === drawer) setOpen(false); });
     }
   </script>
 </body>
