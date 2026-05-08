@@ -6,5 +6,5 @@
     </radialGradient>
   </defs>
   <rect width="32" height="32" rx="7" fill="url(#g)"/>
-  <text x="16" y="23.5" font-family="ui-monospace, 'Geist Mono', 'Menlo', 'Consolas', monospace" font-size="20" font-weight="700" fill="#050816" text-anchor="middle" letter-spacing="-0.5">M</text>
+  <text x="16" y="22" font-family="ui-monospace, 'Geist Mono', 'Menlo', 'Consolas', monospace" font-size="16" font-weight="700" fill="#050816" text-anchor="middle" letter-spacing="-0.8">MD</text>
 </svg>
