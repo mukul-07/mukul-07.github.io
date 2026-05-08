@@ -231,6 +231,153 @@
   .globe-svg { width: 100%; height: 100%; display: block; cursor: grab; }
   .globe-svg:active { cursor: grabbing; }
 
+  /* ============ SATELLITE BEACON ============
+     A small satellite orbits the globe; clicking opens a "now" status
+     popover that summarises what the operator is currently doing. */
+  .orbit-wrapper {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 6;
+    animation: orbit-spin 60s linear infinite;
+    transform-origin: 50% 50%;
+  }
+  .orbit-wrapper.is-paused { animation-play-state: paused; }
+  @keyframes orbit-spin { to { transform: rotate(360deg); } }
+
+  .satellite {
+    position: absolute; top: 6%; left: 50%;
+    transform: translateX(-50%);
+    width: 38px; height: 22px;
+    background: transparent; border: 0; padding: 0;
+    cursor: pointer; pointer-events: auto;
+    animation: satellite-counter 60s linear infinite;
+    filter: drop-shadow(0 0 6px var(--cyan-glow));
+    transition: transform .25s, filter .25s;
+  }
+  .orbit-wrapper.is-paused .satellite { animation-play-state: paused; }
+  .satellite:hover { filter: drop-shadow(0 0 14px var(--cyan)); }
+  .satellite:hover .satellite__svg { transform: scale(1.12); }
+  .satellite__svg { display: block; width: 100%; height: 100%; transition: transform .25s; }
+  .satellite__pulse {
+    position: absolute; top: -8px; right: -4px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--cyan); box-shadow: 0 0 8px var(--cyan), 0 0 14px var(--cyan-glow);
+    animation: sat-blink 1.6s ease-in-out infinite;
+  }
+  @keyframes satellite-counter {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to   { transform: translateX(-50%) rotate(-360deg); }
+  }
+  @keyframes sat-blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.35; transform: scale(0.7); }
+  }
+  .satellite__hint {
+    position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+    font: 500 9px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cyan); opacity: 0; white-space: nowrap;
+    transition: opacity .25s;
+    pointer-events: none;
+  }
+  .satellite:hover .satellite__hint { opacity: 0.85; }
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-wrapper, .satellite { animation: none; }
+  }
+
+  /* The beacon card — slides in from the top-right of the globe panel */
+  .beacon-card {
+    position: absolute; top: 56px; right: 18px; z-index: 12;
+    width: 320px; max-width: calc(100% - 36px);
+    background: rgba(5, 8, 22, 0.96); backdrop-filter: blur(16px);
+    border: 1px solid var(--cyan-mid, rgba(0,212,255,0.35));
+    border-radius: 8px; padding: 18px 18px 16px;
+    box-shadow: 0 24px 48px -16px rgba(0,212,255,0.30), 0 0 0 1px rgba(0,212,255,0.10) inset;
+    opacity: 0; transform: translateY(-8px) scale(0.97);
+    transition: opacity .28s cubic-bezier(0.16, 1, 0.3, 1), transform .28s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    color: var(--ink-dim);
+  }
+  .beacon-card.is-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .beacon-card__head {
+    display: flex; align-items: center; justify-content: space-between;
+    font: 500 10px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 14px;
+  }
+  .beacon-card__head::before {
+    content: ""; position: absolute; top: -1px; left: 18px; right: 18px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan) 50%, transparent);
+    opacity: 0.6;
+  }
+  .beacon-card__head .live {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .beacon-card__head .live .dot {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--green);
+    box-shadow: 0 0 6px var(--green); animation: blink 2s infinite;
+  }
+  .beacon-card__close {
+    background: transparent; border: 1px solid var(--rule-2);
+    color: var(--ink-dim); width: 22px; height: 22px;
+    border-radius: 4px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    font: 500 14px/1 var(--mono); transition: all .2s;
+  }
+  .beacon-card__close:hover { color: var(--cyan); border-color: var(--cyan); }
+  .beacon-card__title {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 18px; line-height: 1.3; color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .beacon-card__title em { color: var(--cyan); }
+  .beacon-card__rows { display: flex; flex-direction: column; gap: 0; margin-bottom: 14px; }
+  .beacon-card__row {
+    display: grid; grid-template-columns: 84px 1fr; gap: 12px;
+    padding: 9px 0; border-bottom: 1px dashed var(--rule);
+    font: 400 12px/1.4 var(--sans);
+  }
+  .beacon-card__row:last-child { border-bottom: none; }
+  .beacon-card__row dt {
+    font: 500 9px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); padding-top: 1px;
+  }
+  .beacon-card__row dd { color: var(--ink); }
+  .beacon-card__row dd .sub { color: var(--muted); font-size: 11px; display: block; margin-top: 2px; }
+  .beacon-card__row dd a { color: var(--cyan); border-bottom: 1px solid var(--cyan-mid); }
+  .beacon-card__row dd a:hover { color: var(--ink); border-color: var(--ink); }
+  .beacon-card__cta {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 6px;
+    background: var(--cyan); color: var(--space);
+    font: 600 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase;
+    box-shadow: 0 0 16px var(--cyan-glow); transition: background .2s;
+  }
+  .beacon-card__cta:hover { background: var(--ink); }
+  .beacon-card__utc {
+    margin-top: 10px; font: 400 9px/1.4 var(--mono);
+    letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted);
+    text-align: right;
+  }
+  .beacon-card__utc .v { color: var(--cyan); }
+  @media (max-width: 700px) {
+    /* On mobile, the panel has overflow: hidden + a 1:1 aspect ratio,
+       which was clipping the card. Float it as a viewport-anchored
+       sheet so it sits inside the globe area without touching the
+       operator profile section below. */
+    .beacon-card {
+      position: fixed;
+      top: 180px; bottom: auto;      /* below the nav, inside the globe area */
+      left: 12px; right: 12px;
+      width: auto; max-width: none;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      transform: translateY(-8px) scale(0.97);
+    }
+    .beacon-card.is-open { transform: translateY(0) scale(1); }
+    .satellite { width: 32px; height: 18px; }
+    .beacon-card__title { font-size: 16px; margin-bottom: 12px; }
+    .beacon-card__row { padding: 8px 0; grid-template-columns: 76px 1fr; gap: 10px; }
+    .beacon-card__row dd { font-size: 13px; }
+  }
+
   /* RIGHT PANEL · deployments */
   .panel-r { display: flex; flex-direction: column; min-height: 0; }
   .deps { flex: 1; display: flex; flex-direction: column; gap: 0; overflow-y: auto; padding-right: 4px; min-height: 0; }
@@ -1460,6 +1607,62 @@
 
       <svg class="globe-svg" id="globe" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet" aria-label="Interactive 3D globe of deployments"></svg>
 
+      <!-- Satellite beacon · orbits the globe; click opens "now" popover -->
+      <div class="orbit-wrapper" id="orbitWrapper" aria-hidden="false">
+        <button class="satellite" id="satellite" aria-label="Open status beacon" aria-expanded="false" aria-controls="beaconCard">
+          <svg class="satellite__svg" viewBox="0 0 32 18" xmlns="http://www.w3.org/2000/svg">
+            <!-- left solar panel -->
+            <rect x="0.5" y="6" width="9" height="6" fill="rgba(0,212,255,0.18)" stroke="#00D4FF" stroke-width="0.7"/>
+            <line x1="3.5" y1="6" x2="3.5" y2="12" stroke="#00D4FF" stroke-width="0.5"/>
+            <line x1="6.5" y1="6" x2="6.5" y2="12" stroke="#00D4FF" stroke-width="0.5"/>
+            <!-- body -->
+            <rect x="11" y="3" width="10" height="12" fill="#00D4FF"/>
+            <rect x="13" y="6" width="6" height="2.5" fill="#050816"/>
+            <rect x="13" y="10" width="6" height="2.5" fill="#050816"/>
+            <!-- right solar panel -->
+            <rect x="22.5" y="6" width="9" height="6" fill="rgba(0,212,255,0.18)" stroke="#00D4FF" stroke-width="0.7"/>
+            <line x1="25.5" y1="6" x2="25.5" y2="12" stroke="#00D4FF" stroke-width="0.5"/>
+            <line x1="28.5" y1="6" x2="28.5" y2="12" stroke="#00D4FF" stroke-width="0.5"/>
+            <!-- antenna -->
+            <line x1="16" y1="3" x2="16" y2="0.5" stroke="#7FE7FF" stroke-width="0.6"/>
+            <circle cx="16" cy="0.5" r="0.7" fill="#7FE7FF"/>
+          </svg>
+          <span class="satellite__pulse" aria-hidden="true"></span>
+          <span class="satellite__hint">Click — open beacon</span>
+        </button>
+      </div>
+
+      <!-- Beacon card · "now" status popover -->
+      <div class="beacon-card" id="beaconCard" role="dialog" aria-modal="false" aria-labelledby="beaconTitle" aria-hidden="true">
+        <div class="beacon-card__head">
+          <span class="live"><span class="dot"></span>Transmission · live</span>
+          <button class="beacon-card__close" id="beaconClose" aria-label="Close beacon">×</button>
+        </div>
+        <p class="beacon-card__title" id="beaconTitle">A snapshot of <em>right now.</em></p>
+        <dl class="beacon-card__rows">
+          <div class="beacon-card__row">
+            <dt>Currently</dt>
+            <dd>Open · interviewing<span class="sub">EU + USA · sponsorship req.</span></dd>
+          </div>
+          <div class="beacon-card__row">
+            <dt>Building</dt>
+            <dd><a href="https://github.com/mukul-07/missiondebug" target="_blank" rel="noopener">missiondebug</a><span class="sub">Local-first ROS 2 debugger</span></dd>
+          </div>
+          <div class="beacon-card__row">
+            <dt>Reading</dt>
+            <dd>Leaders Eat Last<span class="sub">Simon Sinek</span></dd>
+          </div>
+          <div class="beacon-card__row">
+            <dt>Last trek</dt>
+            <dd>Hemkund Sahib Ji<span class="sub">Sep 2023 · 14,200 ft</span></dd>
+          </div>
+        </dl>
+        <a href="https://cal.com/mukul-dharpure-vupqex/30min" target="_blank" rel="noopener" class="beacon-card__cta">
+          <span>Book 30 min</span><span>→</span>
+        </a>
+        <p class="beacon-card__utc">UTC <span class="v" id="beaconUtc">--:--:--</span></p>
+      </div>
+
       <a href="#telemetry" class="scroll-cue">
         <span class="scroll-cue__txt">Scroll for telemetry</span>
         <span class="scroll-cue__arrow"></span>
@@ -2411,6 +2614,43 @@
       utcMobile.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
     }
     tickMobile(); setInterval(tickMobile, 1000);
+
+    // Beacon UTC clock (inside the beacon card)
+    const beaconUtc = document.getElementById('beaconUtc');
+    function tickBeacon() {
+      if (!beaconUtc) return;
+      const d = new Date();
+      beaconUtc.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tickBeacon(); setInterval(tickBeacon, 1000);
+
+    // Satellite beacon · click toggles "now" status card
+    const satellite = document.getElementById('satellite');
+    const beaconCard = document.getElementById('beaconCard');
+    const beaconClose = document.getElementById('beaconClose');
+    const orbitWrapper = document.getElementById('orbitWrapper');
+    if (satellite && beaconCard) {
+      const setBeacon = (open) => {
+        beaconCard.classList.toggle('is-open', open);
+        beaconCard.setAttribute('aria-hidden', String(!open));
+        satellite.setAttribute('aria-expanded', String(open));
+        // Pause the orbit while the card is open so the satellite doesn't
+        // glide away mid-conversation
+        if (orbitWrapper) orbitWrapper.classList.toggle('is-paused', open);
+      };
+      satellite.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setBeacon(!beaconCard.classList.contains('is-open'));
+      });
+      if (beaconClose) beaconClose.addEventListener('click', () => setBeacon(false));
+      // ESC closes; click outside closes
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setBeacon(false); });
+      document.addEventListener('click', (e) => {
+        if (!beaconCard.classList.contains('is-open')) return;
+        if (beaconCard.contains(e.target) || satellite.contains(e.target)) return;
+        setBeacon(false);
+      });
+    }
 
     // Hamburger toggle — top nav and sub-nav share the same drawer
     const hamburgers = [document.getElementById('hamburger'), document.getElementById('hamburgerSub')].filter(Boolean);
