@@ -232,11 +232,15 @@
   .fig-polis .polis-ring { stroke-dasharray: 500; stroke-dashoffset: 500; transition: stroke-dashoffset 1.5s ease-out 0.05s; }
   .fig-polis.in-view .polis-ring { stroke-dashoffset: 0; }
 
-  /* SVG 2 · NEARNESS — three figures slide in along axis */
-  .fig-axis .stop { opacity: 0; transform: translateY(8px); transition: opacity 0.55s, transform 0.55s cubic-bezier(0.16,1,0.3,1); }
-  .fig-axis.in-view .stop-1 { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
-  .fig-axis.in-view .stop-2 { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
-  .fig-axis.in-view .stop-3 { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+  /* SVG 2 · NEARNESS — three figures fade in along axis.
+     IMPORTANT: opacity only — never transform on these <g>s, because the
+     SVG transform="translate(X,Y)" attribute would be overridden by any
+     CSS transform value (including translateY(0)), snapping the group to
+     SVG origin. */
+  .fig-axis .stop { opacity: 0; transition: opacity 0.55s; }
+  .fig-axis.in-view .stop-1 { opacity: 1; transition-delay: 0.15s; }
+  .fig-axis.in-view .stop-2 { opacity: 1; transition-delay: 0.30s; }
+  .fig-axis.in-view .stop-3 { opacity: 1; transition-delay: 0.45s; }
   .fig-axis .arc { stroke-dasharray: 320; stroke-dashoffset: 320; transition: stroke-dashoffset 1.4s ease-out 0.65s; }
   .fig-axis.in-view .arc { stroke-dashoffset: 0; }
   .fig-axis .arc-label { opacity: 0; transition: opacity 0.6s; }
@@ -259,8 +263,9 @@
   .fig-prophet.in-view .city { opacity: 0.40; transition-delay: 0.10s; }
   .fig-prophet .hill { opacity: 0; transition: opacity 0.7s; }
   .fig-prophet.in-view .hill { opacity: 0.45; transition-delay: 0.30s; }
-  .fig-prophet .prophet-fig { opacity: 0; transform: translateY(8px); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.16,1,0.3,1); }
-  .fig-prophet.in-view .prophet-fig { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
+  /* opacity only — see note on .fig-axis .stop */
+  .fig-prophet .prophet-fig { opacity: 0; transition: opacity 0.6s; }
+  .fig-prophet.in-view .prophet-fig { opacity: 1; transition-delay: 0.65s; }
   .fig-prophet .gaze-back { stroke-dasharray: 280; stroke-dashoffset: 280; transition: stroke-dashoffset 1.4s ease-out 1.10s; }
   .fig-prophet.in-view .gaze-back { stroke-dashoffset: 0; }
 
@@ -585,7 +590,7 @@
       <p>Foucault built a career on this insight. His <em>Discipline and Punish</em> opens with the execution of a regicide and closes with the floor plan of a prison. Between them lies a thesis that still unsettles: power is not primarily a matter of laws or rulers but of <em>arrangements</em>. Who sits where. Who can see whom. Who must wait in which hallway.</p>
 
       <figure class="figure-anim fig-pan">
-        <svg viewBox="0 0 320 340" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="pan-title pan-desc">
+        <svg viewBox="-150 0 620 340" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="pan-title pan-desc">
           <title id="pan-title">The panopticon</title>
           <desc id="pan-desc">A circular prison with the watchtower in the centre. Sight lines radiate from the tower to each cell on the outer ring. The prisoners are visible at all times to a guard who may or may not be looking.</desc>
 
