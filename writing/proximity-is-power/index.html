@@ -258,17 +258,16 @@
   .fig-pan .prisoner { opacity: 0; transition: opacity 0.45s; }
   .fig-pan.in-view .prisoner { opacity: 0.55; transition-delay: 1.45s; }
 
-  /* SVG 4 · DISTANCE & AUTHORITY — archetypes fade in from near to far,
-     arc of authority draws in last. Opacity-only (see note on .fig-axis). */
-  .fig-prophet .stop { opacity: 0; transition: opacity 0.55s; }
-  .fig-prophet.in-view .stop-1 { opacity: 0.65; transition-delay: 0.15s; }
-  .fig-prophet.in-view .stop-2 { opacity: 0.85; transition-delay: 0.30s; }
-  .fig-prophet.in-view .stop-3 { opacity: 1;    transition-delay: 0.45s; }
-  .fig-prophet.in-view .stop-4 { opacity: 1;    transition-delay: 0.60s; }
-  .fig-prophet .arc { stroke-dasharray: 540; stroke-dashoffset: 540; transition: stroke-dashoffset 1.7s ease-out 0.80s; }
-  .fig-prophet.in-view .arc { stroke-dashoffset: 0; }
-  .fig-prophet .arc-label { opacity: 0; transition: opacity 0.6s; }
-  .fig-prophet.in-view .arc-label { opacity: 1; transition-delay: 1.9s; }
+  /* SVG 4 · PROPHET — city dims, prophet rises, gaze line draws back.
+     Opacity-only on the prophet group (see note on .fig-axis .stop). */
+  .fig-prophet .city { opacity: 0; transition: opacity 0.7s; }
+  .fig-prophet.in-view .city { opacity: 0.50; transition-delay: 0.10s; }
+  .fig-prophet .hill { opacity: 0; transition: opacity 0.7s; }
+  .fig-prophet.in-view .hill { opacity: 0.55; transition-delay: 0.30s; }
+  .fig-prophet .prophet-fig { opacity: 0; transition: opacity 0.6s; }
+  .fig-prophet.in-view .prophet-fig { opacity: 1; transition-delay: 0.65s; }
+  .fig-prophet .gaze-back { stroke-dasharray: 280; stroke-dashoffset: 280; transition: stroke-dashoffset 1.4s ease-out 1.10s; }
+  .fig-prophet.in-view .gaze-back { stroke-dashoffset: 0; }
 
   /* SVG 5 · CURATION — rings reveal, labels fade in */
   .fig-curation .c-ring { opacity: 0; transition: opacity 0.7s; }
@@ -674,72 +673,39 @@
       <p>There is a kind of authority that depends on the refusal of proximity. The judge cannot be the defendant's friend. The auditor must not dine with the executive. The prophet, in the old stories, almost always speaks from the wilderness — his power partly a function of how strange and far away he is. Max Weber argued that the genius of bureaucracy was precisely its impersonality, its capacity to treat the citizen at the window the same way it treated his neighbour, because no clerk had been close enough to either to care.</p>
 
       <figure class="figure-anim fig-prophet">
-        <svg viewBox="0 0 520 260" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="prophet-title prophet-desc">
-          <title id="prophet-title">Authority rises with distance</title>
-          <desc id="prophet-desc">A scatter plot of authority versus distance from the subject. The neighbour sits close and low (no formal authority). The judge sits at moderate distance, raised by ritual. The pope sits further, raised by institution. The prophet sits at maximum distance, glowing — the wilderness as a throne. The arc of authority rises from low-left to high-right.</desc>
+        <svg viewBox="0 0 480 220" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="prophet-title prophet-desc">
+          <title id="prophet-title">The view that requires distance</title>
+          <desc id="prophet-desc">A dim city silhouette on the left, a hill on the right, and a single figure at the top of the hill — the prophet — looking back toward the city with the gaze of someone who has chosen distance as a vantage point.</desc>
 
-          <!-- Y-axis · wattage -->
-          <line x1="64" y1="32" x2="64" y2="200" stroke="rgba(232,238,250,0.18)" stroke-width="0.6"/>
-          <g font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">
-            <text x="58" y="32" text-anchor="end">↑</text>
-            <text x="20" y="116" text-anchor="middle" transform="rotate(-90 20 116)">WATTAGE</text>
+          <!-- distant city -->
+          <g class="city">
+            <rect x="40" y="120" width="14" height="36" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="58" y="108" width="16" height="48" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="78" y="130" width="12" height="26" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="94" y="118" width="14" height="38" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="112" y="100" width="10" height="56" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="126" y="124" width="12" height="32" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <polygon points="58,108 66,96 74,108" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <text x="89" y="174" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6B7A99" letter-spacing="1.5">THE CITY</text>
           </g>
 
-          <!-- X-axis · distance from subject -->
-          <line x1="64" y1="200" x2="490" y2="200" stroke="rgba(232,238,250,0.18)" stroke-width="0.6"/>
-          <g font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">
-            <text x="64" y="218">NEAR</text>
-            <text x="277" y="218" text-anchor="middle">DISTANCE FROM SUBJECT →</text>
-            <text x="490" y="218" text-anchor="end">WILDERNESS</text>
+          <!-- horizon -->
+          <line x1="0" y1="156" x2="480" y2="156" stroke="rgba(232,238,250,0.12)" stroke-width="0.5"/>
+
+          <!-- the hill -->
+          <path class="hill" d="M 280 156 Q 380 80 460 156 Z" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="0.7"/>
+
+          <!-- gaze line back -->
+          <path class="gaze-back" d="M 380 100 Q 230 60 89 130" fill="none" stroke="#00D4FF" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.55"/>
+
+          <!-- the lone figure on the hill -->
+          <g class="prophet-fig" transform="translate(380, 96)">
+            <circle r="5" fill="#00D4FF" filter="drop-shadow(0 0 6px rgba(0,212,255,0.55))"/>
+            <line x1="0" y1="5" x2="0" y2="20" stroke="#00D4FF" stroke-width="1.5"/>
+            <text x="0" y="-12" text-anchor="middle" font-family="Instrument Serif, serif" font-size="13" font-style="italic" fill="#7FE7FF">the prophet</text>
           </g>
-
-          <!-- Arc of authority — rises from low-left to high-right -->
-          <path class="arc" d="M 110 175 Q 200 158 250 130 Q 340 90 460 50" fill="none" stroke="#00D4FF" stroke-width="1.1" stroke-dasharray="3 3" opacity="0.65"/>
-          <text class="arc-label" x="170" y="100" font-family="Instrument Serif, serif" font-size="14" font-style="italic" fill="#7FE7FF">arc of authority</text>
-
-          <!-- Projection lines from each point down to the X-axis -->
-          <line x1="110" y1="175" x2="110" y2="200" stroke="#6B7A99" stroke-width="0.4" stroke-dasharray="1 3" opacity="0.6"/>
-          <line x1="250" y1="130" x2="250" y2="200" stroke="#6B7A99" stroke-width="0.4" stroke-dasharray="1 3" opacity="0.6"/>
-          <line x1="370" y1="78"  x2="370" y2="200" stroke="#6B7A99" stroke-width="0.4" stroke-dasharray="1 3" opacity="0.6"/>
-          <line x1="460" y1="50"  x2="460" y2="200" stroke="#6B7A99" stroke-width="0.4" stroke-dasharray="1 3" opacity="0.6"/>
-
-          <!-- Stop 1 · The neighbour (close, low wattage) -->
-          <g class="stop stop-1" transform="translate(110, 175)">
-            <circle r="5" fill="#B5BFD9"/>
-            <line x1="0" y1="5" x2="0" y2="14" stroke="#B5BFD9" stroke-width="1"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#B5BFD9" letter-spacing="1.2" font-weight="600">NEIGHBOUR</text>
-          </g>
-          <text x="110" y="234" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="11" fill="#6B7A99">next door</text>
-
-          <!-- Stop 2 · The judge (mid distance, mid wattage) — robed silhouette via wider torso -->
-          <g class="stop stop-2" transform="translate(250, 130)">
-            <circle r="5.5" fill="#CDD5E8"/>
-            <path d="M -7 18 L -3 6 L 3 6 L 7 18 Z" fill="#CDD5E8" opacity="0.85"/>
-            <text x="0" y="-12" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" fill="#CDD5E8" letter-spacing="1.2" font-weight="600">JUDGE</text>
-          </g>
-          <text x="250" y="234" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="11" fill="#6B7A99">in the court</text>
-
-          <!-- Stop 3 · The pope (further, high wattage) — mitre + halo -->
-          <g class="stop stop-3" transform="translate(370, 78)">
-            <circle r="6" fill="#7FE7FF"/>
-            <path d="M -5 -4 L 0 -12 L 5 -4 Z" fill="#7FE7FF"/>
-            <circle r="11" fill="none" stroke="#7FE7FF" stroke-width="0.6" opacity="0.5" stroke-dasharray="1 3"/>
-            <line x1="0" y1="6" x2="0" y2="18" stroke="#7FE7FF" stroke-width="1.2"/>
-            <text x="0" y="-22" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" font-weight="700" fill="#7FE7FF" letter-spacing="1.2">POPE</text>
-          </g>
-          <text x="370" y="234" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="11" fill="#6B7A99">in the palace</text>
-
-          <!-- Stop 4 · The prophet (peak distance, peak wattage) — cyan glow, raised arm -->
-          <g class="stop stop-4" transform="translate(460, 50)">
-            <circle r="14" fill="none" stroke="#00D4FF" stroke-width="0.5" opacity="0.45" stroke-dasharray="1 3"/>
-            <circle r="7" fill="#00D4FF" filter="drop-shadow(0 0 10px rgba(0,212,255,0.7))"/>
-            <line x1="0" y1="7" x2="0" y2="22" stroke="#00D4FF" stroke-width="1.6"/>
-            <line x1="0" y1="11" x2="8" y2="2" stroke="#00D4FF" stroke-width="1.4"/>
-            <text x="0" y="-14" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" font-weight="700" fill="#00D4FF" letter-spacing="1.2">PROPHET</text>
-          </g>
-          <text x="460" y="234" text-anchor="middle" font-family="Instrument Serif, serif" font-style="italic" font-size="11" fill="#7FE7FF">in the wilderness</text>
         </svg>
-        <figcaption>Authority rises with distance. <em>The prophet is unreachable — and therefore loudest.</em></figcaption>
+        <figcaption>Some forms of power keep their wattage by refusing to be touched.</figcaption>
       </figure>
 
       <p>There is even a sovereign use of distance. The Forbidden City was forbidden for a reason. The Pope's inaccessibility is part of what makes the audience meaningful. <strong>Some forms of power keep their wattage by refusing to be touched.</strong></p>
