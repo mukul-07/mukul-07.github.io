@@ -1,826 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proximity Is Power — Mukul Dharpure</title>
-<meta name="description" content="A philosophical essay on power, nearness, and the quiet architecture of a life. From Aristotle's polis to the panopticon, and a quiet correction the philosophers will not let it forget." />
-<meta property="og:title" content="Proximity Is Power" />
-<meta property="og:description" content="A meditation in seven movements on what proximity actually transmits — and why a life is, in part, a curation of proximities." />
-<meta property="og:type" content="article" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#00D4FF" />
+<title>Proximity is Power — Mukul Dharpure</title>
+<meta name="description" content="A meditation in seven movements on power, nearness, and the quiet architecture of a life — from Aristotle's polis to the panopticon, and the correction the philosophers won't let it forget." />
+<meta property="og:title" content="Proximity is Power" />
+<meta property="og:description" content="An old whisper that runs from Aristotle's polis to the panopticon — and a quiet correction the philosophers will not let it forget." />
+<meta property="og:type" content="article" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-:root {
-  --paper: #f1e9d6;
-  --paper-deep: #e8dec5;
-  --ink: #1b1610;
-  --ink-soft: #423a2d;
-  --ink-faint: #8a7d63;
-  --oxblood: #7a2a2a;
-  --oxblood-soft: #a64a3a;
-  --gold: #b18a44;
-  --rule: #c9bd9e;
-}
+  :root {
+    --space:    #050816;
+    --space-2:  #0A1228;
+    --space-3:  #0F1A33;
+    --ink:      #E8EEFA;
+    --ink-dim:  #B5BFD9;
+    --reading:  #CDD5E8;
+    --muted:    #6B7A99;
+    --rule:     rgba(232, 238, 250, 0.10);
+    --rule-2:   rgba(232, 238, 250, 0.22);
+    --cyan:     #00D4FF;
+    --cyan-2:   #7FE7FF;
+    --cyan-glow:rgba(0, 212, 255, 0.40);
+    --cyan-soft:rgba(0, 212, 255, 0.10);
+    --cyan-mid: rgba(0, 212, 255, 0.30);
+    --green:    #00E676;
+    --amber:    #FFB020;
+    --coral:    #FF7A45;
+    --sans: "Geist", -apple-system, system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+  }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--space); color: var(--ink); font-family: var(--sans); }
+  body { line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--cyan); color: var(--space); }
 
-html { scroll-behavior: smooth; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.40), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.30), transparent),
+      radial-gradient(2px 2px at 65% 20%, rgba(0,212,255,0.5), transparent),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.30), transparent),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.50), transparent),
+      radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.40), transparent);
+    opacity: 0.6;
+  }
 
-body {
-  font-family: 'EB Garamond', Georgia, serif;
-  background: var(--paper);
-  background-image:
-    radial-gradient(ellipse at top left, rgba(177, 138, 68, 0.06), transparent 60%),
-    radial-gradient(ellipse at bottom right, rgba(122, 42, 42, 0.05), transparent 55%);
-  color: var(--ink);
-  font-size: 19px;
-  line-height: 1.65;
-  overflow-x: hidden;
-  position: relative;
-}
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: pt-fade-out 220ms cubic-bezier(0.4, 0.0, 0.6, 1) both; }
+  ::view-transition-new(root) { animation: pt-fade-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes pt-fade-out { to { opacity: 0; } }
+  @keyframes pt-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes page-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  body { animation: page-rise 500ms cubic-bezier(0.16, 1, 0.3, 1); }
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
 
-/* Paper grain texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4  0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply;
-}
+  /* READING PROGRESS */
+  .read-prog { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 100; background: rgba(232,238,250,0.06); }
+  .read-prog__bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--cyan-2)); box-shadow: 0 0 8px var(--cyan-glow); transition: width .15s ease-out; }
+  .read-time { position: fixed; top: 14px; right: 18px; z-index: 99; font: 500 10px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; background: rgba(5,8,22,0.82); backdrop-filter: blur(8px); border: 1px solid var(--rule); border-radius: 100px; opacity: 0; transition: opacity .35s; pointer-events: none; }
+  .read-time.show { opacity: 1; }
+  .read-time .v { color: var(--cyan); font-weight: 600; }
+  @media (max-width: 1100px) { .read-time { display: none; } }
 
-.wrap {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 80px 32px 120px;
-  position: relative;
-  z-index: 2;
-}
+  /* TOC */
+  .toc { position: fixed; top: 50%; right: 28px; transform: translateY(-50%); z-index: 40; pointer-events: none; opacity: 0; transition: opacity .4s; max-width: 200px; }
+  .toc.show { opacity: 1; pointer-events: auto; }
+  .toc__head { font: 500 9px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; padding-left: 14px; }
+  .toc__list { list-style: none; padding: 0; margin: 0; }
+  .toc__item { display: flex; align-items: center; gap: 10px; padding: 8px 0 8px 14px; border-left: 1px solid var(--rule); font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--muted); cursor: pointer; transition: color .25s, border-color .25s, padding-left .25s; text-decoration: none; position: relative; }
+  .toc__item:hover { color: var(--ink-dim); }
+  .toc__item.active { color: var(--cyan); border-left-color: var(--cyan); padding-left: 18px; }
+  .toc__item.active::before { content: ""; position: absolute; left: -4px; top: 50%; transform: translateY(-50%); width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+  .toc__num { color: var(--cyan); font-weight: 600; opacity: 0.7; flex-shrink: 0; }
+  .toc__item.active .toc__num { opacity: 1; }
+  @media (max-width: 1280px) { .toc { display: none; } }
 
-/* HEADER */
-.masthead {
-  text-align: center;
-  margin-bottom: 64px;
-  position: relative;
-}
+  /* MISSION STRIP + NAV */
+  .mc-strip { position: relative; z-index: 5; background: var(--space-2); color: var(--ink-dim); border-bottom: 1px solid var(--rule); font: 500 11px/1 var(--mono); letter-spacing: 0.08em; padding: 10px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; text-transform: uppercase; }
+  .mc-strip .key { color: var(--muted); margin-right: 6px; font-size: 10px; }
+  .mc-strip .v { color: var(--ink); }
+  .mc-strip .v.cyan { color: var(--cyan); }
+  .mc-strip .v.green { color: var(--green); }
+  .mc-strip .sep { color: var(--rule-2); }
+  .mc-strip .live { display: inline-flex; align-items: center; gap: 8px; }
+  .mc-strip .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .mc-strip .right { margin-left: auto; }
 
-.kicker {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 28px;
-  display: inline-block;
-  padding: 6px 14px;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-}
+  .nav { position: relative; z-index: 65; border-bottom: 1px solid var(--rule); background: rgba(5,8,22,0.85); backdrop-filter: blur(14px); }
+  .nav__inner { max-width: 1200px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .nav__brand { display: flex; align-items: center; gap: 10px; font: 600 14px/1 var(--mono); letter-spacing: 0.04em; }
+  .nav__brand-mark { width: 28px; height: 28px; background: var(--cyan); color: var(--space); border-radius: 6px; display: flex; align-items: center; justify-content: center; font: 700 11px/1 var(--mono); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__links { display: flex; gap: 28px; font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+  .nav__links a { color: var(--muted); transition: color .2s; }
+  .nav__links a:hover, .nav__links a.now { color: var(--cyan); }
+  .nav__btn { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 16px; border-radius: 6px; background: var(--cyan); color: var(--space); box-shadow: 0 0 16px var(--cyan-glow); }
+  .nav__btn:hover { background: var(--ink); }
+  .nav__hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 36px; height: 36px; background: transparent; border: 1px solid var(--rule-2, rgba(232,238,250,0.22)); border-radius: 6px; padding: 8px; cursor: pointer; transition: border-color .2s; }
+  .nav__hamburger:hover { border-color: var(--cyan); }
+  .nav__hamburger span { display: block; width: 100%; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform .25s, opacity .2s; transform-origin: center; }
+  .nav__hamburger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav__hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav__hamburger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .nav__drawer { display: none; position: fixed; left: 0; right: 0; top: 0; z-index: 60; background: rgba(5,8,22,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid var(--rule); padding: 64px 24px 24px; box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6); }
+  .nav__drawer.is-open { display: block; animation: drawer-down .25s ease-out; }
+  @keyframes drawer-down { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .nav__drawer ul { list-style: none; padding: 0; margin: 0; }
+  .nav__drawer li a { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; font: 500 13px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-dim); border-bottom: 1px solid var(--rule); transition: color .2s; }
+  .nav__drawer li:last-child a { border-bottom: none; }
+  .nav__drawer li a:hover, .nav__drawer li a.now { color: var(--cyan); }
+  .nav__drawer li a .num { font-size: 10px; color: var(--muted); }
+  .nav__drawer-close { position: absolute; top: 16px; right: 16px; z-index: 1; width: 32px; height: 32px; background: rgba(232,238,250,0.04); border: 1px solid var(--rule-2, rgba(232,238,250,0.22)); border-radius: 6px; cursor: pointer; color: var(--ink); font: 500 18px/1 var(--mono); display: flex; align-items: center; justify-content: center; transition: border-color .2s, color .2s, background .2s; }
+  .nav__drawer-close:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.06); }
 
-h1 {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
-  font-weight: 400;
-  font-size: clamp(46px, 8vw, 92px);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  margin-bottom: 24px;
-  color: var(--ink);
-}
+  /* ARTICLE LAYOUT */
+  .article { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 56px 32px 48px; }
+  .article__back { display: inline-flex; align-items: center; gap: 8px; font: 500 11px/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-bottom: 36px; transition: gap .25s, color .2s; }
+  .article__back:hover { gap: 14px; color: var(--cyan); }
+  .article__back-arrow { display: inline-block; transition: transform .25s; }
 
-h1 .accent {
-  font-style: italic;
-  font-variation-settings: "opsz" 144, "WONK" 1;
-  color: var(--oxblood);
-  font-weight: 500;
-}
+  .article__hero { padding-bottom: 36px; border-bottom: 1px solid var(--rule); margin-bottom: 48px; }
+  .article__eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 500 11px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 28px; padding: 7px 14px; background: var(--cyan-soft); border: 1px solid var(--cyan-mid); border-radius: 100px; }
+  .article__eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); animation: blink 2s infinite; }
+  .article__title { font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 5vw, 60px); letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 20px; max-width: 760px; }
+  .article__title em { font-style: italic; color: var(--cyan); }
+  .article__subtitle { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 21px; line-height: 1.55; color: var(--ink-dim); margin-bottom: 32px; max-width: 660px; }
+  .article__meta { display: flex; gap: 22px; flex-wrap: wrap; font: 500 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); align-items: center; }
+  .article__meta .v { color: var(--ink); }
+  .article__meta .cyan { color: var(--cyan); }
+  .article__meta .pub-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: blink 2s infinite; display: inline-block; margin-right: 4px; }
 
-.deck {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 22px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-  max-width: 540px;
-  margin: 0 auto 36px;
-  font-weight: 400;
-}
+  .article__body { font-family: var(--serif); font-weight: 400; font-size: 19px; line-height: 1.7; color: var(--reading); max-width: 660px; margin: 0 auto; letter-spacing: 0; }
+  .article__body strong { color: var(--ink); font-weight: 600; }
+  .article__body em { font-style: italic; }
+  .article__body a { color: var(--cyan); border-bottom: 1px solid var(--cyan-mid); transition: color .2s, border-color .2s; }
+  .article__body a:hover { color: var(--ink); border-color: var(--ink); }
+  .article__body p { margin-bottom: 28px; }
 
-.byline {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
+  .article__body h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(26px, 3vw, 32px);
+    letter-spacing: -0.02em; line-height: 1.15;
+    color: var(--ink); margin: 72px 0 24px;
+    position: relative;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .article__body h2.in-view { opacity: 1; transform: translateY(0); }
+  .article__body h2::before {
+    content: ""; position: absolute; left: 0; top: -32px;
+    width: 0; height: 1px; background: var(--cyan);
+    box-shadow: 0 0 6px var(--cyan-glow);
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  }
+  .article__body h2.in-view::before { width: 56px; }
+  .article__body h2 em { font-style: italic; color: var(--cyan); }
+  .article__body h2 .roman {
+    font: 500 11px/1 var(--mono); letter-spacing: 0.20em;
+    color: var(--cyan); display: block; margin-bottom: 12px;
+    opacity: 0.75;
+  }
 
-.byline span { color: var(--oxblood); }
+  .article__body > p.lead::first-letter {
+    font-family: var(--serif); font-style: italic;
+    font-size: 4.6em; line-height: 0.85;
+    color: var(--cyan); float: left;
+    margin: 6px 14px 0 0;
+    text-shadow: 0 0 32px var(--cyan-glow);
+    font-weight: 400;
+  }
 
-/* HERO SVG */
-.hero-art {
-  margin: 56px auto 80px;
-  max-width: 560px;
-  display: block;
-}
+  .article__body p.bold-lead {
+    border-left: 2px solid transparent;
+    padding-left: 18px; margin-left: -20px;
+    transition: border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s;
+  }
+  .article__body p.bold-lead.in-view { border-left-color: var(--cyan-mid); }
+  .article__body p.bold-lead.in-view strong:first-child { color: var(--cyan); }
 
-/* SECTION HEADINGS */
-.section {
-  margin: 72px 0;
-  position: relative;
-}
+  .pullquote { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 26px; line-height: 1.4; color: var(--ink); border-left: 2px solid var(--cyan); padding: 8px 0 8px 28px; margin: 48px 0; max-width: 600px; }
+  .pullquote em { color: var(--cyan); font-style: italic; }
 
-.section-mark {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 28px;
-}
+  .article__body figure { margin: 44px -110px; }
+  .article__body figure svg { display: block; width: 100%; height: auto; background: var(--space-2); border: 1px solid var(--rule); border-radius: 8px; padding: 24px; }
+  .article__body figcaption { font: 500 11px/1.5 var(--mono); letter-spacing: 0.06em; color: var(--muted); margin-top: 12px; text-align: center; }
 
-.section-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  color: var(--oxblood);
-  font-weight: 500;
-}
+  .figure-anim { opacity: 0; transform: translateY(20px); transition: opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1); }
+  .figure-anim.in-view { opacity: 1; transform: translateY(0); }
 
-.section-rule {
-  flex: 1;
-  height: 1px;
-  background: var(--rule);
-}
+  /* SVG 0 · HERO — concentric rings + figures, pulses on rings */
+  .fig-hero .ring { opacity: 0; transform-origin: center; transition: opacity 1.2s; }
+  .fig-hero.in-view .ring { opacity: 1; animation: ringPulse 5s ease-in-out infinite; }
+  .fig-hero.in-view .ring.r1 { animation-delay: 0s; }
+  .fig-hero.in-view .ring.r2 { animation-delay: 1.5s; }
+  .fig-hero.in-view .ring.r3 { animation-delay: 3s; }
+  @keyframes ringPulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.95; } }
+  .fig-hero .figure-pt { opacity: 0; transition: opacity 0.6s; }
+  .fig-hero.in-view .figure-pt { opacity: 1; transition-delay: 0.6s; }
+  .fig-hero .throne { opacity: 0; transform-origin: 280px 180px; transition: opacity 0.6s, transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .fig-hero.in-view .throne { opacity: 1; transition-delay: 0.2s; }
+  .fig-hero .whisper-line { stroke-dasharray: 30; stroke-dashoffset: 30; transition: stroke-dashoffset 1.2s ease-out 1.6s; }
+  .fig-hero.in-view .whisper-line { stroke-dashoffset: 0; }
+  @media (prefers-reduced-motion: reduce) { .fig-hero.in-view .ring { animation: none; } }
 
-.section-ornament {
-  color: var(--oxblood);
-  font-size: 14px;
-}
+  /* SVG 1 · POLIS — citizens reveal in sequence, gaze lines draw last */
+  .fig-polis .citizen { opacity: 0; transition: opacity 0.5s; }
+  .fig-polis.in-view .c-1 { opacity: 1; transition-delay: 0.10s; }
+  .fig-polis.in-view .c-2 { opacity: 1; transition-delay: 0.20s; }
+  .fig-polis.in-view .c-3 { opacity: 1; transition-delay: 0.30s; }
+  .fig-polis.in-view .c-4 { opacity: 1; transition-delay: 0.40s; }
+  .fig-polis.in-view .c-5 { opacity: 1; transition-delay: 0.50s; }
+  .fig-polis.in-view .c-6 { opacity: 1; transition-delay: 0.60s; }
+  .fig-polis .gaze { opacity: 0; transition: opacity 0.8s; }
+  .fig-polis.in-view .gaze { opacity: 0.45; transition-delay: 0.85s; }
+  .fig-polis .polis-ring { stroke-dasharray: 500; stroke-dashoffset: 500; transition: stroke-dashoffset 1.5s ease-out 0.05s; }
+  .fig-polis.in-view .polis-ring { stroke-dashoffset: 0; }
 
-h2 {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "opsz" 96, "SOFT" 30;
-  font-weight: 500;
-  font-size: clamp(32px, 5vw, 46px);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
-  margin-bottom: 32px;
-  color: var(--ink);
-}
+  /* SVG 2 · NEARNESS — three figures slide in along axis */
+  .fig-axis .stop { opacity: 0; transform: translateY(8px); transition: opacity 0.55s, transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+  .fig-axis.in-view .stop-1 { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+  .fig-axis.in-view .stop-2 { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+  .fig-axis.in-view .stop-3 { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+  .fig-axis .arc { stroke-dasharray: 320; stroke-dashoffset: 320; transition: stroke-dashoffset 1.4s ease-out 0.65s; }
+  .fig-axis.in-view .arc { stroke-dashoffset: 0; }
+  .fig-axis .arc-label { opacity: 0; transition: opacity 0.6s; }
+  .fig-axis.in-view .arc-label { opacity: 1; transition-delay: 1.6s; }
 
-h2 em {
-  font-style: italic;
-  color: var(--oxblood);
-  font-variation-settings: "opsz" 96, "WONK" 1;
-}
+  /* SVG 3 · PANOPTICON — sight lines radiate from tower */
+  .fig-pan .wall, .fig-pan .cells { stroke-dasharray: 900; stroke-dashoffset: 900; transition: stroke-dashoffset 1.4s ease-out; }
+  .fig-pan.in-view .wall { stroke-dashoffset: 0; transition-delay: 0.10s; }
+  .fig-pan.in-view .cells { stroke-dashoffset: 0; transition-delay: 0.45s; }
+  .fig-pan .sight { opacity: 0; transition: opacity 0.6s; }
+  .fig-pan.in-view .sight { opacity: 0.55; transition-delay: 0.95s; animation: sightPulse 4s ease-in-out infinite; animation-delay: 1.6s; }
+  @keyframes sightPulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.85; } }
+  .fig-pan .tower { opacity: 0; transform-origin: 160px 160px; transition: opacity 0.5s, transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .fig-pan.in-view .tower { opacity: 1; transition-delay: 1.20s; }
+  .fig-pan .prisoner { opacity: 0; transition: opacity 0.45s; }
+  .fig-pan.in-view .prisoner { opacity: 0.55; transition-delay: 1.45s; }
 
-/* PROSE */
-p {
-  margin-bottom: 22px;
-  hyphens: auto;
-}
+  /* SVG 4 · PROPHET — city dims, prophet rises */
+  .fig-prophet .city { opacity: 0; transition: opacity 0.7s; }
+  .fig-prophet.in-view .city { opacity: 0.40; transition-delay: 0.10s; }
+  .fig-prophet .hill { opacity: 0; transition: opacity 0.7s; }
+  .fig-prophet.in-view .hill { opacity: 0.45; transition-delay: 0.30s; }
+  .fig-prophet .prophet-fig { opacity: 0; transform: translateY(8px); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .fig-prophet.in-view .prophet-fig { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
+  .fig-prophet .gaze-back { stroke-dasharray: 280; stroke-dashoffset: 280; transition: stroke-dashoffset 1.4s ease-out 1.10s; }
+  .fig-prophet.in-view .gaze-back { stroke-dashoffset: 0; }
 
-p.lead::first-letter {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "opsz" 144, "WONK" 1;
-  font-weight: 500;
-  font-size: 78px;
-  line-height: 0.85;
-  float: left;
-  padding: 10px 12px 0 0;
-  color: var(--oxblood);
-}
+  /* SVG 5 · CURATION — rings reveal, labels fade in */
+  .fig-curation .c-ring { opacity: 0; transition: opacity 0.7s; }
+  .fig-curation.in-view .c-ring.r1 { opacity: 0.70; transition-delay: 0.10s; }
+  .fig-curation.in-view .c-ring.r2 { opacity: 0.50; transition-delay: 0.25s; }
+  .fig-curation.in-view .c-ring.r3 { opacity: 0.30; transition-delay: 0.40s; }
+  .fig-curation .self { opacity: 0; transition: opacity 0.5s; }
+  .fig-curation.in-view .self { opacity: 1; transition-delay: 0.05s; }
+  .fig-curation .near-word { opacity: 0; transition: opacity 0.5s; }
+  .fig-curation.in-view .nw-1 { opacity: 1; transition-delay: 0.60s; }
+  .fig-curation.in-view .nw-2 { opacity: 1; transition-delay: 0.72s; }
+  .fig-curation.in-view .nw-3 { opacity: 1; transition-delay: 0.84s; }
+  .fig-curation.in-view .nw-4 { opacity: 1; transition-delay: 0.96s; }
+  .fig-curation.in-view .nw-5 { opacity: 1; transition-delay: 1.08s; }
+  .fig-curation.in-view .nw-6 { opacity: 1; transition-delay: 1.20s; }
+  .fig-curation .rim-word { opacity: 0; transition: opacity 0.6s; }
+  .fig-curation.in-view .rim-word { opacity: 0.55; transition-delay: 1.50s; }
 
-/* PULL QUOTES */
-.pull {
-  margin: 56px -20px;
-  padding: 36px 28px 36px 36px;
-  border-left: 3px solid var(--oxblood);
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "opsz" 48;
-  font-style: italic;
-  font-weight: 400;
-  font-size: 28px;
-  line-height: 1.25;
-  color: var(--ink);
-  position: relative;
-  background: linear-gradient(to right, rgba(177, 138, 68, 0.08), transparent 80%);
-}
+  /* FOOTER */
+  .article__footer { margin-top: 80px; padding: 32px 0 0; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; max-width: 660px; margin-left: auto; margin-right: auto; }
+  .article__footer-cta { font: 500 12px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--muted); }
+  .article__footer-cta a { color: var(--cyan); border-bottom: 1px solid var(--cyan-mid); }
+  .article__footer-cta a:hover { color: var(--ink); border-color: var(--ink); }
 
-.pull::before {
-  content: '\201C';
-  font-family: 'Fraunces', serif;
-  position: absolute;
-  top: -8px;
-  left: 24px;
-  font-size: 72px;
-  color: var(--oxblood);
-  opacity: 0.35;
-  line-height: 1;
-}
+  .footer { border-top: 1px solid var(--rule); padding: 22px 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 400 11px/1.4 var(--mono); letter-spacing: 0.06em; color: var(--muted); position: relative; z-index: 1; }
+  .footer strong { color: var(--ink); }
+  .footer a { color: var(--cyan); }
 
-.pull cite {
-  display: block;
-  margin-top: 14px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  font-style: normal;
-}
-
-/* INLINE FIGURES */
-.figure {
-  margin: 56px 0;
-  text-align: center;
-}
-
-.figure svg {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  height: auto;
-}
-
-.figure figcaption {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-top: 18px;
-}
-
-.figure figcaption span { color: var(--oxblood); }
-
-/* INLINE STYLES */
-em { font-style: italic; }
-strong { font-weight: 600; color: var(--ink); }
-
-a.name {
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 1px dotted var(--oxblood-soft);
-  font-style: italic;
-}
-
-/* CLOSING ORNAMENT */
-.fin {
-  text-align: center;
-  margin-top: 80px;
-  padding-top: 48px;
-  border-top: 1px solid var(--rule);
-}
-
-.fin-ornament {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  color: var(--oxblood);
-  letter-spacing: 0.4em;
-  margin-bottom: 18px;
-}
-
-.fin-note {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  line-height: 2;
-}
-
-/* ANIMATIONS */
-.fade-in {
-  opacity: 0;
-  transform: translateY(12px);
-  animation: rise 0.9s ease forwards;
-}
-.fade-in.d1 { animation-delay: 0.15s; }
-.fade-in.d2 { animation-delay: 0.3s; }
-.fade-in.d3 { animation-delay: 0.45s; }
-.fade-in.d4 { animation-delay: 0.6s; }
-
-@keyframes rise {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* SVG ANIMATIONS */
-.pulse-ring {
-  transform-origin: center;
-  animation: ringPulse 6s ease-in-out infinite;
-}
-.pulse-ring.r2 { animation-delay: 1.5s; }
-.pulse-ring.r3 { animation-delay: 3s; }
-
-@keyframes ringPulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.85; }
-}
-
-/* RESPONSIVE */
-@media (max-width: 640px) {
-  .wrap { padding: 48px 22px 80px; }
-  body { font-size: 18px; }
-  .pull { margin: 40px -8px; font-size: 22px; padding: 28px 20px; }
-  .deck { font-size: 19px; }
-}
-
-/* Portfolio back-link · paper-toned, fits the essay aesthetic without
-   imposing the dark cyan portfolio nav on this standalone piece */
-.portfolio-back {
-  position: absolute; top: 28px; left: 32px; z-index: 3;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--ink-faint); text-decoration: none;
-  border-bottom: 1px dotted var(--rule);
-  padding-bottom: 2px;
-  transition: color .25s, border-color .25s;
-}
-.portfolio-back:hover { color: var(--oxblood); border-color: var(--oxblood-soft); }
-.portfolio-back .arrow { display: inline-block; transition: transform .25s; margin-right: 6px; }
-.portfolio-back:hover .arrow { transform: translateX(-3px); }
-
-.portfolio-foot {
-  text-align: center;
-  margin-top: 36px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-.portfolio-foot a { color: var(--oxblood); border-bottom: 1px dotted var(--oxblood-soft); }
-.portfolio-foot a:hover { color: var(--ink); }
-.portfolio-foot .dot { margin: 0 12px; color: var(--rule); }
-
-@media (max-width: 640px) {
-  .portfolio-back { position: static; display: inline-block; margin: 18px 22px 0; }
-}
+  @media (max-width: 800px) {
+    .article__body figure { margin: 36px 0; }
+    .article__body figure svg { padding: 16px; }
+  }
+  @media (max-width: 700px) {
+    .nav__links, .nav__btn { display: none; }
+    .nav__hamburger { display: flex; }
+    .nav { position: sticky; top: 0; }
+    .mc-strip .right { display: none; }
+    .article { padding: 36px 22px 40px; }
+    .article__title { font-size: 30px; }
+    .article__subtitle { font-size: 18px; }
+    .article__body { font-size: 17px; line-height: 1.65; }
+    .article__body h2 { font-size: 22px; margin: 44px 0 18px; }
+    .pullquote { font-size: 21px; padding: 6px 0 6px 20px; margin: 36px 0; }
+  }
 </style>
 </head>
 <body>
 
-<a href="/writing/" class="portfolio-back"><span class="arrow">←</span> All writing</a>
-
-<div class="wrap">
-
-  <!-- MASTHEAD -->
-  <header class="masthead fade-in">
-    <div class="kicker">Essay · No. XIV · On Power</div>
-    <h1>Proximity<br>is <span class="accent">Power</span></h1>
-    <p class="deck">An old whisper that runs from Aristotle's polis to the panopticon, and a quiet correction the philosophers will not let it forget.</p>
-    <div class="byline">A meditation in <span>seven movements</span></div>
-  </header>
-
-  <!-- HERO ILLUSTRATION -->
-  <div class="hero-art fade-in d1">
-    <svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#7a2a2a" stop-opacity="0.18"/>
-          <stop offset="100%" stop-color="#7a2a2a" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      <!-- glow -->
-      <circle cx="280" cy="180" r="160" fill="url(#centerGlow)"/>
-
-      <!-- concentric orbital rings -->
-      <g fill="none" stroke="#7a2a2a" stroke-width="0.8">
-        <circle class="pulse-ring" cx="280" cy="180" r="40" opacity="0.85" stroke-dasharray="1 4"/>
-        <circle class="pulse-ring r2" cx="280" cy="180" r="80" opacity="0.6" stroke-dasharray="1 6"/>
-        <circle class="pulse-ring r3" cx="280" cy="180" r="120" opacity="0.45" stroke-dasharray="1 8"/>
-        <circle cx="280" cy="180" r="160" opacity="0.25" stroke-dasharray="1 10"/>
-      </g>
-
-      <!-- center figure (the throne) -->
-      <g transform="translate(280, 180)">
-        <circle r="6" fill="#7a2a2a"/>
-        <line x1="0" y1="6" x2="0" y2="20" stroke="#7a2a2a" stroke-width="1.2"/>
-        <line x1="-6" y1="14" x2="6" y2="14" stroke="#7a2a2a" stroke-width="1.2"/>
-      </g>
-
-      <!-- the courtier (close) -->
-      <g transform="translate(316, 168)">
-        <circle r="3.5" fill="#1b1610"/>
-        <line x1="0" y1="3.5" x2="0" y2="14" stroke="#1b1610" stroke-width="1"/>
-      </g>
-
-      <!-- inner ring figures -->
-      <g fill="#1b1610" opacity="0.85">
-        <circle cx="232" cy="200" r="3"/>
-        <circle cx="306" cy="142" r="3"/>
-        <circle cx="248" cy="148" r="3"/>
-      </g>
-
-      <!-- middle ring figures -->
-      <g fill="#1b1610" opacity="0.55">
-        <circle cx="200" cy="180" r="2.5"/>
-        <circle cx="360" cy="180" r="2.5"/>
-        <circle cx="280" cy="100" r="2.5"/>
-        <circle cx="220" cy="240" r="2.5"/>
-        <circle cx="340" cy="240" r="2.5"/>
-      </g>
-
-      <!-- outer ring figures (faded) -->
-      <g fill="#1b1610" opacity="0.3">
-        <circle cx="160" cy="180" r="2"/>
-        <circle cx="400" cy="180" r="2"/>
-        <circle cx="280" cy="60" r="2"/>
-        <circle cx="280" cy="300" r="2"/>
-        <circle cx="180" cy="100" r="2"/>
-        <circle cx="380" cy="260" r="2"/>
-        <circle cx="180" cy="260" r="2"/>
-        <circle cx="380" cy="100" r="2"/>
-      </g>
-
-      <!-- labels -->
-      <g font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1.5">
-        <text x="280" y="32" text-anchor="middle">THE CROWD</text>
-        <text x="280" y="340" text-anchor="middle">THE PROVINCES</text>
-        <text x="80" y="184" text-anchor="middle" transform="rotate(-90 80 184)">DISTANCE</text>
-        <text x="480" y="184" text-anchor="middle" transform="rotate(90 480 184)">DISTANCE</text>
-      </g>
-
-      <!-- whisper line -->
-      <path d="M 316 168 Q 300 162 290 174" fill="none" stroke="#7a2a2a" stroke-width="0.6" stroke-dasharray="2 2" opacity="0.6"/>
-    </svg>
-  </div>
-
-  <!-- SECTION I: THE WHISPER -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">I</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>The <em>Whisper</em></h2>
-
-    <p class="lead">Picture the throne room. The king on his chair, the petitioners at the door, and between them, almost invisible, a man who leans close enough to murmur. He carries no title, signs no decree, and yet every decree passes through him. This man has done something quietly miraculous. He has converted three feet of empty air into a kind of office.</p>
-
-    <p>Across cultures and centuries, the same figure keeps reappearing. The vizier, the chamberlain, the favorite, the chief of staff. We give them different names because we are reluctant to admit how much of human power lives in this small gap between ear and lip. It is not what they know. It is not what they own. It is where they stand.</p>
-
-    <div class="pull">
-      Proximity is power. The phrase is so simple it sounds like a slogan. Beneath it lies one of the oldest puzzles in philosophy.
-    </div>
-
-    <p>How does mere nearness, an accident of geometry, turn into something as serious as power? The philosophers have been chasing this question for twenty-five centuries, and their answers, taken together, are more unsettling than the slogan itself.</p>
-  </section>
-
-  <!-- SECTION II: THE POLIS -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">II</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>Aristotle's <em>Polis</em></h2>
-
-    <p>For Aristotle, this was no puzzle at all. Politics began with proximity. The <em>polis</em> was not a name for a population; it was a name for a population small enough to gather. A man could be virtuous only in the company of others, because virtue itself was a practice that required witnesses, partners, rivals, and friends. Friendship, <em>philia</em>, was a daily exercise in nearness. You could not love a citizen of Carthage. You could only love the man who broke bread with you.</p>
-
-    <figure class="figure">
-      <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
-        <!-- the polis circle -->
-        <circle cx="210" cy="110" r="78" fill="none" stroke="#7a2a2a" stroke-width="0.7" stroke-dasharray="2 3" opacity="0.55"/>
-
-        <!-- figures around the circle -->
-        <g fill="#1b1610">
-          <g transform="translate(210, 32)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-          <g transform="translate(278, 72)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-          <g transform="translate(278, 148)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-          <g transform="translate(210, 188)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-          <g transform="translate(142, 148)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-          <g transform="translate(142, 72)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#1b1610" stroke-width="1.2"/></g>
-        </g>
-
-        <!-- gaze lines -->
-        <g stroke="#7a2a2a" stroke-width="0.4" opacity="0.4">
-          <line x1="210" y1="40" x2="278" y2="76"/>
-          <line x1="278" y1="76" x2="278" y2="148"/>
-          <line x1="278" y1="148" x2="210" y2="184"/>
-          <line x1="210" y1="184" x2="142" y2="148"/>
-          <line x1="142" y1="148" x2="142" y2="76"/>
-          <line x1="142" y1="76" x2="210" y2="40"/>
-          <line x1="210" y1="40" x2="278" y2="148"/>
-          <line x1="278" y1="76" x2="142" y2="148"/>
-          <line x1="210" y1="40" x2="142" y2="148"/>
-          <line x1="278" y1="76" x2="210" y2="184"/>
-          <line x1="142" y1="76" x2="278" y2="148"/>
-          <line x1="278" y1="76" x2="142" y2="76"/>
-          <line x1="142" y1="148" x2="278" y2="148"/>
-        </g>
-
-        <text x="210" y="216" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="2">THE SPACE OF APPEARANCE</text>
-      </svg>
-      <figcaption>Fig. I · <span>The circle of citizens, seeing and being seen</span></figcaption>
-    </figure>
-
-    <p>Hannah Arendt drew the line forward into the twentieth century. Power, she insisted, was not stored in palaces or armies. It existed only in what she called the <em>space of appearance</em>, the moment when free people gathered to speak and act in front of each other. The instant they dispersed, the power dispersed with them. This is why tyrants fear assemblies more than weapons. An assembly is power in its rawest form, the simple fact of bodies in a shared room.</p>
-  </section>
-
-  <!-- SECTION III: THE STRANGE GEOMETRY -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">III</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>The <em>Strange Geometry</em></h2>
-
-    <p>Then Heidegger comes along and ruins the tidy picture.</p>
-
-    <p>Distance, he writes in <em>Being and Time</em>, is not the same as nearness. The eyeglasses sitting on the bridge of your nose are, in a measurable sense, the closest objects in your world. And yet they are not <em>near</em> to you. They are so close that they vanish. Meanwhile the friend on the other side of the ocean, whose voice you have not heard in a year, may be nearer to you than the stranger on the bus.</p>
-
-    <figure class="figure">
-      <svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- horizontal axis -->
-        <line x1="40" y1="160" x2="440" y2="160" stroke="#c9bd9e" stroke-width="0.5"/>
-        <g font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1.5">
-          <text x="40" y="180">0 cm</text>
-          <text x="240" y="180" text-anchor="middle">DISTANCE (METRIC)</text>
-          <text x="440" y="180" text-anchor="end">∞</text>
-        </g>
-
-        <!-- the eyeglasses (close but invisible) -->
-        <g transform="translate(80, 110)" opacity="0.35">
-          <circle cx="-8" cy="0" r="9" fill="none" stroke="#1b1610" stroke-width="1"/>
-          <circle cx="8" cy="0" r="9" fill="none" stroke="#1b1610" stroke-width="1"/>
-          <line x1="-17" y1="0" x2="-22" y2="-3" stroke="#1b1610" stroke-width="1"/>
-          <line x1="17" y1="0" x2="22" y2="-3" stroke="#1b1610" stroke-width="1"/>
-          <line x1="1" y1="0" x2="-1" y2="0" stroke="#1b1610" stroke-width="1"/>
-          <text x="0" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1">NEAR / FAINT</text>
-        </g>
-        <line x1="80" y1="140" x2="80" y2="160" stroke="#8a7d63" stroke-width="0.5" stroke-dasharray="1 2"/>
-
-        <!-- the bus stranger -->
-        <g transform="translate(200, 100)">
-          <circle r="6" fill="#1b1610" opacity="0.5"/>
-          <line x1="0" y1="6" x2="0" y2="22" stroke="#1b1610" stroke-width="1" opacity="0.5"/>
-          <text x="0" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1">STRANGER</text>
-        </g>
-        <line x1="200" y1="130" x2="200" y2="160" stroke="#8a7d63" stroke-width="0.5" stroke-dasharray="1 2"/>
-
-        <!-- the absent friend (far but vivid) -->
-        <g transform="translate(400, 90)">
-          <circle r="7" fill="#7a2a2a"/>
-          <line x1="0" y1="7" x2="0" y2="26" stroke="#7a2a2a" stroke-width="1.4"/>
-          <text x="0" y="48" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#7a2a2a" letter-spacing="1">THE FRIEND</text>
-        </g>
-        <line x1="400" y1="135" x2="400" y2="160" stroke="#8a7d63" stroke-width="0.5" stroke-dasharray="1 2"/>
-
-        <!-- arc of mattering -->
-        <path d="M 80 110 Q 240 30 400 90" fill="none" stroke="#7a2a2a" stroke-width="0.7" stroke-dasharray="3 3" opacity="0.5"/>
-        <text x="240" y="58" text-anchor="middle" font-family="Fraunces, serif" font-size="11" font-style="italic" fill="#7a2a2a">arc of mattering</text>
-      </svg>
-      <figcaption>Fig. II · <span>Nearness is not metric. It is the orbit of concern.</span></figcaption>
-    </figure>
-
-    <p>What Heidegger noticed is that proximity is not metric. It is <em>mattering</em>. A thing is near to me when it shows up in my world, when it enters the orbit of my concern. This is why a courtier's three feet of air is a longer reach than a citizen's three miles. The courtier has done the harder work, the work of mattering.</p>
-
-    <p>Walter Benjamin saw the same truth from another angle. A painting in a museum carries what he called <em>aura</em>, the strange charge of being uniquely there, in this place, at this hour, before you. A photograph of that painting in a book is closer to your hand and yet infinitely farther from your soul. Reproductions abolish distance and destroy nearness in the same gesture. They make the world available and unreachable at once.</p>
-  </section>
-
-  <!-- SECTION IV: THE ARCHITECT'S TRICK -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">IV</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>The <em>Architect's</em> Trick</h2>
-
-    <p>If proximity is power, then whoever designs the rooms designs the power.</p>
-
-    <p>Foucault built a career on this insight. His <em>Discipline and Punish</em> opens with the execution of a regicide and closes with the floor plan of a prison. Between them lies a thesis that still unsettles: power is not primarily a matter of laws or rulers but of <em>arrangements</em>. Who sits where. Who can see whom. Who must wait in which hallway.</p>
-
-    <figure class="figure">
-      <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
-        <!-- outer wall -->
-        <circle cx="160" cy="160" r="140" fill="none" stroke="#1b1610" stroke-width="1.2"/>
-        <!-- inner cell ring -->
-        <circle cx="160" cy="160" r="110" fill="none" stroke="#1b1610" stroke-width="0.6" stroke-dasharray="2 2"/>
-
-        <!-- cells (radial dividers) -->
-        <g stroke="#1b1610" stroke-width="0.6">
-          <line x1="160" y1="20" x2="160" y2="80"/>
-          <line x1="160" y1="240" x2="160" y2="300"/>
-          <line x1="20" y1="160" x2="80" y2="160"/>
-          <line x1="240" y1="160" x2="300" y2="160"/>
-          <line x1="62" y1="62" x2="105" y2="105"/>
-          <line x1="258" y1="62" x2="215" y2="105"/>
-          <line x1="62" y1="258" x2="105" y2="215"/>
-          <line x1="258" y1="258" x2="215" y2="215"/>
-        </g>
-
-        <!-- sight lines from tower -->
-        <g stroke="#7a2a2a" stroke-width="0.4" opacity="0.55">
-          <line x1="160" y1="160" x2="160" y2="22"/>
-          <line x1="160" y1="160" x2="160" y2="298"/>
-          <line x1="160" y1="160" x2="22" y2="160"/>
-          <line x1="160" y1="160" x2="298" y2="160"/>
-          <line x1="160" y1="160" x2="62" y2="62"/>
-          <line x1="160" y1="160" x2="258" y2="62"/>
-          <line x1="160" y1="160" x2="62" y2="258"/>
-          <line x1="160" y1="160" x2="258" y2="258"/>
-        </g>
-
-        <!-- central tower -->
-        <circle cx="160" cy="160" r="22" fill="#f1e9d6" stroke="#7a2a2a" stroke-width="1.4"/>
-        <circle cx="160" cy="160" r="4" fill="#7a2a2a"/>
-
-        <!-- prisoners (faint figures in cells) -->
-        <g fill="#1b1610" opacity="0.55">
-          <circle cx="160" cy="50" r="2.5"/>
-          <circle cx="160" cy="270" r="2.5"/>
-          <circle cx="50" cy="160" r="2.5"/>
-          <circle cx="270" cy="160" r="2.5"/>
-          <circle cx="82" cy="82" r="2.5"/>
-          <circle cx="238" cy="82" r="2.5"/>
-          <circle cx="82" cy="238" r="2.5"/>
-          <circle cx="238" cy="238" r="2.5"/>
-        </g>
-
-        <!-- label -->
-        <text x="160" y="316" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="2">THE PANOPTICON</text>
-      </svg>
-      <figcaption>Fig. III · <span>The geometry of being seen</span></figcaption>
-    </figure>
-
-    <p>The famous panopticon, Bentham's circular prison with the watchtower in the center, is for Foucault not a peculiar building but a metaphor for modernity itself. We have learned to discipline ourselves under the assumption of being seen.</p>
-
-    <div class="pull">
-      Every serious institution invests heavily in its geography. The corner office, the head of the table, the private dining room. These are not perks. They are infrastructure.
-    </div>
-
-    <p>They are the trellis on which power grows. The architect's quiet vanity is to know that the politicians and the executives, for all their speeches, are only walking around inside arrangements someone else has already drawn.</p>
-  </section>
-
-  <!-- SECTION V: THE POWER OF STANDING APART -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">V</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>The Power of <em>Standing Apart</em></h2>
-
-    <p>And yet.</p>
-
-    <p>There is a kind of authority that depends on the refusal of proximity. The judge cannot be the defendant's friend. The auditor must not dine with the executive. The prophet, in the old stories, almost always speaks from the wilderness, his power partly a function of how strange and far away he is. Max Weber argued that the genius of bureaucracy was precisely its impersonality, its capacity to treat the citizen at the window the same way it treated his neighbor, because no clerk had been close enough to either to care.</p>
-
-    <figure class="figure">
-      <svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- distant city -->
-        <g opacity="0.4">
-          <rect x="40" y="120" width="14" height="36" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <rect x="58" y="108" width="16" height="48" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <rect x="78" y="130" width="12" height="26" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <rect x="94" y="118" width="14" height="38" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <rect x="112" y="100" width="10" height="56" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <rect x="126" y="124" width="12" height="32" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-          <polygon points="58,108 66,96 74,108" fill="none" stroke="#1b1610" stroke-width="0.6"/>
-        </g>
-        <text x="89" y="174" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1.5">THE CITY</text>
-
-        <!-- horizon -->
-        <line x1="0" y1="156" x2="480" y2="156" stroke="#c9bd9e" stroke-width="0.5"/>
-
-        <!-- the hill -->
-        <path d="M 280 156 Q 380 80 460 156 Z" fill="#e8dec5" stroke="#1b1610" stroke-width="0.6" opacity="0.5"/>
-
-        <!-- the lone figure on the hill -->
-        <g transform="translate(380, 96)">
-          <circle r="4" fill="#7a2a2a"/>
-          <line x1="0" y1="4" x2="0" y2="18" stroke="#7a2a2a" stroke-width="1.4"/>
-        </g>
-        <text x="380" y="78" text-anchor="middle" font-family="Fraunces, serif" font-size="11" font-style="italic" fill="#7a2a2a">the prophet</text>
-
-        <!-- gaze line -->
-        <path d="M 380 100 Q 230 60 89 130" fill="none" stroke="#7a2a2a" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.45"/>
-      </svg>
-      <figcaption>Fig. IV · <span>The view that requires distance</span></figcaption>
-    </figure>
-
-    <p>There is even a sovereign use of distance. The Forbidden City was forbidden for a reason. The Pope's inaccessibility is part of what makes the audience meaningful. Some forms of power keep their wattage by refusing to be touched.</p>
-
-    <p>So the slogan needs a correction. Proximity is not power as such. Proximity is <em>leverage</em>. It is a multiplier, and what it multiplies depends entirely on what you bring near. The same nearness that makes the courtier influential makes the judge corrupt. The same gathering that creates Arendt's power can dissolve into a mob.</p>
-  </section>
-
-  <!-- SECTION VI: WHAT PROXIMITY ACTUALLY TRANSMITS -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">VI</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>What Proximity <em>Transmits</em></h2>
-
-    <p>When something is near, certain things pass between it and us that cannot pass at any other range.</p>
-
-    <p><strong>Tacit knowledge passes.</strong> The thousand small habits of a craft that no manual records. You become a chef by standing in the kitchen, not by reading the cookbook.</p>
-
-    <p><strong>Trust passes.</strong> The slow accumulation of weather shared, faces read, silences endured.</p>
-
-    <p><strong>Tone passes.</strong> You can fake the words of a memo. You cannot fake the look in your eyes when you say them at a distance of two feet.</p>
-
-    <p><strong>Possibility passes.</strong> Casual chances, overheard fragments, introductions no one would have bothered to make formally. The sociologist Mark Granovetter once showed that most people find their jobs not through close friends but through acquaintances, the people on the slightly farther rings of their orbit. Even there, the orbit must exist.</p>
-
-    <div class="pull">
-      This is what the courtier traffics in. Not secrets, exactly. Texture. The thick weave of what a person is actually like when no one is performing.
-    </div>
-
-    <p>To stand close enough to read that weave is to know something the records will never contain. And to know it is, slowly, to shape what happens next.</p>
-  </section>
-
-  <!-- SECTION VII: CLOSING -->
-  <section class="section">
-    <div class="section-mark">
-      <span class="section-num">VII</span>
-      <span class="section-ornament">✦</span>
-      <span class="section-rule"></span>
-    </div>
-    <h2>A Closing <em>Thought</em></h2>
-
-    <p>Perhaps, then, the philosopher's version of the slogan is this. We do not become powerful by being near to power. We become powerful by deciding, day after day, what we will let become near to <em>us</em>.</p>
-
-    <figure class="figure">
-      <svg viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="selfGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#b18a44" stop-opacity="0.25"/>
-            <stop offset="100%" stop-color="#b18a44" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-
-        <circle cx="180" cy="140" r="120" fill="url(#selfGlow)"/>
-
-        <!-- concentric rings of mattering -->
-        <g fill="none" stroke="#7a2a2a" stroke-dasharray="1 4">
-          <circle cx="180" cy="140" r="40" opacity="0.7"/>
-          <circle cx="180" cy="140" r="75" opacity="0.5"/>
-          <circle cx="180" cy="140" r="110" opacity="0.3"/>
-        </g>
-
-        <!-- you, at the center -->
-        <g transform="translate(180, 140)">
-          <circle r="7" fill="#7a2a2a"/>
-          <line x1="0" y1="7" x2="0" y2="22" stroke="#7a2a2a" stroke-width="1.5"/>
-        </g>
-
-        <!-- things drawn into nearness, labeled -->
-        <g font-family="Fraunces, serif" font-size="12" font-style="italic" fill="#1b1610">
-          <text x="180" y="80" text-anchor="middle">books</text>
-          <text x="240" y="118" text-anchor="middle">a voice</text>
-          <text x="244" y="170" text-anchor="middle">a friend</text>
-          <text x="180" y="208" text-anchor="middle">a craft</text>
-          <text x="118" y="170" text-anchor="middle">a question</text>
-          <text x="118" y="118" text-anchor="middle">a hope</text>
-        </g>
-
-        <!-- small marks of those things on the inner ring -->
-        <g fill="#7a2a2a" opacity="0.7">
-          <circle cx="180" cy="98" r="2"/>
-          <circle cx="220" cy="119" r="2"/>
-          <circle cx="220" cy="161" r="2"/>
-          <circle cx="180" cy="180" r="2"/>
-          <circle cx="140" cy="161" r="2"/>
-          <circle cx="140" cy="119" r="2"/>
-        </g>
-
-        <!-- outer rim labels: what stays distant -->
-        <g font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7d63" letter-spacing="1.5">
-          <text x="180" y="22" text-anchor="middle">NOISE</text>
-          <text x="180" y="272" text-anchor="middle">FLATTERY</text>
-          <text x="40" y="144" text-anchor="middle">SPECTACLE</text>
-          <text x="320" y="144" text-anchor="middle">RUMOUR</text>
-        </g>
-      </svg>
-      <figcaption>Fig. V · <span>A life as a curation of proximities</span></figcaption>
-    </figure>
-
-    <p>A life is, in part, a curation of proximities. The books on the shelf nearest the bed. The voices in the morning. The faces across the table. The thoughts allowed to circle close, and the ones kept on the far rim. None of these are neutral. Each of them is doing the quiet work Heidegger called <em>nearing</em>, the work of pulling something into the orbit of mattering.</p>
-
-    <p>The courtier learned this trick first, and badly. He used it to convert three feet of air into influence over a king. But the rest of us can use it for better ends. We can choose what to stand near. We can choose what to let stand near to us. And in that small, daily choosing, we draft the map of the only power that finally counts, which is the power to become a particular kind of person, in a particular kind of room, with particular kinds of people in it.</p>
-  </section>
-
-  <!-- FIN -->
-  <div class="fin">
-    <div class="fin-ornament">❦ &nbsp; ✦ &nbsp; ❦</div>
-    <div class="fin-note">
-      End of Essay No. XIV<br>
-      On Power, Nearness, and the Quiet Architecture of a Life
+  <div class="read-prog"><div class="read-prog__bar" id="prog"></div></div>
+  <div class="read-time" id="readTime">~<span class="v" id="readTimeVal">9</span> min left</div>
+
+  <nav class="toc" id="toc" aria-label="Article sections">
+    <p class="toc__head">— Sections</p>
+    <ul class="toc__list">
+      <li><a href="#whisper"   class="toc__item" data-section="whisper"><span class="toc__num">I</span> The whisper</a></li>
+      <li><a href="#polis"     class="toc__item" data-section="polis"><span class="toc__num">II</span> Aristotle's polis</a></li>
+      <li><a href="#geometry"  class="toc__item" data-section="geometry"><span class="toc__num">III</span> Strange geometry</a></li>
+      <li><a href="#architect" class="toc__item" data-section="architect"><span class="toc__num">IV</span> Architect's trick</a></li>
+      <li><a href="#distance"  class="toc__item" data-section="distance"><span class="toc__num">V</span> Standing apart</a></li>
+      <li><a href="#transmits" class="toc__item" data-section="transmits"><span class="toc__num">VI</span> What it transmits</a></li>
+      <li><a href="#closing"   class="toc__item" data-section="closing"><span class="toc__num">VII</span> Closing</a></li>
+    </ul>
+  </nav>
+
+  <div class="mc-strip">
+    <span><span class="key">Mission</span><span class="v cyan">MD-PM-07</span></span>
+    <span class="sep">│</span>
+    <span><span class="key">Status</span><span class="live"><span class="dot"></span><span class="v green">Open · interviewing</span></span></span>
+    <div class="right">
+      <span><span class="key">UTC</span><span class="v" id="utc">--:--:--</span></span>
     </div>
   </div>
 
-  <div class="portfolio-foot">
-    <a href="/writing/">← all writing</a><span class="dot">·</span><a href="/">portfolio home</a><span class="dot">·</span>© 2026 Mukul Dharpure
-  </div>
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__brand">
+        <span class="nav__brand-mark">M</span>
+        <span>mukuldharpure</span>
+      </a>
+      <div class="nav__links">
+        <a href="/">mission</a>
+        <a href="/#about">about</a>
+        <a href="/builds/">builds</a>
+        <a href="/writing/" class="now">writing</a>
+        <a href="/off-mission/">off-mission</a>
+        <a href="/#comms">contact</a>
+      </div>
+      <a href="https://cal.com/mukul-dharpure-vupqex/30min" target="_blank" rel="noopener" class="nav__btn">Book a call →</a>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__drawer" id="navDrawer">
+      <button class="nav__drawer-close" id="navDrawerClose" aria-label="Close menu">×</button>
+      <ul>
+        <li><a href="/"><span>Mission</span><span class="num">01</span></a></li>
+        <li><a href="/#about"><span>About</span><span class="num">02</span></a></li>
+        <li><a href="/builds/"><span>Builds</span><span class="num">03</span></a></li>
+        <li><a href="/writing/" class="now"><span>Writing</span><span class="num">04</span></a></li>
+        <li><a href="/off-mission/"><span>Off-mission</span><span class="num">05</span></a></li>
+        <li><a href="https://cal.com/mukul-dharpure-vupqex/30min" target="_blank" rel="noopener"><span style="color:var(--cyan)">Book a call →</span><span class="num">06</span></a></li>
+      </ul>
+    </div>
+  </nav>
 
-</div>
+  <article class="article">
+    <a href="/writing/" class="article__back"><span class="article__back-arrow">←</span> Field notes</a>
 
+    <header class="article__hero">
+      <p class="article__eyebrow"><span class="dot"></span>Field note · 04 · Essay</p>
+      <h1 class="article__title"><em>Proximity</em> is Power.</h1>
+      <p class="article__subtitle">An old whisper that runs from Aristotle's polis to the panopticon, and a quiet correction the philosophers will not let it forget. A meditation in seven movements.</p>
+      <div class="article__meta">
+        <span><span class="pub-dot"></span> Published <span class="v">May 2026</span></span>
+        <span class="sep" style="color: var(--rule-2)">·</span>
+        <span><span class="v">9 min</span> read</span>
+        <span class="sep" style="color: var(--rule-2)">·</span>
+        <span>by <span class="cyan">Mukul Dharpure</span></span>
+      </div>
+    </header>
+
+    <div class="article__body">
+
+      <figure class="figure-anim fig-hero">
+        <svg viewBox="0 0 560 360" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="hero-title hero-desc">
+          <title id="hero-title">The throne room as a geometry of nearness</title>
+          <desc id="hero-desc">A central figure at the throne, a courtier at three feet of distance, and concentric orbital rings of progressively fainter figures — the crowd, the inner circle, the provinces.</desc>
+
+          <!-- glow -->
+          <defs>
+            <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#00D4FF" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="280" cy="180" r="160" fill="url(#centerGlow)"/>
+
+          <!-- concentric orbital rings -->
+          <g fill="none" stroke="#00D4FF" stroke-width="0.8">
+            <circle class="ring r1" cx="280" cy="180" r="40" opacity="0.85" stroke-dasharray="1 4"/>
+            <circle class="ring r2" cx="280" cy="180" r="80" opacity="0.6" stroke-dasharray="1 6"/>
+            <circle class="ring r3" cx="280" cy="180" r="120" opacity="0.45" stroke-dasharray="1 8"/>
+            <circle cx="280" cy="180" r="160" opacity="0.25" stroke-dasharray="1 10"/>
+          </g>
+
+          <!-- center figure (the throne) -->
+          <g class="throne" transform="translate(280, 180)">
+            <circle r="7" fill="#00D4FF" filter="drop-shadow(0 0 8px rgba(0,212,255,0.6))"/>
+            <line x1="0" y1="7" x2="0" y2="22" stroke="#00D4FF" stroke-width="1.4"/>
+            <line x1="-7" y1="16" x2="7" y2="16" stroke="#00D4FF" stroke-width="1.2"/>
+          </g>
+
+          <!-- the courtier (close) -->
+          <g class="figure-pt" transform="translate(316, 168)">
+            <circle r="3.5" fill="#7FE7FF"/>
+            <line x1="0" y1="3.5" x2="0" y2="14" stroke="#7FE7FF" stroke-width="1"/>
+          </g>
+
+          <!-- whisper line -->
+          <path class="whisper-line" d="M 316 168 Q 300 162 290 174" fill="none" stroke="#00D4FF" stroke-width="0.7" stroke-dasharray="2 2" opacity="0.7"/>
+
+          <!-- inner ring figures -->
+          <g class="figure-pt" fill="#E8EEFA" opacity="0.85">
+            <circle cx="232" cy="200" r="3"/>
+            <circle cx="306" cy="142" r="3"/>
+            <circle cx="248" cy="148" r="3"/>
+          </g>
+
+          <!-- middle ring figures -->
+          <g class="figure-pt" fill="#B5BFD9" opacity="0.55">
+            <circle cx="200" cy="180" r="2.5"/>
+            <circle cx="360" cy="180" r="2.5"/>
+            <circle cx="280" cy="100" r="2.5"/>
+            <circle cx="220" cy="240" r="2.5"/>
+            <circle cx="340" cy="240" r="2.5"/>
+          </g>
+
+          <!-- outer ring figures (faded) -->
+          <g class="figure-pt" fill="#6B7A99" opacity="0.5">
+            <circle cx="160" cy="180" r="2"/>
+            <circle cx="400" cy="180" r="2"/>
+            <circle cx="280" cy="60" r="2"/>
+            <circle cx="280" cy="300" r="2"/>
+            <circle cx="180" cy="100" r="2"/>
+            <circle cx="380" cy="260" r="2"/>
+            <circle cx="180" cy="260" r="2"/>
+            <circle cx="380" cy="100" r="2"/>
+          </g>
+
+          <!-- labels -->
+          <g font-family="Geist Mono, monospace" font-size="8" fill="#6B7A99" letter-spacing="1.5">
+            <text x="280" y="32" text-anchor="middle">THE CROWD</text>
+            <text x="280" y="340" text-anchor="middle">THE PROVINCES</text>
+            <text x="80" y="184" text-anchor="middle" transform="rotate(-90 80 184)">DISTANCE</text>
+            <text x="480" y="184" text-anchor="middle" transform="rotate(90 480 184)">DISTANCE</text>
+          </g>
+        </svg>
+        <figcaption>The throne room — and the three feet of empty air that quietly become an office.</figcaption>
+      </figure>
+
+      <h2 id="whisper"><span class="roman">I · The Whisper</span>The <em>whisper.</em></h2>
+
+      <p class="lead">Picture the throne room. The king on his chair, the petitioners at the door, and between them, almost invisible, a man who leans close enough to murmur. He carries no title, signs no decree, and yet every decree passes through him. This man has done something quietly miraculous. He has converted three feet of empty air into a kind of office.</p>
+
+      <p>Across cultures and centuries, the same figure keeps reappearing. The vizier, the chamberlain, the favourite, the chief of staff. We give them different names because we are reluctant to admit how much of human power lives in this small gap between ear and lip. It is not what they know. It is not what they own. <em>It is where they stand.</em></p>
+
+      <blockquote class="pullquote">
+        Proximity is power. The phrase is so simple it sounds like a slogan. <em>Beneath it lies one of the oldest puzzles in philosophy.</em>
+      </blockquote>
+
+      <p>How does mere nearness — an accident of geometry — turn into something as serious as power? The philosophers have been chasing this question for twenty-five centuries, and their answers, taken together, are more unsettling than the slogan itself.</p>
+
+      <h2 id="polis"><span class="roman">II · Aristotle's Polis</span>Aristotle's <em>polis.</em></h2>
+
+      <p>For Aristotle, this was no puzzle at all. Politics began with proximity. The <em>polis</em> was not a name for a population; it was a name for a population small enough to gather. A man could be virtuous only in the company of others, because virtue itself was a practice that required witnesses, partners, rivals, and friends. Friendship, <em>philia</em>, was a daily exercise in nearness. You could not love a citizen of Carthage. You could only love the man who broke bread with you.</p>
+
+      <figure class="figure-anim fig-polis">
+        <svg viewBox="0 0 420 220" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="polis-title polis-desc">
+          <title id="polis-title">The circle of citizens</title>
+          <desc id="polis-desc">Six citizens arranged around a dashed cyan circle, connected by gaze lines that show the lattice of seeing-and-being-seen.</desc>
+
+          <!-- the polis circle -->
+          <circle class="polis-ring" cx="210" cy="110" r="78" fill="none" stroke="#00D4FF" stroke-width="0.9" stroke-dasharray="2 3" opacity="0.55"/>
+
+          <!-- gaze lines (drawn first so they sit under figures) -->
+          <g class="gaze" stroke="#00D4FF" stroke-width="0.4">
+            <line x1="210" y1="40" x2="278" y2="76"/>
+            <line x1="278" y1="76" x2="278" y2="148"/>
+            <line x1="278" y1="148" x2="210" y2="184"/>
+            <line x1="210" y1="184" x2="142" y2="148"/>
+            <line x1="142" y1="148" x2="142" y2="76"/>
+            <line x1="142" y1="76" x2="210" y2="40"/>
+            <line x1="210" y1="40" x2="278" y2="148"/>
+            <line x1="278" y1="76" x2="142" y2="148"/>
+            <line x1="210" y1="40" x2="142" y2="148"/>
+            <line x1="278" y1="76" x2="210" y2="184"/>
+            <line x1="142" y1="76" x2="278" y2="148"/>
+            <line x1="278" y1="76" x2="142" y2="76"/>
+            <line x1="142" y1="148" x2="278" y2="148"/>
+          </g>
+
+          <!-- figures around the circle -->
+          <g fill="#E8EEFA">
+            <g class="citizen c-1" transform="translate(210, 32)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+            <g class="citizen c-2" transform="translate(278, 72)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+            <g class="citizen c-3" transform="translate(278, 148)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+            <g class="citizen c-4" transform="translate(210, 188)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+            <g class="citizen c-5" transform="translate(142, 148)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+            <g class="citizen c-6" transform="translate(142, 72)"><circle r="4"/><line x1="0" y1="4" x2="0" y2="16" stroke="#E8EEFA" stroke-width="1.2"/></g>
+          </g>
+
+          <text x="210" y="216" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" font-weight="600" fill="#00D4FF" letter-spacing="2">THE SPACE OF APPEARANCE</text>
+        </svg>
+        <figcaption>Power, in Arendt's reading, exists only inside the space where free people gather to speak in front of each other.</figcaption>
+      </figure>
+
+      <p>Hannah Arendt drew the line forward into the twentieth century. Power, she insisted, was not stored in palaces or armies. It existed only in what she called the <em>space of appearance</em> — the moment when free people gathered to speak and act in front of each other. The instant they dispersed, the power dispersed with them. This is why tyrants fear assemblies more than weapons. <strong>An assembly is power in its rawest form, the simple fact of bodies in a shared room.</strong></p>
+
+      <h2 id="geometry"><span class="roman">III · The Strange Geometry</span>The <em>strange geometry.</em></h2>
+
+      <p>Then Heidegger comes along and ruins the tidy picture.</p>
+
+      <p>Distance, he writes in <em>Being and Time</em>, is not the same as nearness. The eyeglasses sitting on the bridge of your nose are, in a measurable sense, the closest objects in your world. And yet they are not <em>near</em> to you. They are so close that they vanish. Meanwhile the friend on the other side of the ocean, whose voice you have not heard in a year, may be nearer to you than the stranger on the bus.</p>
+
+      <figure class="figure-anim fig-axis">
+        <svg viewBox="0 0 480 220" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="axis-title axis-desc">
+          <title id="axis-title">Nearness is not metric distance</title>
+          <desc id="axis-desc">A horizontal distance axis with three stops: eyeglasses on the bridge of the nose (near but faint), a stranger on the bus (mid-range), and an absent friend (far but vivid). An arc of mattering rises above the axis.</desc>
+
+          <!-- horizontal axis -->
+          <line x1="40" y1="160" x2="440" y2="160" stroke="rgba(232,238,250,0.18)" stroke-width="0.6"/>
+          <g font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5">
+            <text x="40" y="180">0 CM</text>
+            <text x="240" y="180" text-anchor="middle">METRIC DISTANCE</text>
+            <text x="440" y="180" text-anchor="end">∞</text>
+          </g>
+
+          <!-- arc of mattering -->
+          <path class="arc" d="M 80 110 Q 240 30 400 90" fill="none" stroke="#00D4FF" stroke-width="0.9" stroke-dasharray="3 3" opacity="0.55"/>
+          <text class="arc-label" x="240" y="58" text-anchor="middle" font-family="Instrument Serif, serif" font-size="13" font-style="italic" fill="#7FE7FF">arc of mattering</text>
+
+          <!-- the eyeglasses (close but faint) -->
+          <g class="stop stop-1" transform="translate(80, 110)" opacity="0.55">
+            <circle cx="-8" cy="0" r="9" fill="none" stroke="#6B7A99" stroke-width="1"/>
+            <circle cx="8" cy="0" r="9" fill="none" stroke="#6B7A99" stroke-width="1"/>
+            <line x1="-17" y1="0" x2="-22" y2="-3" stroke="#6B7A99" stroke-width="1"/>
+            <line x1="17" y1="0" x2="22" y2="-3" stroke="#6B7A99" stroke-width="1"/>
+            <line x1="1" y1="0" x2="-1" y2="0" stroke="#6B7A99" stroke-width="1"/>
+            <text x="0" y="32" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6B7A99" letter-spacing="1">NEAR · FAINT</text>
+          </g>
+          <line x1="80" y1="140" x2="80" y2="160" stroke="#6B7A99" stroke-width="0.5" stroke-dasharray="1 2"/>
+
+          <!-- the bus stranger -->
+          <g class="stop stop-2" transform="translate(200, 100)">
+            <circle r="6" fill="#B5BFD9" opacity="0.6"/>
+            <line x1="0" y1="6" x2="0" y2="22" stroke="#B5BFD9" stroke-width="1" opacity="0.6"/>
+            <text x="0" y="44" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6B7A99" letter-spacing="1">STRANGER</text>
+          </g>
+          <line x1="200" y1="130" x2="200" y2="160" stroke="#6B7A99" stroke-width="0.5" stroke-dasharray="1 2"/>
+
+          <!-- the absent friend (far but vivid) -->
+          <g class="stop stop-3" transform="translate(400, 90)">
+            <circle r="7" fill="#00D4FF" filter="drop-shadow(0 0 6px rgba(0,212,255,0.5))"/>
+            <line x1="0" y1="7" x2="0" y2="26" stroke="#00D4FF" stroke-width="1.4"/>
+            <text x="0" y="48" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" font-weight="600" fill="#00D4FF" letter-spacing="1">THE FRIEND</text>
+          </g>
+          <line x1="400" y1="135" x2="400" y2="160" stroke="#6B7A99" stroke-width="0.5" stroke-dasharray="1 2"/>
+        </svg>
+        <figcaption>Nearness is not metric. It is <em>mattering</em> — the orbit in which a thing shows up in your world.</figcaption>
+      </figure>
+
+      <p>What Heidegger noticed is that proximity is not metric. <strong>It is <em>mattering</em>.</strong> A thing is near to me when it shows up in my world — when it enters the orbit of my concern. This is why a courtier's three feet of air is a longer reach than a citizen's three miles. The courtier has done the harder work: the work of mattering.</p>
+
+      <p>Walter Benjamin saw the same truth from another angle. A painting in a museum carries what he called <em>aura</em> — the strange charge of being uniquely there, in this place, at this hour, before you. A photograph of that painting in a book is closer to your hand and yet infinitely farther from your soul. Reproductions abolish distance and destroy nearness in the same gesture. They make the world available and unreachable at once.</p>
+
+      <h2 id="architect"><span class="roman">IV · The Architect's Trick</span>The <em>architect's</em> trick.</h2>
+
+      <p>If proximity is power, then whoever designs the rooms designs the power.</p>
+
+      <p>Foucault built a career on this insight. His <em>Discipline and Punish</em> opens with the execution of a regicide and closes with the floor plan of a prison. Between them lies a thesis that still unsettles: power is not primarily a matter of laws or rulers but of <em>arrangements</em>. Who sits where. Who can see whom. Who must wait in which hallway.</p>
+
+      <figure class="figure-anim fig-pan">
+        <svg viewBox="0 0 320 340" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="pan-title pan-desc">
+          <title id="pan-title">The panopticon</title>
+          <desc id="pan-desc">A circular prison with the watchtower in the centre. Sight lines radiate from the tower to each cell on the outer ring. The prisoners are visible at all times to a guard who may or may not be looking.</desc>
+
+          <!-- outer wall -->
+          <circle class="wall" cx="160" cy="160" r="140" fill="none" stroke="#00D4FF" stroke-width="1.2" opacity="0.85"/>
+          <!-- inner cell ring -->
+          <circle class="cells" cx="160" cy="160" r="110" fill="none" stroke="rgba(0,212,255,0.55)" stroke-width="0.7" stroke-dasharray="2 2"/>
+
+          <!-- cells (radial dividers) -->
+          <g stroke="rgba(0,212,255,0.45)" stroke-width="0.6">
+            <line x1="160" y1="20" x2="160" y2="80"/>
+            <line x1="160" y1="240" x2="160" y2="300"/>
+            <line x1="20" y1="160" x2="80" y2="160"/>
+            <line x1="240" y1="160" x2="300" y2="160"/>
+            <line x1="62" y1="62" x2="105" y2="105"/>
+            <line x1="258" y1="62" x2="215" y2="105"/>
+            <line x1="62" y1="258" x2="105" y2="215"/>
+            <line x1="258" y1="258" x2="215" y2="215"/>
+          </g>
+
+          <!-- sight lines from tower -->
+          <g class="sight" stroke="#00D4FF" stroke-width="0.45" opacity="0.55">
+            <line x1="160" y1="160" x2="160" y2="22"/>
+            <line x1="160" y1="160" x2="160" y2="298"/>
+            <line x1="160" y1="160" x2="22" y2="160"/>
+            <line x1="160" y1="160" x2="298" y2="160"/>
+            <line x1="160" y1="160" x2="62" y2="62"/>
+            <line x1="160" y1="160" x2="258" y2="62"/>
+            <line x1="160" y1="160" x2="62" y2="258"/>
+            <line x1="160" y1="160" x2="258" y2="258"/>
+          </g>
+
+          <!-- central tower -->
+          <g class="tower">
+            <circle cx="160" cy="160" r="22" fill="rgba(0,212,255,0.10)" stroke="#00D4FF" stroke-width="1.4"/>
+            <circle cx="160" cy="160" r="4" fill="#00D4FF" filter="drop-shadow(0 0 6px rgba(0,212,255,0.6))"/>
+          </g>
+
+          <!-- prisoners (faint figures in cells) -->
+          <g class="prisoner" fill="#B5BFD9">
+            <circle cx="160" cy="50" r="2.5"/>
+            <circle cx="160" cy="270" r="2.5"/>
+            <circle cx="50" cy="160" r="2.5"/>
+            <circle cx="270" cy="160" r="2.5"/>
+            <circle cx="82" cy="82" r="2.5"/>
+            <circle cx="238" cy="82" r="2.5"/>
+            <circle cx="82" cy="238" r="2.5"/>
+            <circle cx="238" cy="238" r="2.5"/>
+          </g>
+
+          <text x="160" y="324" text-anchor="middle" font-family="Geist Mono, monospace" font-size="9" font-weight="600" fill="#00D4FF" letter-spacing="2">THE PANOPTICON</text>
+        </svg>
+        <figcaption>The geometry of being seen — a building that turns its own architecture into discipline.</figcaption>
+      </figure>
+
+      <p>The famous panopticon — Bentham's circular prison with the watchtower in the centre — is for Foucault not a peculiar building but a metaphor for modernity itself. We have learned to discipline ourselves under the assumption of being seen.</p>
+
+      <blockquote class="pullquote">
+        Every serious institution invests heavily in its geography. The corner office. The head of the table. The private dining room. <em>These are not perks. They are infrastructure.</em>
+      </blockquote>
+
+      <p>They are the trellis on which power grows. The architect's quiet vanity is to know that the politicians and the executives, for all their speeches, are only walking around inside arrangements someone else has already drawn.</p>
+
+      <h2 id="distance"><span class="roman">V · Standing Apart</span>The <em>power of standing apart.</em></h2>
+
+      <p>And yet.</p>
+
+      <p>There is a kind of authority that depends on the refusal of proximity. The judge cannot be the defendant's friend. The auditor must not dine with the executive. The prophet, in the old stories, almost always speaks from the wilderness — his power partly a function of how strange and far away he is. Max Weber argued that the genius of bureaucracy was precisely its impersonality, its capacity to treat the citizen at the window the same way it treated his neighbour, because no clerk had been close enough to either to care.</p>
+
+      <figure class="figure-anim fig-prophet">
+        <svg viewBox="0 0 480 220" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="prophet-title prophet-desc">
+          <title id="prophet-title">The view that requires distance</title>
+          <desc id="prophet-desc">A dim city silhouette on the left, a hill on the right, and a single figure at the top of the hill — the prophet — looking back toward the city with the gaze of someone who has chosen distance as a vantage point.</desc>
+
+          <!-- distant city -->
+          <g class="city">
+            <rect x="40" y="120" width="14" height="36" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="58" y="108" width="16" height="48" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="78" y="130" width="12" height="26" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="94" y="118" width="14" height="38" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="112" y="100" width="10" height="56" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <rect x="126" y="124" width="12" height="32" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <polygon points="58,108 66,96 74,108" fill="none" stroke="#B5BFD9" stroke-width="0.7"/>
+            <text x="89" y="174" text-anchor="middle" font-family="Geist Mono, monospace" font-size="8" fill="#6B7A99" letter-spacing="1.5">THE CITY</text>
+          </g>
+
+          <!-- horizon -->
+          <line x1="0" y1="156" x2="480" y2="156" stroke="rgba(232,238,250,0.12)" stroke-width="0.5"/>
+
+          <!-- the hill -->
+          <path class="hill" d="M 280 156 Q 380 80 460 156 Z" fill="rgba(0,212,255,0.04)" stroke="rgba(0,212,255,0.30)" stroke-width="0.7"/>
+
+          <!-- gaze line back -->
+          <path class="gaze-back" d="M 380 100 Q 230 60 89 130" fill="none" stroke="#00D4FF" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.55"/>
+
+          <!-- the lone figure on the hill -->
+          <g class="prophet-fig" transform="translate(380, 96)">
+            <circle r="5" fill="#00D4FF" filter="drop-shadow(0 0 6px rgba(0,212,255,0.55))"/>
+            <line x1="0" y1="5" x2="0" y2="20" stroke="#00D4FF" stroke-width="1.5"/>
+            <text x="0" y="-12" text-anchor="middle" font-family="Instrument Serif, serif" font-size="13" font-style="italic" fill="#7FE7FF">the prophet</text>
+          </g>
+        </svg>
+        <figcaption>Some forms of power keep their wattage by refusing to be touched.</figcaption>
+      </figure>
+
+      <p>There is even a sovereign use of distance. The Forbidden City was forbidden for a reason. The Pope's inaccessibility is part of what makes the audience meaningful. <strong>Some forms of power keep their wattage by refusing to be touched.</strong></p>
+
+      <p>So the slogan needs a correction. Proximity is not power as such. <em>Proximity is leverage.</em> It is a multiplier, and what it multiplies depends entirely on what you bring near. The same nearness that makes the courtier influential makes the judge corrupt. The same gathering that creates Arendt's power can dissolve into a mob.</p>
+
+      <h2 id="transmits"><span class="roman">VI · What It Transmits</span>What proximity <em>transmits.</em></h2>
+
+      <p>When something is near, certain things pass between it and us that cannot pass at any other range.</p>
+
+      <p class="bold-lead"><strong>Tacit knowledge passes.</strong> The thousand small habits of a craft that no manual records. You become a chef by standing in the kitchen, not by reading the cookbook.</p>
+
+      <p class="bold-lead"><strong>Trust passes.</strong> The slow accumulation of weather shared, faces read, silences endured.</p>
+
+      <p class="bold-lead"><strong>Tone passes.</strong> You can fake the words of a memo. You cannot fake the look in your eyes when you say them at a distance of two feet.</p>
+
+      <p class="bold-lead"><strong>Possibility passes.</strong> Casual chances, overheard fragments, introductions no one would have bothered to make formally. The sociologist Mark Granovetter once showed that most people find their jobs not through close friends but through acquaintances — the people on the slightly farther rings of their orbit. Even there, the orbit must exist.</p>
+
+      <blockquote class="pullquote">
+        This is what the courtier traffics in. Not secrets, exactly. <em>Texture.</em> The thick weave of what a person is actually like when no one is performing.
+      </blockquote>
+
+      <p>To stand close enough to read that weave is to know something the records will never contain. And to know it is, slowly, to shape what happens next.</p>
+
+      <h2 id="closing"><span class="roman">VII · A Closing Thought</span>A <em>closing</em> thought.</h2>
+
+      <p>Perhaps, then, the philosopher's version of the slogan is this. <strong>We do not become powerful by being near to power. We become powerful by deciding, day after day, what we will let become near to <em>us</em>.</strong></p>
+
+      <figure class="figure-anim fig-curation">
+        <svg viewBox="0 0 360 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="cur-title cur-desc">
+          <title id="cur-title">A life as a curation of proximities</title>
+          <desc id="cur-desc">Concentric rings of mattering around a central figure. Words drawn into nearness — books, a voice, a friend, a craft, a question, a hope — sit on the inner rings, while NOISE, FLATTERY, SPECTACLE, and RUMOUR are held at the outer rim.</desc>
+
+          <defs>
+            <radialGradient id="selfGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#00D4FF" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <circle cx="180" cy="150" r="120" fill="url(#selfGlow)"/>
+
+          <!-- concentric rings of mattering -->
+          <g fill="none" stroke="#00D4FF" stroke-dasharray="1 4">
+            <circle class="c-ring r1" cx="180" cy="150" r="40"/>
+            <circle class="c-ring r2" cx="180" cy="150" r="75"/>
+            <circle class="c-ring r3" cx="180" cy="150" r="110"/>
+          </g>
+
+          <!-- you, at the centre -->
+          <g class="self" transform="translate(180, 150)">
+            <circle r="7" fill="#00D4FF" filter="drop-shadow(0 0 8px rgba(0,212,255,0.6))"/>
+            <line x1="0" y1="7" x2="0" y2="22" stroke="#00D4FF" stroke-width="1.5"/>
+          </g>
+
+          <!-- small marks on the inner ring -->
+          <g fill="#7FE7FF" opacity="0.85">
+            <circle cx="180" cy="108" r="2"/>
+            <circle cx="220" cy="129" r="2"/>
+            <circle cx="220" cy="171" r="2"/>
+            <circle cx="180" cy="190" r="2"/>
+            <circle cx="140" cy="171" r="2"/>
+            <circle cx="140" cy="129" r="2"/>
+          </g>
+
+          <!-- things drawn into nearness, labeled -->
+          <g font-family="Instrument Serif, serif" font-size="13" font-style="italic" fill="#E8EEFA">
+            <text class="near-word nw-1" x="180" y="90" text-anchor="middle">books</text>
+            <text class="near-word nw-2" x="240" y="128" text-anchor="middle">a voice</text>
+            <text class="near-word nw-3" x="244" y="180" text-anchor="middle">a friend</text>
+            <text class="near-word nw-4" x="180" y="218" text-anchor="middle">a craft</text>
+            <text class="near-word nw-5" x="118" y="180" text-anchor="middle">a question</text>
+            <text class="near-word nw-6" x="118" y="128" text-anchor="middle">a hope</text>
+          </g>
+
+          <!-- outer rim labels: what stays distant -->
+          <g class="rim-word" font-family="Geist Mono, monospace" font-size="9" fill="#6B7A99" letter-spacing="1.5" font-weight="600">
+            <text x="180" y="22" text-anchor="middle">NOISE</text>
+            <text x="180" y="292" text-anchor="middle">FLATTERY</text>
+            <text x="40" y="154" text-anchor="middle">SPECTACLE</text>
+            <text x="320" y="154" text-anchor="middle">RUMOUR</text>
+          </g>
+        </svg>
+        <figcaption>The quiet, daily curation of who and what is allowed into the orbit of mattering.</figcaption>
+      </figure>
+
+      <p>A life is, in part, a curation of proximities. The books on the shelf nearest the bed. The voices in the morning. The faces across the table. The thoughts allowed to circle close, and the ones kept on the far rim. None of these are neutral. Each of them is doing the quiet work Heidegger called <em>nearing</em> — the work of pulling something into the orbit of mattering.</p>
+
+      <p>The courtier learned this trick first, and badly. He used it to convert three feet of air into influence over a king. But the rest of us can use it for better ends. We can choose what to stand near. We can choose what to let stand near to us.</p>
+
+      <blockquote class="pullquote">
+        In that small, daily choosing, we draft the map of the only power that finally counts — <em>the power to become a particular kind of person, in a particular kind of room, with particular kinds of people in it.</em>
+      </blockquote>
+
+    </div>
+
+    <footer class="article__footer">
+      <a href="/writing/" class="article__back"><span class="article__back-arrow">←</span> All field notes</a>
+      <span class="article__footer-cta">
+        Want a heads-up when the next one drops? <a href="mailto:mukuldharpure@gmail.com?subject=Notify%20me%20when%20your%20next%20essay%20drops">Email me to subscribe</a>
+      </span>
+    </footer>
+  </article>
+
+  <footer class="footer">
+    <span><strong>Mukul Dharpure</strong> · Field note 04 · Writing</span>
+    <span><a href="/writing/">← all writing</a> · <a href="/">portfolio home</a></span>
+    <span>© 2026 · All rights reserved · No reuse without permission</span>
+  </footer>
+
+  <script>
+    /* READING PROGRESS + TIME REMAINING */
+    const prog       = document.getElementById('prog');
+    const readTime   = document.getElementById('readTime');
+    const readTimeV  = document.getElementById('readTimeVal');
+    const TOTAL_MIN  = 9;
+
+    function updateProg() {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const ratio = max > 0 ? h.scrollTop / max : 0;
+      prog.style.width = `${Math.min(100, ratio * 100)}%`;
+      const remaining = TOTAL_MIN * (1 - ratio);
+      readTimeV.textContent = remaining < 1 ? '<1' : Math.ceil(remaining);
+      readTime.classList.toggle('show', h.scrollTop > 200 && ratio < 0.98);
+    }
+    document.addEventListener('scroll', updateProg, { passive: true });
+    updateProg();
+
+    /* FIGURE + H2 + BOLD-LEAD REVEAL */
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          revealIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.figure-anim, .article__body h2, .article__body p.bold-lead')
+      .forEach(el => revealIO.observe(el));
+
+    /* TOC */
+    const toc      = document.getElementById('toc');
+    const tocItems = document.querySelectorAll('.toc__item');
+    const sections = ['whisper','polis','geometry','architect','distance','transmits','closing']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+
+    function updateTocVisibility() {
+      toc.classList.toggle('show', window.scrollY > 240);
+    }
+    document.addEventListener('scroll', updateTocVisibility, { passive: true });
+    updateTocVisibility();
+
+    const sectionIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          tocItems.forEach(item => item.classList.toggle('active', item.dataset.section === id));
+        }
+      });
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+    sections.forEach(s => sectionIO.observe(s));
+
+    /* UTC */
+    function pad(n){return n.toString().padStart(2,'0');}
+    function tick() {
+      const d = new Date();
+      const el = document.getElementById('utc');
+      if (el) el.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    }
+    tick(); setInterval(tick, 1000);
+
+    /* MOBILE DRAWER TOGGLE */
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('navDrawer');
+    const drawerClose = document.getElementById('navDrawerClose');
+    if (hamburger && drawer) {
+      const setOpen = (o) => {
+        drawer.classList.toggle('is-open', o);
+        hamburger.classList.toggle('is-open', o);
+        hamburger.setAttribute('aria-expanded', o);
+      };
+      hamburger.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!drawer.classList.contains('is-open')); });
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+      if (drawerClose) drawerClose.addEventListener('click', () => setOpen(false));
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+      drawer.addEventListener('click', (e) => { if (e.target === drawer) setOpen(false); });
+    }
+  </script>
 </body>
 </html>
