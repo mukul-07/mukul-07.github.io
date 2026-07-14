@@ -2366,10 +2366,16 @@
       // Skip destinations on the far hemisphere — a clipped arc reads as a
       // dangling line to nowhere (e.g. California from the India-facing view).
       sites.filter(s => s.type !== 'hq' && s.country !== 'India').forEach((s, i) => {
-        if (!isPointVisible(s.coords)) return;
+        // USA routes west over Europe and the Atlantic via waypoints — the
+        // shorter eastward great circle exits over the pole from the default
+        // India-facing view and reads as a broken line. The westward route is
+        // always drawn (it spans both hemispheres); single-segment arcs still
+        // hide when their destination is on the far side.
+        const via = s.id === 'cal' ? [[30, 47], [-10, 52], [-60, 50]] : [];
+        if (!via.length && !isPointVisible(s.coords)) return;
         const arc = {
           type: 'LineString',
-          coordinates: [HQ.coords, s.coords]
+          coordinates: [HQ.coords, ...via, s.coords]
         };
         arcsGroup.append('path')
           .datum(arc)
