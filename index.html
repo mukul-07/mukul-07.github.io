@@ -2373,8 +2373,11 @@
     // ============ ARCS · HQ → each site ============
     function drawArcs() {
       arcsGroup.selectAll('*').remove();
-      // Arcs only from HQ to foreign cities (Thailand, Singapore, UAE, Germany)
+      // Arcs only from HQ to foreign cities (Thailand, Singapore, UAE, Germany, USA).
+      // Skip destinations on the far hemisphere — a clipped arc reads as a
+      // dangling line to nowhere (e.g. California from the India-facing view).
       sites.filter(s => s.type !== 'hq' && s.country !== 'India').forEach((s, i) => {
+        if (!isPointVisible(s.coords)) return;
         const arc = {
           type: 'LineString',
           coordinates: [HQ.coords, s.coords]
@@ -2468,7 +2471,7 @@
       svg.select('path[fill="url(#sphereGrad)"]').attr('d', path);
       graticulePath.attr('d', path);
       landGroup.selectAll('path').attr('d', path);
-      arcsGroup.selectAll('path').attr('d', path);
+      drawArcs();
       drawSites();
     }
 
