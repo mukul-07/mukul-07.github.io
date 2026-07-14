@@ -2262,7 +2262,8 @@
     // Registry shows HQ + international sites only — the Indian city cluster
     // stays on the globe but would drown the list in near-identical cards
     const depsEl = document.getElementById('deps');
-    const registrySites = sites.filter(s => s.type === 'hq' || s.country !== 'India');
+    const registryOrder = ['blr', 'cal', 'ber', 'dxb', 'sin', 'ryg'];
+    const registrySites = registryOrder.map(id => sites.find(s => s.id === id)).filter(Boolean);
     registrySites.forEach(s => {
       const el = document.createElement('div');
       el.className = `dep dep--${s.type}`;
