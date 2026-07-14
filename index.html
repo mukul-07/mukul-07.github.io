@@ -2371,7 +2371,7 @@
         // India-facing view and reads as a broken line. The westward route is
         // always drawn (it spans both hemispheres); single-segment arcs still
         // hide when their destination is on the far side.
-        const via = s.id === 'cal' ? [[30, 47], [-10, 52], [-60, 50]] : [];
+        const via = s.id === 'cal' ? [[30, 47], [-15, 52], [-55, 50], [-90, 45]] : [];
         if (!via.length && !isPointVisible(s.coords)) return;
         const arc = {
           type: 'LineString',
