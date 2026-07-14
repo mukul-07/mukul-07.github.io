@@ -2360,26 +2360,45 @@
       });
 
     // ============ ARCS · HQ → each site ============
+    // Direct great-circle routes lifted off the sphere in 3D — altitude
+    // scales with route length, so long hauls (India → California) read as
+    // a ballistic flight path soaring over the horizon instead of a surface
+    // line clipped at the rim. Elevated points stay visible while they're
+    // outside the globe's silhouette, then slip behind it.
+    function arcPathD(from, to) {
+      const interp = d3.geoInterpolate(from, to);
+      const dist = d3.geoDistance(from, to);
+      const lift = 0.25 * (dist / Math.PI);
+      const R = projection.scale();
+      const [cx, cy] = projection.translate();
+      const rotate = d3.geoRotation(projection.rotate());
+      const N = 120;
+      let d = '', pen = false;
+      for (let i = 0; i <= N; i++) {
+        const t = i / N;
+        const q = rotate(interp(t));
+        const lam = q[0] * Math.PI / 180, phi = q[1] * Math.PI / 180;
+        const x = Math.cos(phi) * Math.sin(lam);
+        const y = Math.sin(phi);
+        const z = Math.cos(phi) * Math.cos(lam);
+        const alt = 1 + lift * Math.sin(Math.PI * t);
+        const visible = z > 0 || Math.hypot(x, y) * alt > 1.004;
+        if (visible) {
+          d += (pen ? 'L' : 'M') + (cx + R * alt * x).toFixed(1) + ' ' + (cy - R * alt * y).toFixed(1);
+          pen = true;
+        } else pen = false;
+      }
+      return d;
+    }
+
     function drawArcs() {
       arcsGroup.selectAll('*').remove();
-      // Arcs only from HQ to foreign cities (Thailand, Singapore, UAE, Germany, USA).
-      // Skip destinations on the far hemisphere — a clipped arc reads as a
-      // dangling line to nowhere (e.g. California from the India-facing view).
-      sites.filter(s => s.type !== 'hq' && s.country !== 'India').forEach((s, i) => {
-        // USA routes west over Europe and the Atlantic via waypoints — the
-        // shorter eastward great circle exits over the pole from the default
-        // India-facing view and reads as a broken line. The westward route is
-        // always drawn (it spans both hemispheres); single-segment arcs still
-        // hide when their destination is on the far side.
-        const via = s.id === 'cal' ? [[30, 47], [-15, 52], [-55, 50], [-90, 45]] : [];
-        if (!via.length && !isPointVisible(s.coords)) return;
-        const arc = {
-          type: 'LineString',
-          coordinates: [HQ.coords, ...via, s.coords]
-        };
+      // Arcs only from HQ to foreign cities (Thailand, Singapore, UAE, Germany, USA)
+      sites.filter(s => s.type !== 'hq' && s.country !== 'India').forEach(s => {
+        const d = arcPathD(HQ.coords, s.coords);
+        if (!d) return;
         arcsGroup.append('path')
-          .datum(arc)
-          .attr('d', path)
+          .attr('d', d)
           .attr('fill', 'none')
           .attr('stroke', s.type === 'f500' ? '#FF7A45' : '#00D4FF')
           .attr('stroke-opacity', 0.9)
