@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Builds · Mukul Dharpure — Side projects shipped to production</title>
-<meta name="description" content="Side projects built outside the day job. ComplianceOS (AI compliance), Vantara Farms (D2C oranges), and what's next on the bench." />
+<meta name="description" content="Side projects built outside the day job. MissionDebug (a black box for ROS 2 robots, now on the Transitive Robotics marketplace), ComplianceOS (AI compliance), Vantara Farms (D2C oranges), and what's next on the bench." />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="theme-color" content="#00D4FF" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -353,9 +353,9 @@
     <header class="hero">
       <p class="hero__eyebrow"><span class="dot"></span>Builds · side-projects in production</p>
       <h1 class="hero__title">Things I built when no one <em>asked me to.</em></h1>
-      <p class="hero__sub">Side projects make me a better PM. They keep my hands dirty, remind me how hard 0→1 really is, and teach me things I'd never learn inside a single company. <strong>Three are live. More on the bench.</strong></p>
+      <p class="hero__sub">Side projects make me a better PM. They keep my hands dirty, remind me how hard 0→1 really is, and teach me things I'd never learn inside a single company. <strong>Four are live. More on the bench.</strong></p>
       <div class="hero__meta">
-        <span class="item"><span>Live</span><span class="cyan">03</span></span>
+        <span class="item"><span>Live</span><span class="cyan">04</span></span>
         <span class="item"><span>On the bench</span><span class="v">03</span></span>
         <span class="item"><span>Built mostly</span><span class="v">solo · evenings &amp; weekends</span></span>
       </div>
@@ -373,18 +373,19 @@
           <div class="build__head">
             <h2 class="build__name">missiondebug</h2>
             <span class="build__status build__status--live"><span class="dot"></span>Open source</span>
+            <span class="build__status build__status--draft">Cloud · beta</span>
           </div>
-          <p class="build__tag">Robotics observability · ROS 2 · Local-first</p>
-          <p class="build__tagline">Local-first debugger for ROS 2 robots — record, detect, replay.</p>
-          <p class="build__desc">The product version of the thesis in <a href="/writing/dont-guess-let-the-customer-tell-you/" style="color:var(--cyan); border-bottom:1px solid var(--cyan-mid);">field note 03</a>. <strong>missiondebug captures ROS 2 topics into MCAP, runs configurable rule-based anomaly detectors against the stream, and lets you replay the moment a robot misbehaved</strong> — all locally on the operator's machine, no cloud round-trip, no customer data leaving the plant. Built for robotics teams who want observability without being told what an anomaly is by an opaque ML model.</p>
+          <p class="build__tag">Robotics observability · ROS 2 · Local-first + Cloud</p>
+          <p class="build__tagline">A black box for ROS 2 robots — like the one in airplanes.</p>
+          <p class="build__desc">The product version of the thesis in <a href="/writing/dont-guess-let-the-customer-tell-you/" style="color:var(--cyan); border-bottom:1px solid var(--cyan-mid);">field note 03</a>. <strong>missiondebug keeps the last 60 seconds of your robot's data and saves it the moment something goes wrong</strong> — the robot stops moving when told to move, a sensor goes silent, the battery runs low — then lets you replay the incident with charts, camera frames, and what triggered it. The open-source original runs fully local for sites where data can't leave the building (defense, hospitals, factories). <strong>MissionDebug Cloud</strong>, now in beta on the Transitive Robotics marketplace, is the same black box for connected fleets: one-click install, every recording uploads to a hosted dashboard you replay in the browser (even when the robot is offline), all incidents from all robots in one list, MCAP export. Free for a limited time while in beta.</p>
           <dl class="build__meta">
             <dt>Role</dt><dd>Solo · open source · MIT</dd>
-            <dt>Stack</dt><dd><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">ROS 2</span><span class="chip">MCAP</span><span class="chip">React</span><span class="chip">TypeScript</span></dd>
+            <dt>Stack</dt><dd><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">ROS 2</span><span class="chip">MCAP</span><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">Transitive Robotics</span></dd>
             <dt>Customer</dt><dd>Robotics teams running ROS 2 fleets · ops engineers · field debugging</dd>
-            <dt>Status</dt><dd>Live on GitHub · iterating in public</dd>
+            <dt>Status</dt><dd>Open source on GitHub · MissionDebug Cloud in beta on the Transitive marketplace, hosted in the USA · free for a limited time</dd>
           </dl>
           <div class="build__actions">
-            <a href="https://github.com/mukul-07/missiondebug" target="_blank" rel="noopener" class="build__btn build__btn--prim">View on GitHub ↗</a>
+            <a href="https://transitiverobotics.com/caps/missiondebug/missiondebug-cloud/" target="_blank" rel="noopener" class="build__btn build__btn--prim">Try MissionDebug Cloud ↗</a>
             <a href="https://github.com/mukul-07/missiondebug" target="_blank" rel="noopener" class="build__btn build__btn--ghost">github.com/mukul-07/missiondebug</a>
           </div>
         </div>
