@@ -2445,8 +2445,9 @@
           .attr('stroke-width', 1.5)
           .style('filter', 'url(#glow)');
 
-        // Label chip · on HQ and on selected
-        if (s.type === 'hq' || s.id === selectedId) {
+        // Label chip · always on the international registry sites + selected;
+        // the dense Indian city cluster stays chip-free to avoid collisions
+        if (registryOrder.includes(s.id) || s.id === selectedId) {
           const label = s.city.toUpperCase();
           const w = label.length * 7 + 14;
           g.append('rect')
