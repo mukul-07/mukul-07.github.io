@@ -206,8 +206,10 @@
 
   /* CENTER · globe canvas */
   .panel-c { position: relative; background: radial-gradient(ellipse at 50% 42%, rgba(0, 212, 255, 0.08) 0%, transparent 60%); border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); overflow: hidden; display: flex; flex-direction: column; }
+  /* z-index 7 keeps these labels above the orbiting satellite (z-index 6),
+     which otherwise sweeps over them on narrow panels */
   .globe-overlay-tl, .globe-overlay-tr, .globe-overlay-bl, .globe-overlay-br {
-    position: absolute; z-index: 5; pointer-events: none;
+    position: absolute; z-index: 7; pointer-events: none;
     font: 500 10px/1.6 var(--mono); letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--muted);
   }
@@ -962,8 +964,9 @@
 
     .hud__corner { display: none; }
     .stage { min-height: 0; height: auto; }
-    .panel-c { height: auto; aspect-ratio: 1 / 1; min-height: 0; }
-    .globe-svg { aspect-ratio: 1 / 1; }
+    /* Shorter than square so the operator name + claim clear the first
+       viewport; the svg's preserveAspectRatio centers the smaller sphere */
+    .panel-c { height: auto; aspect-ratio: 1 / 0.85; min-height: 0; }
 
     /* Mission log: hide table, show cards */
     .log { display: none; }
@@ -1724,8 +1727,8 @@
       </div>
       <div class="tcell">
         <div class="tcell__key">FOOTPRINT · GLOBAL</div>
-        <div class="tcell__num"><span data-counter data-target="5" data-decimals="0">5</span><span class="small"> / 15</span></div>
-        <div class="tcell__lbl">Countries · cities with deployments</div>
+        <div class="tcell__num"><span data-counter data-target="15" data-decimals="0">15</span></div>
+        <div class="tcell__lbl">Cities with deployments · across 5 countries</div>
       </div>
     </div>
 
@@ -2021,44 +2024,8 @@
                 <p class="timeline-card__eyebrow">Most recent · 1y 0m</p>
                 <h3 class="timeline-card__title">Project &amp; Customer Delivery Lead · Sr Commissioning Engineer</h3>
                 <p class="timeline-card__company">Botsync · Bengaluru, India</p>
-                <p class="timeline-card__body">Owned end-to-end delivery of autonomous-forklift programs at Fortune 500 sites: Ford Thailand, Caterpillar Singapore, Coca-Cola India. Primary customer contact across 3 concurrent F500 accounts; managed budgets, vendors, and integration partners. Translated customer feedback into product decisions; partnered with hardware + software engineering to ship patches with zero unplanned production downtime.</p>
+                <p class="timeline-card__body">Owned end-to-end delivery of autonomous-forklift programs at Fortune 500 sites — Ford Thailand, Caterpillar Singapore, Coca-Cola India — as primary customer contact across 3 concurrent accounts. Every deployment is in the mission log above.</p>
                 <p class="timeline-card__year">Apr 2025–Mar 2026</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Feb 2026</p>
-                <h3 class="timeline-card__title">Caterpillar · Singapore · 2 autonomous forklifts</h3>
-                <p class="timeline-card__body">Two production-ready autonomous forklifts deployed at the Singapore site. Zero incidents on accelerated 15-day timeline.</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Nov 2025</p>
-                <h3 class="timeline-card__title">Ford Motors · Thailand · Paint Shop forklift</h3>
-                <p class="timeline-card__body">Second Ford deployment at Rayong, on the Paint Shop floor. Built on top of the Body Shop programme commissioned earlier in the year.</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Jul–Sep 2025</p>
-                <h3 class="timeline-card__title">Ford Motors · Thailand · Body Shop forklift</h3>
-                <p class="timeline-card__body">First Ford deployment. Autonomous forklift on the Rayong Body Shop floor, 14 trips/hour, 2 automated production shifts. SICK Safety LiDAR + Percipio camera calibration, AprilTag docking, full SAT.</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">May 2025</p>
-                <h3 class="timeline-card__title">Coca-Cola · India · autonomous Cobot</h3>
-                <p class="timeline-card__body">Cobot deployment for warehouse automation at Coca-Cola India. First Botsync programme of the year.</p>
               </div>
             </div>
 
@@ -2068,35 +2035,8 @@
                 <p class="timeline-card__eyebrow">4y 6m</p>
                 <h3 class="timeline-card__title">Product Operations Manager · grew from Intern</h3>
                 <p class="timeline-card__company">Flo Mobility · Bengaluru, India</p>
-                <p class="timeline-card__body">Joined Flo as an Intern (Dec 2020), moved through Project Head, then ran the company as Product Operations Manager. Scaled the autonomous fleet 0→45+ units across 10+ cities at 95%+ uptime. Led two 0→1 commercial product launches with a 4-engineer team: <strong>Autonomous Lawnmower</strong> (Nov 2021–Apr 2023, 10+ units, 1st commercial product) and <strong>Material Movement Robot</strong> (Apr 2023–Apr 2025, 35+ units across 10+ Indian cities). Built a Robot Fleet Management System in ReactJS with a 2-engineer dev team and shipped a trip-data analytics platform. Customers: L&amp;T, Godrej Properties, Sobha, K2K.</p>
+                <p class="timeline-card__body">Intern (Dec 2020) → Project Head → Product Operations Manager. Scaled the autonomous fleet 0→45+ units across 10+ cities at 95%+ uptime; led two 0→1 launches — <strong>Autonomous Lawnmower</strong> and <strong>Material Movement Robot</strong> — with a 4-engineer team, and built the Robot Fleet Management System in ReactJS. Customers: L&amp;T, Godrej Properties, Sobha, K2K.</p>
                 <p class="timeline-card__year">Dec 2020 – Apr 2025</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Sep 2024</p>
-                <h3 class="timeline-card__title">Everest Carbon · Berlin · soil-sampler robot</h3>
-                <p class="timeline-card__body">Custom 0→1 build for a German climate-hardware customer. Single bespoke unit shipped, the only Flo deployment outside India and the UAE.</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Apr 2023 – Apr 2025</p>
-                <h3 class="timeline-card__title">Material Movement Robot (MMR) · build &amp; scale</h3>
-                <p class="timeline-card__body">Indoor AMR for commercial construction. Built and scaled to 35+ units across 10+ Indian cities. Customers: L&amp;T, Godrej, Sobha, K2K.</p>
-              </div>
-            </div>
-
-            <div class="timeline-item timeline-item--sub">
-              <div class="timeline-node small"></div>
-              <div class="timeline-card">
-                <p class="timeline-card__eyebrow">Nov 2021 – Apr 2023</p>
-                <h3 class="timeline-card__title">Autonomous Lawnmower · build &amp; scale</h3>
-                <p class="timeline-card__body">First commercial product at Flo. Outdoor autonomy stack; 10+ lawnmowers built and deployed for landscaping clients.</p>
               </div>
             </div>
 
