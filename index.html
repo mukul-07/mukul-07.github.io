@@ -406,6 +406,7 @@
   .dep__type--f500 { background: #FF7A45; color: var(--space); font-weight: 700; box-shadow: 0 0 12px rgba(255,122,69,0.5); }
   /* ENT = outline only, transparent fill */
   .dep__type--ent { background: transparent; color: var(--cyan); border: 1px solid rgba(0,212,255,0.45); }
+  .dep__type--cloud { background: var(--cyan); color: var(--space); font-weight: 700; box-shadow: 0 0 12px rgba(0,212,255,0.5); }
   /* HQ = filled green */
   .dep__type--hq { background: var(--green); color: var(--space); font-weight: 700; }
   .dep__country { font: 400 11px/1 var(--mono); color: var(--muted); margin-bottom: 8px; letter-spacing: 0.04em; }
@@ -434,6 +435,7 @@
   .legend__dot--f500 { background: #FF7A45; box-shadow: 0 0 12px rgba(255,122,69,0.6); }
   /* ENT = outlined ring (no fill) · clearly different shape */
   .legend__dot--ent { background: transparent; border: 1.5px solid var(--cyan); box-shadow: none; }
+  .legend__dot--cloud { background: var(--cyan); box-shadow: 0 0 8px rgba(0,212,255,0.6); }
 
   /* =========================================
      SCROLL CONTENT · telemetry / mission log
@@ -1607,7 +1609,7 @@
     <div class="panel-c">
       <div class="globe-overlay-tl">
         <div>Now facing</div>
-        <div><span class="cyan" id="selName">Bengaluru</span> · India</div>
+        <div><span class="cyan" id="selName">Bengaluru</span> · <span id="selCountry">India</span></div>
       </div>
       <div class="globe-overlay-tr">
         <div>Coordinates</div>
@@ -1701,6 +1703,7 @@
         <div class="legend__row"><span class="legend__dot legend__dot--hq"></span><span>HQ · Origin</span></div>
         <div class="legend__row"><span class="legend__dot legend__dot--f500"></span><span>Fortune 500 customer</span></div>
         <div class="legend__row"><span class="legend__dot legend__dot--ent"></span><span>Enterprise deployment</span></div>
+        <div class="legend__row"><span class="legend__dot legend__dot--cloud"></span><span>MissionDebug Cloud · USA</span></div>
       </div>
     </aside>
   </section>
@@ -2114,7 +2117,7 @@
             <span class="builds-teaser__mark">SO</span>
             <span class="builds-teaser__body">
               <span class="builds-teaser__name">opensource-sales-ops <span class="builds-teaser__status">● Open source</span></span>
-              <span class="builds-teaser__tag">AI SDR · local-first · github.com/mukul-07/opensource-sales-ops</span>
+              <span class="builds-teaser__tag">AI SDR · local-first · open source · MIT</span>
             </span>
           </span>
           <span class="builds-teaser__row">
@@ -2244,6 +2247,7 @@
       { id: 'ryg', city: 'Rayong',     country: 'Thailand',  coords: [101.27, 12.68],type: 'f500', role: 'F500 · Botsync',        meta: 'Ford · 3 mo delivery · 14 trips/hr', sector: 'Automotive'},
       { id: 'sin', city: 'Singapore',  country: 'Singapore', coords: [103.81, 1.35], type: 'f500', role: 'F500 · Botsync',        meta: 'Caterpillar · 15d · 6× compression', sector: 'Construction equipment'},
       { id: 'ber', city: 'Berlin',     country: 'Germany',   coords: [13.40, 52.52], type: 'ent',  role: 'Enterprise · Custom',   meta: 'Everest Carbon · soil-sampler robot', sector: 'Climate hardware · custom'},
+      { id: 'cal', city: 'California', country: 'USA',       coords: [-122.42, 37.77], type: 'cloud', role: 'Product · MissionDebug Cloud', meta: 'MissionDebug Cloud · Transitive marketplace', sector: 'MissionDebug Cloud'},
       { id: 'del', city: 'Delhi',      country: 'India',     coords: [77.21, 28.61], type: 'ent',  role: 'Enterprise · Flo',      meta: 'Enterprise deployment',         sector: 'Enterprise'},
       { id: 'amd', city: 'Ahmedabad',  country: 'India',     coords: [72.57, 23.02], type: 'ent',  role: 'Enterprise · Flo',      meta: 'Enterprise deployment',         sector: 'Enterprise'},
       { id: 'sty', city: 'Surat',      country: 'India',     coords: [72.83, 21.17], type: 'ent',  role: 'Enterprise · Flo',      meta: 'Enterprise deployment',         sector: 'Enterprise'},
@@ -2260,8 +2264,8 @@
       const el = document.createElement('div');
       el.className = `dep dep--${s.type}`;
       el.dataset.id = s.id;
-      const typeClass = s.type === 'hq' ? 'dep__type--hq' : s.type === 'f500' ? 'dep__type--f500' : 'dep__type--ent';
-      const typeLbl = s.type === 'hq' ? 'HQ' : s.type === 'f500' ? 'F500' : 'ENT';
+      const typeClass = s.type === 'hq' ? 'dep__type--hq' : s.type === 'f500' ? 'dep__type--f500' : s.type === 'cloud' ? 'dep__type--cloud' : 'dep__type--ent';
+      const typeLbl = s.type === 'hq' ? 'HQ' : s.type === 'f500' ? 'F500' : s.type === 'cloud' ? 'CLOUD' : 'ENT';
       el.innerHTML = `
         <div class="dep__head">
           <span class="dep__city">${s.city}</span>
@@ -2395,8 +2399,8 @@
         const [x, y] = projection(s.coords);
         const visible = isPointVisible(s.coords);
         const color = s.type === 'hq' ? '#00E676' : (s.type === 'f500' ? '#FF7A45' : '#00D4FF');
-        const pinR = s.type === 'hq' ? 5 : (s.type === 'f500' ? 5 : 3.5);
-        const ringR = s.type === 'hq' ? 14 : (s.type === 'f500' ? 12 : 9);
+        const pinR = s.type === 'ent' ? 3.5 : 5;
+        const ringR = s.type === 'hq' ? 14 : (s.type === 'ent' ? 9 : 12);
         if (!visible) return;
 
         const g = sitesGroup.append('g')
@@ -2503,6 +2507,7 @@
       });
       if (!best) return;
       document.getElementById('selName').textContent = best.city;
+      document.getElementById('selCountry').textContent = best.country;
       document.getElementById('selCoords').innerHTML = `LAT ${best.coords[1].toFixed(2)}° · LON ${best.coords[0].toFixed(2)}°`;
       // Distance from HQ
       const toRad = x => x * Math.PI / 180;
